@@ -4,6 +4,8 @@
 	- CSS templates (bootstrap, material design)
 	- Ability to have personal templates (I like to have my SASS files set up a certain way, would be cool to be able to store that somewhere and pull it up later)
 
+  
+  
 ## Aaron's edits 9.16.14 ##
   - Using Monk's angular-fullstack generator: https://github.com/DaftMonk/generator-angular-fullstack
   ```
@@ -29,6 +31,12 @@
   grunt edit         || to open project in Sublime
   grunt serve        || preview
   grunt serve:dist   || preview of built app
+  ```
+  
+## Running the server ##
+  - Start the server via grunt:
+  ```
+  grunt serve
   ```
   
 ## Adding helpful components ##
