@@ -6,6 +6,7 @@ angular.module('appceptionApp')
       .state('files', {
         url: '/files',
         templateUrl: 'app/files/files.html',
-        controller: 'FilesCtrl'
+        controller: 'FilesCtrl',
+        authenticate: true
       });
   });
