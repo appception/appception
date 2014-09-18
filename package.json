@@ -24,7 +24,7 @@
     "passport": "~0.2.0",
     "passport-github": "^0.1.5",
     "passport-local": "~0.1.6",
-    "serve-favicon": "~2.0.1"
+    "serve-favicon": "~2.0.1",
     "connect-livereload": "~0.4.0",
     "grunt": "~0.4.4",
     "grunt-angular-templates": "^0.5.4",
