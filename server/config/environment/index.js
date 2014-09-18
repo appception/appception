@@ -42,9 +42,9 @@ var all = {
   },
 
   github: {
-    clientID:     process.env.GITHUB_CLIENT_ID || '7bf23587f9f2afebf687',
-    clientSecret: process.env.GITHUB_CLIENT_SECRET || '5a18b843bcfa5c04f4d21a8c3ee41a22981fc054',
-    callbackURL:  (process.env.DOMAIN || '') + "http://localhost:9000/auth/github/callback"
+    clientID:     process.env.GITHUB_CLIENT_ID || '3ba9a626f936bca491ee',
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || '094043a8cf1602d42cf9921d978c75ad92662145',
+    callbackURL:  (process.env.DOMAIN || '') + "/auth/github/callback"
   }
 
 };
