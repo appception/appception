@@ -7,6 +7,10 @@ angular.module('appceptionApp')
       'link': '/'
     },
     {
+      'title': 'Projects',
+      'link': '/projects'
+    },
+    {
       'title': 'Files',
       'link': '/files'
     }
