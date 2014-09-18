@@ -29,16 +29,14 @@
     <!-- Add your site or application content here -->
     <div ui-view=""></div>
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-XXXXX-X');
-      ga('send', 'pageview');
-    </script>
+    <footer>
+      <div class="container">
+        <p class="text-center">Built in 2014 at <a href="http://www.hackreactor.com/">Hack Reactor</a> by Wai-Yin Kwan, Aaron Melocik, and Kelly Walker</p>
+        <p class="text-center">Artwork courtesy of <a href="https://github.com/tategallery/collection">the Tate Collection.</a></p>
+        <div class="clearfix"></div>
+      </div>
+    </footer>
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -48,7 +46,6 @@
       <!-- bower:js -->
       <script src="bower_components/jquery/dist/jquery.js"></script>
       <script src="bower_components/angular/angular.js"></script>
-      <script src="bower_components/json3/lib/json3.js"></script>
       <script src="bower_components/angular-resource/angular-resource.js"></script>
       <script src="bower_components/angular-cookies/angular-cookies.js"></script>
       <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
@@ -68,8 +65,12 @@
           <script src="app/account/signup/signup.controller.js"></script>
           <script src="app/admin/admin.controller.js"></script>
           <script src="app/admin/admin.js"></script>
+          <script src="app/files/files.controller.js"></script>
+          <script src="app/files/files.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
+          <script src="app/projects/projects.controller.js"></script>
+          <script src="app/projects/projects.js"></script>
           <script src="app/testController/testController.controller.js"></script>
           <script src="app/testDirective/testDirective.directive.js"></script>
           <script src="app/testRoute/testRoute.controller.js"></script>
