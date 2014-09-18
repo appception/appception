@@ -1,6 +1,23 @@
 // Generated on 2014-09-17 using generator-angular-fullstack 2.0.12
 'use strict';
 
+/***********************************
+ ***        GRUNT   TASKS        ***
+ * You can issue the following tasks:
+ *
+ *   grunt  ===================>  DEFAULT TASK. Lints code, then runs server tests, then client tests, then builds.
+ *   grunt wait  ==============>  Wait for server to reload
+ *   grunt express-keepalive ==>  Keep grunt running asynchronously
+ *   grunt serve  =============>  Starts the server & watches, with optional targets:
+ *     grunt serve:dist  ========>  Starts the server & watches AFTER running distribution tasks (minify, etc.)
+ *     grunt serve:debug  =======>  Starts the server & watches AFTER cleaning, injecting scripts / components, etc.
+ *   grunt test  ==============>  Runs server then client tests. This has optional targets:
+ *     grunt test:server  =======>  Runs server tests using MOCHA
+ *     grunt test:client  =======>  Runs client tests using KARMA
+ *     grunt test:e2e  ==========>  Runs end-to-end tests using PROTRACTOR
+ *   grunt build  =============>  Builds app by cleaning folders, injecting, minifying, uglifying, etc.
+ **********************************/
+
 module.exports = function (grunt) {
   var localConfig;
   try {
