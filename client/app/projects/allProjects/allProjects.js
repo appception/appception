@@ -5,8 +5,8 @@ angular.module('appceptionApp')
     $stateProvider
       .state('projects', {
         url: '/projects',
-        templateUrl: 'app/projects/projects.html',
-        controller: 'ProjectsCtrl',
+        templateUrl: 'app/projects/allProjects/allProjects.html',
+        controller: 'AllProjectsCtrl',
         authenticate: true
       });
   });
