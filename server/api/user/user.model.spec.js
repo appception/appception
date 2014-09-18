@@ -11,7 +11,7 @@ var user = new User({
   password: 'password'
 });
 
-describe('User Model', function() {
+describe('User Model at /server/api/user', function() {
   before(function(done) {
     // Clear users before testing
     User.remove().exec().then(function() {

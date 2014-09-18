@@ -7,7 +7,7 @@ Runs:
   •	'clean:server',
     -- Empties .tmp folder
   •	'env:all',
-    -- Sets server environment; try localhost:9000
+    -- Sets server environment for testing on localhost:9000 
   •	'injector:sass', 
     -- Injects component scss into app.scss
     -- May be part of ‘watch’ process?
@@ -28,9 +28,9 @@ Testing server-side:
 grunt test:server
 Runs:
   •	'env:all',
-    -- Sets server environment; try localhost:9000 or 8080 (though browser should launch automatically) 
+    -- Sets server environment and tests on localhost:9000 (though browser should launch automatically) 
   •	'env:test',
-    -- Sets Node server environment for testing; try localhost:9000 or 8080
+    -- Sets Node server environment for testing on localhost:9000 
   •	 ‘mochaTest’, 
     -- Runs mocha test
     -- src: ‘server/**/*.spec.js’
@@ -42,9 +42,9 @@ Runs:
   •	'clean:server',
     -- Empties .tmp folder
   •	'env:all',
-    -- Sets server environment; try localhost:9000
+    -- Sets server environment for testing on localhost:9000 
   •	'env:test',
-    -- Sets Node server environment for testing; try localhost:9000 or 8080
+    -- Sets Node server environment for testing on localhost:9000 
   •	'injector:sass', 
     -- Injects component scss into app.scss
     -- May be part of ‘watch’ process?

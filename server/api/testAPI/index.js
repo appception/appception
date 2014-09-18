@@ -5,7 +5,12 @@ var controller = require('./testAPI.controller');
 
 var router = express.Router();
 
-router.get('/', controller.index);
+/****************
+ * Sample Route below:
+ * NOTE: route logic is in 'testAPI.controller.js'.
+ ***************/
+
+router.get('/', controller.index); // basic GET '/' route. Find this in 'testAPI.controller.js : index'
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
