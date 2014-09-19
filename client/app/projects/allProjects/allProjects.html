@@ -9,13 +9,9 @@
 
       <h1>Project Page</h1>
       <div>
+
         <ul>
-          <li><a href="/files">Project 1</a></li>
-          <li><a href="/files">Project 2</a></li>
-          <li><a href="/files">Project 3</a></li>
-          <li><a href="/files">Project 4</a></li>
-          <li><a href="/files">Project 5</a></li>
-          <li><a href="/files">Project 6</a></li>
+          <li ng-repeat='project in projects'>{{project}}</li>
         </ul>
       </div>
 
