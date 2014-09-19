@@ -1,0 +1,55 @@
+  - Using Monk's angular-fullstack generator: https://github.com/DaftMonk/generator-angular-fullstack
+  ```
+  yo angular-fullstack Appception
+  ```
+  - for difference between 2 MEAN generators, see: http://stackoverflow.com/questions/24601323/what-is-the-relationship-between-generator-angular-and-generator-angular-fullsta
+  - Testing with:
+  ```
+  karma        (runs unit tests in browser)
+  Mocha? (NOTE: might change to Jasmine later)
+  protractor   (angular-focused) 
+  ```
+  Later versions might use:
+  ```
+  jasmine      (Complete client-side testing framework -- use with karma)   NOTE: Might not work out-the-box...
+  jasmine-node (Complete server-side unit testing)                           NOTE: Might not work out-the-box...
+  ```
+  
+## Building the app ##
+  - Run the following commands:
+  ```
+  grunt              || to build
+  grunt edit         || to open project in Sublime
+  grunt serve        || preview
+  grunt serve:dist   || preview of built app
+  ```
+  
+## Running the server ##
+  - Start the server via grunt:
+  ```
+  grunt serve
+  ```
+  
+## Adding helpful components ##
+  - You can also add the following, with details here: https://github.com/DaftMonk/generator-angular-fullstack
+  ```
+  ROUTE:
+    yo angular-fullstack:route myroute
+    [?] Where would you like to create this route? client/app/
+    [?] What will the url of your route be? /myroute
+
+  CONTROLLER:
+    yo angular-fullstack:controller user
+    [?] Where would you like to create this controller? client/app/
+
+  DIRECTIVE:
+    yo angular-fullstack:directive myDirective
+    [?] Where would you like to create this directive? client/app/
+    [?] Does this directive need an external html file? Yes
+    ```
+
+## NOTES ##
+Might need:
+```
+npm run update-webdriver
+```
