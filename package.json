@@ -4,7 +4,10 @@
   "main": "server/app.js",
   "dependencies": {
     "body-parser": "~1.5.0",
+    "brackets": "^0.3.0",
+    "composable-middleware": "^0.3.0",
     "compression": "~1.0.1",
+    "connect": "^3.2.0",
     "connect-livereload": "~0.4.0",
     "cookie-parser": "~1.0.1",
     "ejs": "~0.8.4",
