@@ -5,13 +5,11 @@
   "dependencies": {
     "body-parser": "~1.5.0",
     "compression": "~1.0.1",
-    "connect-mongo": "^0.4.1",
     "cookie-parser": "~1.0.1",
     "ejs": "~0.8.4",
     "errorhandler": "~1.0.0",
     "express": "~4.0.0",
     "express-jwt": "^0.1.3",
-    "express-session": "~1.0.2",
     "github": "^0.2.2",
     "jsonwebtoken": "^0.3.0",
     "lodash": "~2.4.1",
@@ -55,15 +53,13 @@
     "jit-grunt": "^0.5.0",
     "jshint-stylish": "~0.1.5",
     "open": "~0.0.4",
-    "requirejs": "~2.1.11",
-    "should": "~3.3.1",
     "time-grunt": "~0.3.1"
   },
   "devDependencies": {
-    // Not found in current files
     "composable-middleware": "^0.3.0",
-
-    // Testing needs
+    "connect-mongo": "^0.4.1",
+    "express-session": "~1.0.2",
+    "requirejs": "~2.1.11",
     "grunt-karma": "~0.8.2",
     "grunt-mocha-test": "~0.10.2",
     "grunt-protractor-runner": "^1.1.0",
@@ -82,7 +78,8 @@
     "karma-script-launcher": "~0.1.0",
     "jasmine": "^2.0.1",
     "jasmine-node": "^1.14.5",
-    "supertest": "~0.11.0",
+    "should": "~3.3.1",
+    "supertest": "~0.11.0"
   },
   "engines": {
     "node": ">=0.10.0"
