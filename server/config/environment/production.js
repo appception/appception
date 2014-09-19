@@ -18,6 +18,6 @@ module.exports = {
     uri:    process.env.MONGOLAB_URI ||
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
-            'mongodb://localhost/appception'
+            'mongodb://MongoLab-y:VZ.2XJ7B6sc8rLY81sd1mA1.QvYwIIaSRR60ne5haCc-@ds052837.mongolab.com:52837/MongoLab-y'
   }
 };
