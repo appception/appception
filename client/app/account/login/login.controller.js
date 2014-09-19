@@ -14,8 +14,8 @@ angular.module('appceptionApp')
           password: $scope.user.password
         })
         .then( function() {
-          // Logged in, redirect to home
-          $location.path('/');
+          // Logged in, redirect to files
+          $location.path('/files');
         })
         .catch( function(err) {
           $scope.errors.other = err.message;

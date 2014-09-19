@@ -42,11 +42,10 @@ var all = {
   },
 
   github: {
-    clientID:     process.env.GITHUB_CLIENT_ID || '3ba9a626f936bca491ee',
-    clientSecret: process.env.GITHUB_CLIENT_SECRET || '094043a8cf1602d42cf9921d978c75ad92662145',
-    callbackURL:  (process.env.DOMAIN || '') + "/auth/github/callback"
+    clientID:     process.env.GITHUB_ID || '3ba9a626f936bca491ee',
+    clientSecret: process.env.GITHUB_SECRET || '094043a8cf1602d42cf9921d978c75ad92662145',
+    callbackURL:  (process.env.DOMAIN || '') + '/auth/github/callback'
   }
-
 };
 
 // Export the config object based on the NODE_ENV
