@@ -42,8 +42,8 @@ var all = {
   },
 
   github: {
-    clientID:     process.env.GITHUB_ID || '3ba9a626f936bca491ee',
-    clientSecret: process.env.GITHUB_SECRET || '094043a8cf1602d42cf9921d978c75ad92662145',
+    clientID:     process.env.GITHUB_ID || 'b000475dfa18e133e84b',
+    clientSecret: process.env.GITHUB_SECRET || '623daa76e878008111f88e15446017239fc9219c',
     callbackURL:  (process.env.DOMAIN || '') + '/auth/github/callback'
   }
 };

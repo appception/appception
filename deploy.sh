@@ -127,6 +127,14 @@ if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
   cd - > /dev/null
 fi
 
+# 5. Run grunt build
+if [ -e "$DEPLOYMENT_SOURCE/Gruntfile.js" ]; then
+  eval $NPM_CMD install grunt-cli
+  exitWithMessageOnError "installing grunt failed"
+  ./node_modules/.bin/grunt --no-color build
+  exitWithMessageOnError "grunt failed"
+fi
+
 ##################################################################################################################################
 
 # Post deployment stub
