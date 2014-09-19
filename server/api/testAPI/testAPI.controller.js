@@ -6,7 +6,6 @@ var Testapi = require('./testAPI.model');
 // Get list of testAPIs
 exports.index = function(req, res) {
   Testapi.find(function (err, testAPIs) {
-    console.log('res = ', res); // print result in test
     if(err) { return handleError(res, err); }
     return res.json(200, testAPIs);
   });
