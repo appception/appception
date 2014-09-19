@@ -128,12 +128,15 @@ if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
 fi
 
 # 5. Run grunt build
-if [ -e "$DEPLOYMENT_SOURCE/Gruntfile.js" ]; then
-  eval $NPM_CMD install grunt-cli
-  exitWithMessageOnError "installing grunt failed"
-  ./node_modules/.bin/grunt build
-  exitWithMessageOnError "grunt failed"
-fi
+# This code is not working, the azure log says 'An error has occurred during web site deployment.
+# grunt failed'
+# It looks like grunt-cli is getting installed but the grunt build command is not working
+# if [ -e "$DEPLOYMENT_SOURCE/Gruntfile.js" ]; then
+#   eval $NPM_CMD install grunt-cli
+#   exitWithMessageOnError "installing grunt failed"
+#   ./node_modules/.bin/grunt build
+#   exitWithMessageOnError "grunt failed"
+# fi
 
 ##################################################################################################################################
 
