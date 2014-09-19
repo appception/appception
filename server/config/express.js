@@ -15,6 +15,11 @@ var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
 var passport = require('passport');
+var connect = require('connect'); // include connect middleware: https://www.npmjs.org/package/connect
+var brackets = require('brackets'); // include brackets web module: https://www.npmjs.org/package/brackets
+
+
+
 
 module.exports = function(app) {
   var env = app.get('env');
@@ -27,6 +32,12 @@ module.exports = function(app) {
   app.use(bodyParser.json());
   app.use(methodOverride());
   app.use(cookieParser());
+
+
+  app.use(connect()); // BEST GUESS...
+  app.use('/brackets', brackets()); // BEST GUESS...
+
+
   app.use(passport.initialize());
   if ('production' === env) {
     // app.use(favicon(path.join(config.root, 'client/components', 'favicon.ico')));
