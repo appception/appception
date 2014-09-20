@@ -24,13 +24,12 @@ github.authenticate({
     secret: process.env.GITHUB_SECRET
 });
 
-
-
+var username = 'wykhuh';
 
 // Get list of projects
 exports.index = function(req, res) {
 
-  github.repos.getFromUser({user: 'wykhuh'}, function(err, data) {
+  github.repos.getFromUser({ user: username }, function(err, data) {
     if(err){  console.log("get all repos error", err); }
     console.log("get all repos success")
     res.end(JSON.stringify(data));

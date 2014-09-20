@@ -2,12 +2,11 @@
 
 angular.module('appceptionApp')
   .controller('AllProjectsCtrl', function ($scope, github) {
-    var projectList = ['a','b','c'];
-
     console.log('AllProjectsCtrl')
 
-    console.log(github.someMethod());
+    github.getRepos().then(function(res){ 
+      $scope.projects = res.data;
+    })
 
-    $scope.projects = projectList;
 
   });

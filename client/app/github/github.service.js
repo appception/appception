@@ -20,6 +20,7 @@ angular.module('appceptionApp')
 
     // Public API here
     return {
-      someMethod: someMethod
+      someMethod: someMethod,
+      getRepos: getRepos
     };
   });
