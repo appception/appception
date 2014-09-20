@@ -31,9 +31,7 @@ SCRIPT_DIR="${SCRIPT_DIR%/*}"
 ARTIFACTS=$SCRIPT_DIR/../artifacts
 KUDU_SYNC_CMD=${KUDU_SYNC_CMD//\"}
 
-if [[ ! -n "$DEPLOYMENT_SOURCE" ]]; then
-  DEPLOYMENT_SOURCE=$SCRIPT_DIR/dist
-fi
+DEPLOYMENT_SOURCE=$SCRIPT_DIR/dist
 
 if [[ ! -n "$NEXT_MANIFEST_PATH" ]]; then
   NEXT_MANIFEST_PATH=$ARTIFACTS/manifest
@@ -109,23 +107,23 @@ fi
 # 2. Select node version
 selectNodeVersion
 
-# 3. Install npm packages
-if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
-  cd "$DEPLOYMENT_TARGET"
-  eval $NPM_CMD install --production
-  exitWithMessageOnError "npm failed"
-  cd - > /dev/null
-fi
+# # 3. Install npm packages
+# if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
+#   cd "$DEPLOYMENT_TARGET"
+#   eval $NPM_CMD install --production
+#   exitWithMessageOnError "npm failed"
+#   cd - > /dev/null
+# fi
 
-# 4. Install bower packages
-if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
-  cd "$DEPLOYMENT_TARGET"
-  eval $NPM_CMD install bower
-  exitWithMessageOnError "installing bower failed"
-  ./node_modules/.bin/bower install
-  exitWithMessageOnError "bower failed"
-  cd - > /dev/null
-fi
+# # 4. Install bower packages
+# if [ -e "$DEPLOYMENT_TARGET/bower.json" ]; then
+#   cd "$DEPLOYMENT_TARGET"
+#   eval $NPM_CMD install bower
+#   exitWithMessageOnError "installing bower failed"
+#   ./node_modules/.bin/bower install
+#   exitWithMessageOnError "bower failed"
+#   cd - > /dev/null
+# fi
 
 # 5. Run grunt build
 # This code is not working, the azure log says 'An error has occurred during web site deployment.
