@@ -32,8 +32,7 @@ exports.index = function(req, res) {
   github.repos.getFromUser({ user: username }, function(err, data) {
     if(err){  console.log("get all repos error", err); }
     console.log("get all repos success")
-    res.end(JSON.stringify(data));
-    // res.end(data)
+    return res.json(data)
   });
 
 };
