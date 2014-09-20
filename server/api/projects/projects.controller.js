@@ -9,39 +9,33 @@ var github = new GitHubApi({
     // required
     version: "3.0.0",
     // optional
-    debug: true,
-    protocol: "https",
-    // host: "github.my-GHE-enabled-company.com",
-    pathPrefix: "/api/v3", // for some GHEs
-    timeout: 5000
+    debug: true
+    // protocol: "https",
+    // host:  "http",
+    // pathP refix: "/api/v3", // for some GHEs
+    // timeout: 5000
+});
+
+
+// get 
+github.authenticate({
+    type: "oauth",
+    key: process.env.GITHUB_ID,
+    secret: process.env.GITHUB_SECRET
 });
 
 
 
 
-
-// Get list of projectss
+// Get list of projects
 exports.index = function(req, res) {
-  // Projects.find(function (err, projectss) {
-  //   if(err) { return handleError(res, err); }
-  //   return res.json(200, projectss);
-  // });
 
-
-// console.log(github.user.getFollowingFromUser({user:'mikedeboer'}))
-
-  github.user.getFollowingFromUser({
-    // optional:
-    // headers: {
-    //     "cookie": "blahblah"
-    // },
-    user: "mikedeboer"
-  }, function(err, res) {
-    if(err) {console.log('github connection error')}
-    console.log(JSON.stringify(res));
+  github.repos.getFromUser({user: 'wykhuh'}, function(err, data) {
+    if(err){  console.log("get all repos error", err); }
+    console.log("get all repos success")
+    res.end(JSON.stringify(data));
+    // res.end(data)
   });
-  // console.log('projects api index')
-
 
 };
 
