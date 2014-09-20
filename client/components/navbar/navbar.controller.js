@@ -48,7 +48,7 @@ angular.module('appceptionApp')
       }
     };
 
-     $scope.loginOauth = function(provider) {
+    $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
 
