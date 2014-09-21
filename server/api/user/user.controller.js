@@ -14,6 +14,8 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
+  console.log('user.controller.js: index api');
+
   User.find({}, '-salt -hashedPassword', function (err, users) {
     if(err) return res.send(500, err);
     res.json(200, users);
@@ -24,6 +26,7 @@ exports.index = function(req, res) {
  * Creates a new user
  */
 exports.create = function (req, res, next) {
+
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
@@ -38,6 +41,8 @@ exports.create = function (req, res, next) {
  * Get a single user
  */
 exports.show = function (req, res, next) {
+  console.log('user.controller.js: show api');
+
   var userId = req.params.id;
 
   User.findById(userId, function (err, user) {
@@ -81,9 +86,14 @@ exports.changePassword = function(req, res, next) {
 
 /**
  * Get my info
+ 
  */
 exports.me = function(req, res, next) {
+  console.log('user.controller.js: me api');
+
+
   var userId = req.user._id;
+  // console.log('==========',req.user)
   User.findOne({
     _id: userId
   }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt

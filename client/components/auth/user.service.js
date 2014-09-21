@@ -2,7 +2,11 @@
 
 angular.module('appceptionApp')
   .factory('User', function ($resource) {
-    return $resource('/api/users/:id/:controller', {
+
+    // $resource(url, [paramDefaults], [actions], options);
+    return $resource('/api/users/:id/:controller',
+    {
+      // @: Angular 'this'; _id: MongoDB default field name for ids
       id: '@_id'
     },
     {
@@ -19,4 +23,6 @@ angular.module('appceptionApp')
         }
       }
 	  });
+
+
   });
