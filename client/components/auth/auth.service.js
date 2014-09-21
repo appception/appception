@@ -5,6 +5,7 @@ angular.module('appceptionApp')
     var currentUser = {};
     if($cookieStore.get('token')) {
       currentUser = User.get();
+      console.log('auth.service.js: get.(token)');
     }
 
     return {
@@ -98,6 +99,7 @@ angular.module('appceptionApp')
        * @return {Object} user
        */
       getCurrentUser: function() {
+        // console.log('auth.service', currentUser)
         return currentUser;
       },
 
