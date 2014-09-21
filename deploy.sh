@@ -26,7 +26,7 @@ exitWithMessageOnError "Missing node.js executable, please install node.js, if a
 # Setup
 # -----
 
-# SCRIPT_DIR="${BASH_SOURCE[0]%\\*}"
+SCRIPT_DIR="${BASH_SOURCE[0]%\\*}"
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 ARTIFACTS=$SCRIPT_DIR/../artifacts
 KUDU_SYNC_CMD=${KUDU_SYNC_CMD//\"}
