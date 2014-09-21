@@ -26,12 +26,14 @@ exitWithMessageOnError "Missing node.js executable, please install node.js, if a
 # Setup
 # -----
 
-SCRIPT_DIR="${BASH_SOURCE[0]%\\*}"
+# SCRIPT_DIR="${BASH_SOURCE[0]%\\*}"
 SCRIPT_DIR="${SCRIPT_DIR%/*}"
 ARTIFACTS=$SCRIPT_DIR/../artifacts
 KUDU_SYNC_CMD=${KUDU_SYNC_CMD//\"}
 
-DEPLOYMENT_SOURCE=$SCRIPT_DIR/dist
+# if [[ ! -n "$DEPLOYMENT_SOURCE" ]]; then
+  DEPLOYMENT_SOURCE=$SCRIPT_DIR/dist
+# fi
 
 if [[ ! -n "$NEXT_MANIFEST_PATH" ]]; then
   NEXT_MANIFEST_PATH=$ARTIFACTS/manifest
