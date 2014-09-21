@@ -11,9 +11,9 @@ angular.module('appceptionApp')
 
     var user = 'wykhuh';
 
-    // github.getRepos(user).then(function(res){ 
-    //   $scope.projects = res.data;
-    // })
+    github.getRepos(user).then(function(res){
+      $scope.projects = res.data;
+    });
 
 
   });
