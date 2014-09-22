@@ -5,10 +5,10 @@
 
 'use strict';
 
-var MainPage = function() {
+var NewProjectsPage = function() {
 	this.header = element(by.css('h1'));
-  this.signin = element(by.cssContainingText('button', 'Sign in with Github'));
+  // this.signin = element(by.cssContainingText('button', 'Sign in with Github'));
 };
 
-module.exports = new MainPage();
+module.exports = new NewProjectsPage();
 
