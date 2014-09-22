@@ -27,6 +27,7 @@ module.exports = function (grunt) {
   }
 
   // Load grunt tasks automatically, when needed
+  // This automatically checks node_modules for grunt files. If one of the plugins cannot be resolved in automatic mapping, they are statically mapped (like express: 'grunt-express-server' etc below)
   require('jit-grunt')(grunt, {
     express: 'grunt-express-server',
     useminPrepare: 'grunt-usemin',
@@ -46,12 +47,13 @@ module.exports = function (grunt) {
     // Project settings
     pkg: grunt.file.readJSON('package.json'),
     yeoman: {
-      // configurable paths
+      // Here is where the paths to folders that are used throughout the rest of the grunt file are set. <%= yeoman.client %> and <%= yeoman.dist %>
       client: require('./bower.json').appPath || 'client',
       dist: 'dist'
     },
     express: {
       options: {
+        // <%= express.options.port %>
         port: process.env.PORT || 9000
       },
       dev: {
@@ -69,11 +71,12 @@ module.exports = function (grunt) {
     open: {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
-      }//,
-//      edit: { // to open the project for SublimeText editing
-//        path: 'AppceptionSublimeProject.sublime-project',
-//        tasks: ['edit']
-//      }
+      }
+     //  edit: {
+     //    // to open the project for SublimeText editing
+     //    path: './appception.sublime-project',
+     //    tasks: ['edit']
+     // }
     },
     watch: {
       injectJS: {
@@ -244,11 +247,12 @@ module.exports = function (grunt) {
       target: {
         src: '<%= yeoman.client %>/index.html',
         ignorePath: '<%= yeoman.client %>/',
-        exclude: [/bootstrap-sass-official/, /bootstrap.js/, '/json3/', '/es5-shim/', /bootstrap.css/, /font-awesome.css/ ]
+        exclude: [/bootstrap-sass-official/, /bootstrap.js/, '/json3/', '/es5-shim/']
       }
     },
 
     // Renames files for browser caching purposes
+    // see Grunt doc http://gruntjs.com/configuring-tasks section "Globbing patterns" for info on this pattern: {,*/}*
     rev: {
       dist: {
         files: {
@@ -265,6 +269,7 @@ module.exports = function (grunt) {
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
+    // Looks through index.html to find things to minify/concat. Then it sends those files to the subsequent grunt tasks called in the register task section (concat, cssmin, uglify, etc)
     useminPrepare: {
       html: ['<%= yeoman.client %>/index.html'],
       options: {

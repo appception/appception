@@ -7,12 +7,12 @@
 
     <a href="/newproject">Add new project</a>
 
-      <h1>Project Page</h1>
+      <h1>Your Projects</h1>
       <div>
 
         <ul>
-          <li ng-repeat='project in projects'><a href="http://localhost:9000/brackets/">{{project.name}}</a>: {{project.description}} 
-            <br> Created at: {{project.created_at}} Updated: {{project.updated_at}}   
+          <li ng-repeat='project in projects'><a href="http://localhost:9000/brackets/">{{project.name}}</a>: {{project.description}}
+            <br> Created at: {{project.created_at}} Updated: {{project.updated_at}}
           </li>
         </ul>
       </div>
