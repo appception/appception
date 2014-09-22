@@ -6,10 +6,9 @@
     <div class="col-lg-12">
 
     <a href="/newproject">Add new project</a>
-    <a href="" ng-click="getUser()">Get User</a>
       <h1>Your Projects</h1>
       <div>
-
+        <h4 ng-show="loading">Loading...</h4>
         <ul>
           <li ng-repeat='project in projects'><a href="http://localhost:9000/brackets/">{{project.name}}</a>: {{project.description}}
             <br> Created at: {{project.created_at}} Updated: {{project.updated_at}}
