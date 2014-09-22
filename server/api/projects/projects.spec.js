@@ -18,3 +18,12 @@ describe('GET /api/projects', function() {
       });
   });
 });
+
+/*
+
+make call to github
+
+get json back from github
+
+
+*/

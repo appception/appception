@@ -16,7 +16,8 @@
     "lodash": "~2.4.1",
     "angular-ui-router": "~0.2.10",
     "angular-mocks": ">=1.2.*",
-    "angular-scenario": ">=1.2.*"
+    "angular-scenario": ">=1.2.*",
+    "angularjs-indexedDB": "*"
   },
   "devDependencies": {}
 }
