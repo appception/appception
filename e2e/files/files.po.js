@@ -6,7 +6,7 @@
 'use strict';
 
 var FilesPage = function() {
-  // this.signin = element(by.cssContainingText('button', 'Sign in with Github'));
+  this.editor = element(by.css('brackets'))
 };
 
 module.exports = new FilesPage();

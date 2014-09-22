@@ -1,14 +1,20 @@
 'use strict';
 
 describe('Projects View', function() {
-  var page;
+  var projectsPage;
 
   beforeEach(function() {
+    browser.ignoreSynchronization = true;
     browser.get('/projects');
-    page = require('./projects.po');
+    projectsPage = require('./projects.po');
   });
 
-  // it('should have a sign in button', function() {
-  //   expect(page.signin.getText()).toBe('Sign in with Github');
-  // });
+  afterEach(function() {
+    browser.ignoreSynchronization = false;
+  });
+
+  it('should render projects view when user navigates to /projects', function() {
+    expect(projectsPage.header.getText()).
+      toBe('Your Projects');
+  });
 });
