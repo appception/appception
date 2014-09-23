@@ -5,7 +5,7 @@ angular.module('appceptionApp')
   .factory('github', function ($http) {
 
     // Get all repos for the logged in user.
-    var getRepos = function(githubLogin){
+    var getRepos = function(githubLogin) {
       return $http({
         method: 'GET',
         url: '/api/projects',
@@ -13,7 +13,20 @@ angular.module('appceptionApp')
       });
     };
 
+    // Get list and content of repo files for the logged in user.
+    var getRepoFiles = function(githubLogin, githubRepo) {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/files',
+        params: {
+          githubLogin: githubLogin,
+          githubRepo: githubRepo
+        }
+      })
+    };
+
     return {
-      getRepos: getRepos
+      getRepos: getRepos,
+      getRepoFiles: getRepoFiles
     };
   });

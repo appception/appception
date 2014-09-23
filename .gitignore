@@ -1,3 +1,4 @@
+.DS_Store
 node_modules
 public
 .tmp
@@ -5,6 +6,7 @@ public
 dist
 .idea
 client/bower_components
+server/tempfiles
 
 /server/config/local.env.js
 ~$*
