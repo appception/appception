@@ -4,7 +4,9 @@ var _ = require('lodash');
 var AdmZip = require('adm-zip');
 var zlib = require('zlib');
 var fs = require('fs');
+var fstream = require('fstream');
 var https = require('https');
+var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
 
@@ -48,79 +50,40 @@ exports.files = function(req, res) {
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
 
+  // Get the url for the requested repo zip archive
   github.repos.getArchiveLink({
     user: githubLogin,
     repo: githubRepo,
-    archive_format: 'tarball'
+    archive_format: 'zipball'
   }, function(err, data) {
     if(err) {
       console.log('projects.controller.js: get files error', err)
     }
     console.log('projects.controller.js: get files success')
 
-
-
-
     var file = data.meta.location;
+
+    // if we wanted to let users pick a different branch to look at we can change 'master' here
     file = file.replace(/:ref/g, 'master')
 
-    var fileName = '/tmp/' + new Date().getTime() + Math.random();
+    var filePath = 'server/tempfiles/' + githubRepo + '.zip';
 
+    // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
     request.get({
       url: file,
       encoding: null
     }, function(err, resp, body) {
       if(err) throw err;
-      fs.writeFile('server/tempfiles/' + githubRepo + '.zip', body, function(err) {
+      fs.writeFile(filePath, body, function(err) {
         console.log("file written!");
+        fs.createReadStream(filePath).pipe(unzip.Parse())
+          .pipe(fstream.Writer('server/tempfiles/'));
       });
     });
 
-
-
-    // https.get(file, function(res) {
-    //   var data = [];
-    //   var dataLength = 0;
-    //   res.on('data', function(chunk) {
-    //     data.push(chunk);;
-    //     dataLength += chunk.length;
-    //   }).on('end', function() {
-    //     var buf = new Buffer(dataLength);
-    //     var pos = 0;
-    //     for(var i = 0; i < data.length; i++) {
-    //       data[i].copy(buf, pos);
-    //       pos += data[i].length;
-    //     }
-
-    //     var zip = new AdmZip(buf);
-    //     var zipEntries = zip.getEntries();
-    //     console.log(zipEntries.length)
-    //   })
-    // })
-
-    // var output = fs.createWriteStream('output.txt')
-    // var input = fs.createReadStream(file)
-    // input.pipe(zlib.createGunzip()).pipe(output)
-    // unzipAndStoreFiles(file)
   })
 };
 
-var unzipAndStoreFiles = function(zipball) {
-  // in the future we can let users pick a branch and update the :ref
-  // var branch = 'master';
-  // var zipballURL = zipball.replace(/:ref/g, branch);
-  // console.log(zipballURL)
-
-  // var zip = new AdmZip(zipballURL);
-  // var zipEntries = zip.getEntries();
-  // console.log(zipEntries)
-
-  // zipEntries.forEach(function(zipEntry) {
-  //   console.log(zipEntry.toString())
-  // })
-
-
-}
 
 // // Creates a new projects in the DB.
 // exports.create = function(req, res) {
