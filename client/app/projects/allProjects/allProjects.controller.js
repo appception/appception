@@ -21,6 +21,18 @@ angular.module('appceptionApp')
     	}
 	  });
 
+    $scope.getRepoFiles = function(repo) {
+      Auth.isLoggedInAsync(function(boolean) {
+        if(boolean === true){
+          var user = Auth.getCurrentUser()
+          github.getRepoFiles(user.github.login, repo).then(function(res) {
+            $scope.files = res.data
+          })
+        }else {
+          $scope.files = 'Sorry, no files have been found';
+        }
+      })
+    }
 
 
   });
