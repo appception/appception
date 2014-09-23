@@ -34,8 +34,9 @@ github.authenticate({
 
 // Get list of projects
 exports.index = function(req, res) {
-
+  // console.log(req)
   var githubLogin = req.query.githubLogin;
+  console.log('inside projects.index', githubLogin)
 
   github.repos.getFromUser({ user: githubLogin }, function(err, data) {
     if(err){  console.log("projects.controller.js: get all repos error", err); }
@@ -47,6 +48,7 @@ exports.index = function(req, res) {
 
 // Get a single projects files
 exports.files = function(req, res) {
+    console.log('inside projects.files')
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
 
@@ -78,6 +80,10 @@ exports.files = function(req, res) {
         console.log("file written!");
         fs.createReadStream(filePath).pipe(unzip.Parse())
           .pipe(fstream.Writer('server/tempfiles/'));
+
+        return res.json({
+          zipFile: filePath
+          })
       });
     });
 
