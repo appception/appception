@@ -5,6 +5,7 @@ angular.module('appceptionApp')
     var currentUser = {};
     if($cookieStore.get('token')) {
       currentUser = User.get();
+      console.log('auth.service.js: get.(token)');
     }
 
     return {
@@ -98,6 +99,7 @@ angular.module('appceptionApp')
        * @return {Object} user
        */
       getCurrentUser: function() {
+        // console.log('auth.service', currentUser)
         return currentUser;
       },
 
@@ -115,7 +117,9 @@ angular.module('appceptionApp')
        */
       isLoggedInAsync: function(cb) {
         if(currentUser.hasOwnProperty('$promise')) {
+          console.log(currentUser, cb)
           currentUser.$promise.then(function() {
+            console.log('cb called')
             cb(true);
           }).catch(function() {
             cb(false);

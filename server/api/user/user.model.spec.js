@@ -58,3 +58,14 @@ describe('User Model at /server/api/user', function() {
     return user.authenticate('blah').should.not.be.true;
   });
 });
+
+
+/*
+user click signup and sent to github,
+
+get token back from github
+
+create user in local database
+
+
+*/
