@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "main": "server/app.js",
   "dependencies": {
-    "adm-zip": "^0.4.4",
     "body-parser": "~1.5.0",
     "brackets": "^0.3.0",
     "composable-middleware": "^0.3.0",
@@ -96,7 +95,8 @@
     "start": "node server/app.js",
     "test": "grunt test",
     "postinstall": "grunt build",
-    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
+    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update",
+    "update-webdriver-short": "npm run update-webdriver"
   },
   "private": true
 }
