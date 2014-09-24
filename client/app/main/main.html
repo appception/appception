@@ -1,8 +1,9 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
-<!-- <div class="debug">
-  <label><input type="checkbox"> Debug</label>
-</div> -->
-<div class="wrapper">
+<div class="main">
+  <div ng-include="'components/navbar/navbar.html'"></div>
+  <!-- <div class="debug">
+    <label><input type="checkbox"> Debug</label>
+  </div> -->
+
   <div class="group hero">
     <div class="background">
       <div class="container">
@@ -10,9 +11,9 @@
           <div class="col-md-12">
       	   	<h1>A Web App to Make Web Apps</h1>
       	    <p>Appception has made it easier than ever to start programming. Sign in with Github to see for yourself!</p>
-      	    <button class="btn btn-default" ng-click="loginOauth('github')">
+      	    <button class="btn btn-default btn-lg" ng-click="loginOauth('github')">
               <i class="fa fa-github"></i>
-              Login with Github
+              <span>Login with Github</span>
             </button>
           </div>
         </div>
@@ -23,7 +24,7 @@
   <div class="group support">
     <div class="layer layer--base">
       <div class="container">
-        <div class="row text-center">
+        <div class="row align-center">
           <div class="col-md-4">
           	<h2>Do this awesome thing</h2>
           	<p>No omnes qualisque repudiare vix, ad postea possim ceteros qui. Has noluisse consectetuer id, eos dicta viris intellegebat ei, sed ad vidit corrumpit.</p>
@@ -38,7 +39,7 @@
           </div>
           <div class="clearfix"></div>
 
-          <button class="btn btn-default" ng-click="loginOauth('github')">
+          <button class="btn btn-default btn-lg" ng-click="loginOauth('github')">
             <i class="fa fa-github"></i>
             Login with Github
           </button>
