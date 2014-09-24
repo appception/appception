@@ -10,3 +10,5 @@ server/tempfiles
 
 /server/config/local.env.js
 ~$*
+/data/*
+*sublime-*
