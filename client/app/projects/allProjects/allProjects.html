@@ -22,8 +22,8 @@
               <tr ng-repeat='project in projects'>
                 <td><a href="" ng-click="getRepoFiles(project.name)">{{project.name}}</a></td>
                 <td>{{project.description}}</td>
-                <td>{{project.created_at}}</td>
-                <td>{{project.updated_at}}</td>
+                <td>{{project.created_at | date:'h:mm a, MMM d, y'}}</td>
+                <td>{{project.updated_at | date:'h:mm a, MMM d, y'}}</td>
               </tr>
             </tbody>
           </table>

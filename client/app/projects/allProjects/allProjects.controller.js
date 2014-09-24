@@ -12,7 +12,7 @@ angular.module('appceptionApp')
     	if(boolean === true){
     		var user = Auth.getCurrentUser()
     		github.getRepos(user.github.login).then(function(res){
-	      	$scope.projects = res.data;
+          $scope.projects = res.data;
           $scope.loading = false;
 	    	})
     	}else {
