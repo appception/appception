@@ -1,13 +1,24 @@
 @import 'main/main';
 
+html, body {
+  overflow: hidden;
+}
+
 html {
   position: relative;
   min-height: 100%;
 }
 body {
-  /* Margin bottom by footer height */
+   // Margin bottom by footer height
   margin-bottom: 60px;
 }
+
+.navbar.navbar-default {
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
