@@ -3,6 +3,7 @@ node_modules
 public
 .tmp
 .sass-cache
+dist
 .idea
 client/bower_components
 server/tempfiles
