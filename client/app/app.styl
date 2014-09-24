@@ -1,5 +1,7 @@
 @import "font-awesome/css/font-awesome.css";
 @import "bootstrap/dist/css/bootstrap.css";
+@import url('http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900');
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic');
 
 //
 // Bootstrap Fonts
@@ -47,6 +49,9 @@
 @import 'brackets/brackets.styl';
 @import 'files/files.styl';
 @import 'main/main.styl';
+@import 'projects/allProjects/allProjects.styl';
+@import 'styles/buttons.styl';
+@import 'styles/typography.styl';
 // endinjector
 
 html {
@@ -62,12 +67,32 @@ body {
   position: absolute;
   width: 100%;
   top: 0;
+  background-color: white;
+}
+
+.navbar-default .navbar-collapse {
+  background-color: rgba(255, 255, 255, 0.9)
+
+  .navbar-default .navbar-nav > li > a {
+    color: #000;
+    font-size: 20px;
+  }
+}
+
+.navbar-default .navbar-brand {
+  font-family: 'Source Code Pro', monospace;
+  color: #000;
+}
+
+.page-wrapper {
+  margin-top: 60px;
 }
 
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
+  padding: 0;
   /* Set the fixed height of the footer here */
   height: 60px;
   background-color: #f5f5f5;
