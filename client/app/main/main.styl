@@ -1,15 +1,11 @@
 .wrapper {
-	perspective: 300px;
-	height: 100vh;
-	overflow-x: hidden;
-	overflow-y: auto;
-	// font-size: 200%
+	// this is a hack
+	background: #050104;
 }
 
 .group {
 	position: relative;
 	height: 100vh;
-	transform-style: preserve-3d;
 }
 
 .group {
@@ -30,16 +26,22 @@
 
 .hero {
 	z-index: 4;
+	.text-center{
+		top: 170px
+	}
 
 	.background {
-		background: url('../assets/images/mountain.jpg') no-repeat center center;
+		background: url('../assets/images/mountain3.jpg') no-repeat center center;
 		background-size: cover;
 		height: 100vh;
 	}
 }
 
 .support {
-	z-index: 2;
+	z-index: 5;
+	color: white;
+	background-image: linear-gradient(0,#050104 50%,#241d24 90%,rgba(36, 29, 36, 0.87) 95%, rgba(36, 29, 36, 0.09) 100%);
+	top:-100px
 }
 
 .cta {
