@@ -1,11 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var AdmZip = require('adm-zip');
-var zlib = require('zlib');
 var fs = require('fs');
 var fstream = require('fstream');
-var https = require('https');
 var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
