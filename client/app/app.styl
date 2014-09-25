@@ -44,14 +44,16 @@
 
 // Component styles are injected through grunt
 // injector
+@import 'a-styles/a-colors.styl';
+@import 'a-styles/b-typography.styl';
+@import 'a-styles/c-buttons.styl';
 @import 'account/login/login.styl';
 @import 'admin/admin.styl';
 @import 'brackets/brackets.styl';
 @import 'files/files.styl';
 @import 'main/main.styl';
 @import 'projects/allProjects/allProjects.styl';
-@import 'styles/buttons.styl';
-@import 'styles/typography.styl';
+@import 'navbar/navbar.styl';
 // endinjector
 
 html {
@@ -63,26 +65,7 @@ body {
   margin-bottom: 60px;
 }
 
-.navbar.navbar-default {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  background-color: white;
-}
 
-.navbar-default .navbar-collapse {
-  background-color: rgba(255, 255, 255, 0.9)
-
-  .navbar-default .navbar-nav > li > a {
-    color: #000;
-    font-size: 20px;
-  }
-}
-
-.navbar-default .navbar-brand {
-  font-family: 'Source Code Pro', monospace;
-  color: #000;
-}
 
 .page-wrapper {
   margin-top: 60px;
@@ -95,7 +78,7 @@ body {
   padding: 0;
   /* Set the fixed height of the footer here */
   height: 60px;
-  background-color: #f5f5f5;
+  background-color: $white;
 
   p {
   	margin-top: 20px;
