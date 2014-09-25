@@ -8,6 +8,7 @@ var fstream = require('fstream');
 var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
+var token = require('../../auth/github/passport');
 
 var GitHubApi = require("github");
 
@@ -89,6 +90,33 @@ exports.files = function(req, res) {
   })
 };
 
+
+// Create a new repo
+exports.newRepo = function(req, res) {
+  console.log('inside server new repo')
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+
+  console.log('token.token', token.token)
+  github.authenticate({
+      type: "oauth",
+      token: token.token
+  });
+
+  // passport.authenticate('github')
+
+  github.repos.create({
+    name: repoName,
+    auto_init: true
+  }, function(err, res) {
+    if(err) {
+      console.log('projects.controller.js: create repo error', err, res)
+    }else {
+      console.log('projects.controller.js: create repo success')
+      console.log('res: ', res)
+    }
+  })
+}
 
 // // Creates a new projects in the DB.
 // exports.create = function(req, res) {

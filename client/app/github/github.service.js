@@ -2,7 +2,7 @@
 
 // This factory interacts with the Github API
 angular.module('appceptionApp')
-  .factory('github', function ($http) {
+  .factory('github', function ($http, Auth) {
 
     // Get all repos for the logged in user.
     var getRepos = function(githubLogin) {
@@ -25,8 +25,21 @@ angular.module('appceptionApp')
       })
     };
 
+    var createRepo = function(githubLogin, repoName) {
+      console.log('inside service createRepo')
+      return $http({
+        method: 'GET',
+        url: '/api/projects/new',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName
+        }
+      })
+    };
+
     return {
       getRepos: getRepos,
-      getRepoFiles: getRepoFiles
+      getRepoFiles: getRepoFiles,
+      createRepo: createRepo
     };
   });
