@@ -30,21 +30,17 @@ module.exports = function(grunt) {
       }
     }, // end cssmin
 
-    // uglify: { // mifies js
-    //   options: {
-    //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
-    //   },
-    //   dist: {
-    //     files: {
-    //       'public/dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-    //     }
-    //   }
-    // },
-
-
-
-
-
+    uglify: { // minifies js
+      options: {
+        banner: '/*! Aaron, Kelly, & Wai-Yin. Uglified by Grunt. <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+      },
+      js: {
+        files: [{
+          src: ['client/app/min/app.cat.js', '!client/**/*.min.js'],
+          dest: 'client/app/min/app.min.js'
+        }] // end files[]
+      }
+    }, // end minify
 
     nodemon: {
       dev: {
@@ -76,7 +72,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-nodemon');
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   // grunt.loadNpmTasks('grunt-contrib-jshint');
   // grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -105,7 +101,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', [
     'concat',
-    'cssmin'
+    'cssmin',
+    'uglify'
   ]);
 
   //   grunt.registerTask('deploy', [
