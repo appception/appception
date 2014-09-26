@@ -69,11 +69,7 @@ module.exports = function (grunt) {
     open: {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
-      }//,
-//      edit: { // to open the project for SublimeText editing
-//        path: 'AppceptionSublimeProject.sublime-project',
-//        tasks: ['edit']
-//      }
+      }
     },
     watch: {
       injectJS: {
