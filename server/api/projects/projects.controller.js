@@ -113,20 +113,35 @@ exports.newRepo = function(req, res) {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
-      github.repos.createFile({
-        user: githubLogin,
-        repo: repoName,
-        path: 'hello.txt',
-        message: 'Initial Commit',
-        content: 'bXkgbmV3IGZpbGUgY29udGVudHM=',
-      }, function(err, res) {
-        if(err) {
-          console.log('projects.controller.js: create file error', err, res)
-        }else {
-          console.log('projects.controller.js: create file success')
-          console.log('res: ', res)
-        }
-      })
+      exports.addFiletoRepo(githubLogin, repoName, 'hello.txt', 'Initial Commit', 'bXkgbmV3IGZpbGUgY29udGVudHM=')
+
+
+    }
+  })
+}
+
+exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, committer) {
+
+  if(!committer) {
+    committer = {
+      "name" : "appception",
+      "email" : "appception@gmail.com"
+    }
+  }
+
+  github.repos.createFile({
+    user: githubLogin,
+    repo: repoName,
+    path: path,
+    message: message,
+    content: content,
+    committer: committer
+  }, function(err, res) {
+    if(err) {
+      console.log('projects.controller.js: create file error', err, res)
+    }else {
+      console.log('projects.controller.js: create file success')
+      console.log('res: ', res)
     }
   })
 }
