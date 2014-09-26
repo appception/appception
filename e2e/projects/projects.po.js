@@ -6,6 +6,7 @@
 'use strict';
 
 var ProjectsPage = function() {
+	this.header = element(by.css('h1'));
   // this.signin = element(by.cssContainingText('button', 'Sign in with Github'));
 };
 

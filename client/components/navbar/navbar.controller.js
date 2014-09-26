@@ -2,10 +2,7 @@
 
 angular.module('appceptionApp')
   .controller('NavbarCtrl', function ($scope, $location, $window, Auth) {
-    $scope.menu = [{
-      'title': 'Home',
-      'link': '/'
-    },
+    $scope.menu = [
     {
       'title': 'Projects',
       'link': '/projects'

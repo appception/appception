@@ -1,9 +1,13 @@
+.DS_Store
 node_modules
 public
 .tmp
 .sass-cache
 .idea
 client/bower_components
+server/tempfiles
 
 /server/config/local.env.js
 ~$*
+/data/*
+*sublime-*
