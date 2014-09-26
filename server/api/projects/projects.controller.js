@@ -113,9 +113,18 @@ exports.newRepo = function(req, res) {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
-      exports.addFiletoRepo(githubLogin, repoName, 'hello.txt', 'Initial Commit', 'bXkgbmV3IGZpbGUgY29udGVudHM=')
+      var htmlStream = fs.createReadStream('server/api/projects/filetemplates/index.html', {
+        encoding: 'base64'
+      })
 
+      var response = '';
+      htmlStream.on('data', function(chunk) {
+        response = response + chunk
+      })
 
+      htmlStream.on('end', function() {
+        exports.addFiletoRepo(githubLogin, repoName, 'index.html', 'Initial Commit', response)
+      })
     }
   })
 }
