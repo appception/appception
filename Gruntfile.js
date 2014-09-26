@@ -1,5 +1,3 @@
-// Concat
-// Minify
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -9,19 +7,30 @@ module.exports = function(grunt) {
       options: {
         separator: ';'
       },
-      dist: {
-        src: ['public/client/**/*.js'],
-        dest: 'client/app/min/<%= pkg.name %>.js'
-      }
+
+      js: {
+        src: ['client/**/*.js', '!client/**/*.cat.js', '!client/**/*.min.js'],
+        dest: 'client/app/min/app.cat.js'
+      }, // end .js
+      css: {
+        src: ['client/**/*.css', '!client/**/*.cat.css', '!client/**/*.min.css'],
+        dest: 'client/app/min/app.cat.css'
+      } // end .css
     }, // end concat
 
-    nodemon: {
-      dev: {
-        script: 'server.js'
+    cssmin: { // minifies css
+      options: {
+        keepSpecialComments: 0
+      },
+      css: {
+        files: [{
+          src: ['client/app/min/app.cat.css', '!client/**/*.min.css'],
+          dest: 'client/app/min/app.min.css'
+        }] // end files[]
       }
-    }, // end nodemon
+    }, // end cssmin
 
-    // uglify: {
+    // uglify: { // mifies js
     //   options: {
     //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
     //   },
@@ -32,16 +41,18 @@ module.exports = function(grunt) {
     //   }
     // },
 
-    // cssmin: {
-    //   options: {
-    //     keepSpecialComments: 0
-    //   },
-    //   dist: {
-    //     files: {
-    //       'public/dist/style.min.css': 'public/style.css' // TODO: dest is now client/app/min
-    //     }
-    //   }
-    // },
+
+
+
+
+
+    nodemon: {
+      dev: {
+        script: 'server.js'
+      }
+    }, // end nodemon
+
+
 
     // watch: {
     //   scripts: {
@@ -63,11 +74,11 @@ module.exports = function(grunt) {
   }); // end initConfig()
 
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-nodemon');
   // grunt.loadNpmTasks('grunt-contrib-uglify');
   // grunt.loadNpmTasks('grunt-contrib-jshint');
   // grunt.loadNpmTasks('grunt-contrib-watch');
-  // grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // grunt.registerTask('server-dev', function(target) {
   //   // Running nodejs in a different process and displaying output on the main console
@@ -93,15 +104,16 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'concat'
+    'concat',
+    'cssmin'
   ]);
 
-//   grunt.registerTask('deploy', [
-//     'test',
-//     'build',
-//     'upload'
-//   ]);
-// };
+  //   grunt.registerTask('deploy', [
+  //     'test',
+  //     'build',
+  //     'upload'
+  //   ]);
+  // };
 
 };
 
@@ -140,14 +152,14 @@ module.exports = function(grunt) {
 //   }
 
 //   // Load grunt tasks automatically, when needed
-//   require('jit-grunt')(grunt, {
-//     express: 'grunt-express-server',
-//     useminPrepare: 'grunt-usemin',
-//     ngtemplates: 'grunt-angular-templates',
-//     cdnify: 'grunt-google-cdn',
-//     protractor: 'grunt-protractor-runner',
-//     injector: 'grunt-asset-injector',
-//     buildcontrol: 'grunt-build-control'
+  // require('jit-grunt')(grunt, {
+  //   express: 'grunt-express-server',
+  //   useminPrepare: 'grunt-usemin',
+  //   ngtemplates: 'grunt-angular-templates',
+  //   cdnify: 'grunt-google-cdn',
+  //   protractor: 'grunt-protractor-runner',
+  //   injector: 'grunt-asset-injector',
+  //   buildcontrol: 'grunt-build-control'
 //   });
 
 //   // Time how long tasks take. Can help when optimizing build times
