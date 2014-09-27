@@ -162,6 +162,27 @@ exports.newRepo = function(req, res) {
 }
 
 
+exports.commit = function(req, res) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+  var message = req.query.message;
+
+  // Get latest commit sha
+  github.gitdata.getReference({
+    user: githubLogin,
+    repo: repoName,
+    ref: 'heads/master'
+  }, function(err, res) {
+    if(err) {
+      console.log('get latest commit sha error', err)
+    } else {
+      console.log('get latest commit sha success')
+      var latestCommit = res.object.sha;
+    }
+  })
+}
+
+
 exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, cb, committer) {
   console.log('cb: ', cb)
   if(!committer) {
