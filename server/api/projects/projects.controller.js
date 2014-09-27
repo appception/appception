@@ -105,6 +105,7 @@ exports.newRepo = function(req, res) {
       token: token.token
   });
 
+  // Creating a new repo using github node module
   github.repos.create({
     name: repoName,
     auto_init: true
@@ -115,45 +116,38 @@ exports.newRepo = function(req, res) {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
+      // Once new repo has been created, read the directory that contains the template files.
       fs.readdir('server/api/projects/filetemplates/', function(err, files) {
-        forEachAsync(files, function(next, fileTitle, index, array) {
-          console.log('fileTitle', fileTitle);
 
+        // Async read each file name in the array returned.
+        forEachAsync(files, function(next, fileTitle, index, array) {
+          // Get file contents
           var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
             encoding: 'base64'
           })
 
           var response = '';
           stream.on('data', function(chunk) {
-            console.log('data for: ', fileTitle)
             response = response + chunk
           })
 
           stream.on('end', function() {
-            console.log('end for: ', fileTitle)
-            console.log('next: ', next)
-            // exports.addFiletoRepo(githubLogin, repoName, fileTitle, 'Initial Commit for ' + fileTitle, response, next);
-
-            // if(!committer) {
-            var committer = {
-                "name" : "appception",
-                "email" : "appception@gmail.com"
-              }
-            // }
-
+            // Using github module, create a file on github based on data read from file
             github.repos.createFile({
               user: githubLogin,
               repo: repoName,
               path: fileTitle,
               message: 'Initial Commit for ' + fileTitle,
               content: response,
-              committer: committer
+              committer: {
+                "name" : "appception",
+                "email" : "appception@gmail.com"
+              }
             }, function(err, res) {
               if(err) {
                 console.log('projects.controller.js: create file error', err, res)
               }else {
                 console.log('projects.controller.js: create file success')
-                console.log('res: ', res)
                 next()
               }
             })
