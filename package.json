@@ -99,9 +99,9 @@
   },
   "scripts": {
     "start": "node server/app.js",
-    "install": "git submodule update --init",
+    "postinstall": "git submodule update --init",
     "postinstall": "grunt",
-    "update-webdriver-short": "npm run update-webdriver"
+    "postinstall": "npm run update-webdriver"
   },
   "private": true
 }
