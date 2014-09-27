@@ -1,0 +1,451 @@
+.full-wrapper {
+	height: 100%;
+}
+
+.full {
+	min-height: 100%;
+	border: 1px solid red;
+}
+
+.container {
+	width: 900px;
+	margin: 0 auto;
+	z-index: 1;
+	position: relative;
+}
+
+.row {
+	margin-bottom: $five;
+}
+
+.inline-list li{
+	display: inline
+}
+
+.clear-after:after {
+	content: '';
+	display: table;
+	clear: both;
+}
+
+.float-right {
+	float: right
+}
+
+.float-left {
+	float: left
+}
+
+// Grid widths
+
+.one-whole {
+	width: 100%;
+}
+
+.five-sixths {
+	 width: 84%;
+}
+
+.three-fourths {
+	width: 75%;
+	padding-left: 5%;
+}
+
+.two-thirds {
+	width: 66%;
+}
+
+.half {
+	width: 48%;
+	margin: 1%;
+}
+
+.third {
+	width: 31%;
+	margin: 1%;
+}
+
+.fourth {
+	width: 25%;
+}
+
+.sixth {
+	width: 16%
+}
+
+
+.align-center {
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.vert-align-center {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+
+// Margin Helpers
+
+.margin-half--all {
+	margin: $half;
+}
+
+.margin-half--sides {
+	margin-left: $half;
+	margin-right: $half;
+}
+
+.margin-half--ends {
+	margin-top: $half;
+	margin-bottom: $half;
+}
+
+.margin-half--left {
+	margin-left: $half;
+}
+
+.margin-half--right {
+	margin-right: $half;
+}
+
+.margin-half--bottom {
+	margin-bottom: $half;
+}
+
+.margin-half--top {
+	margin-top: $half;
+}
+
+.margin-one--all {
+	margin: $one;
+}
+
+.margin-one--sides {
+	margin-left: $one;
+	margin-right: $one;
+}
+
+.margin-one--ends {
+	margin-top: $one;
+	margin-bottom: $one;
+}
+
+.margin-one--left {
+	margin-left: $one;
+}
+
+.margin-one--right {
+	margin-right: $one;
+}
+
+.margin-one--bottom {
+	margin-bottom: $one;
+}
+
+.margin-one--top {
+	margin-top: $one;
+}
+
+.margin-one-and-half--all {
+	margin: $one-and-half;
+}
+
+.margin-one-and-half--sides {
+	margin-left: $one-and-half;
+	margin-right: $one-and-half;
+}
+
+.margin-one-and-half--ends {
+	margin-top: $one-and-half;
+	margin-bottom: $one-and-half;
+}
+
+.margin-one-and-half--left {
+	margin-left: $one-and-half;
+}
+
+.margin-one-and-half--right {
+	margin-right: $one-and-half;
+}
+
+.margin-one-and-half--bottom {
+	margin-bottom: $one-and-half;
+}
+
+.margin-one-and-half--top {
+	margin-top: $one-and-half;
+}
+
+.margin-two--all {
+	margin: $two;
+}
+
+.margin-two--sides {
+	margin-left: $two;
+	margin-right: $two;
+}
+
+.margin-two--ends {
+	margin-top: $two;
+	margin-bottom: $two;
+}
+
+.margin-two--left {
+	margin-left: $two;
+}
+
+.margin-two--right {
+	margin-right: $two;
+}
+
+.margin-two--bottom {
+	margin-bottom: $two;
+}
+
+.margin-two--top {
+	margin-top: $two;
+}
+
+.margin-three--all {
+	margin: $three;
+}
+
+.margin-three--sides {
+	margin-left: $three;
+	margin-right: $three;
+}
+
+.margin-three--ends {
+	margin-top: $three;
+	margin-bottom: $three;
+}
+
+.margin-three--left {
+	margin-left: $three;
+}
+
+.margin-three--right {
+	margin-right: $three;
+}
+
+.margin-three--bottom {
+	margin-bottom: $three;
+}
+
+.margin-three--top {
+	margin-top: $three;
+}
+
+.margin-four--all {
+	margin: $four;
+}
+
+.margin-four--sides {
+	margin-left: $four;
+	margin-right: $four;
+}
+
+.margin-four--ends {
+	margin-top: $four;
+	margin-bottom: $four;
+}
+
+.margin-four--left {
+	margin-left: $four;
+}
+
+.margin-four--right {
+	margin-right: $four;
+}
+
+.margin-four--bottom {
+	margin-bottom: $four;
+}
+
+.margin-four--top {
+	margin-top: $four;
+}
+
+// Padding Helpers
+
+.padding-half--all {
+	padding: $half;
+}
+
+.padding-half--sides {
+	padding-left: $half;
+	padding-right: $half;
+}
+
+.padding-half--ends {
+	padding-top: $half;
+	padding-bottom: $half;
+}
+
+.padding-half--left {
+	padding-left: $half;
+}
+
+.padding-half--right {
+	padding-right: $half;
+}
+
+.padding-half--bottom {
+	padding-bottom: $half;
+}
+
+.padding-half--top {
+	padding-top: $half;
+}
+
+.padding-one--all {
+	padding: $one;
+}
+
+.padding-one--sides {
+	padding-left: $one;
+	padding-right: $one;
+}
+
+.padding-one--ends {
+	padding-top: $one;
+	padding-bottom: $one;
+}
+
+.padding-one--left {
+	padding-left: $one;
+}
+
+.padding-one--right {
+	padding-right: $one;
+}
+
+.padding-one--bottom {
+	padding-bottom: $one;
+}
+
+.padding-one--top {
+	padding-top: $one;
+}
+
+.padding-one-and-half--all {
+	padding: $one-and-half;
+}
+
+.padding-one-and-half--sides {
+	padding-left: $one-and-half;
+	padding-right: $one-and-half;
+}
+
+.padding-one-and-half--ends {
+	padding-top: $one-and-half;
+	padding-bottom: $one-and-half;
+}
+
+.padding-one-and-half--left {
+	padding-left: $one-and-half;
+}
+
+.padding-one-and-half--right {
+	padding-right: $one-and-half;
+}
+
+.padding-one-and-half--bottom {
+	padding-bottom: $one-and-half;
+}
+
+.padding-one-and-half--top {
+	padding-top: $one-and-half;
+}
+
+.padding-two--all {
+	padding: $two;
+}
+
+.padding-two--sides {
+	padding-left: $two;
+	padding-right: $two;
+}
+
+.padding-two--ends {
+	padding-top: $two;
+	padding-bottom: $two;
+}
+
+.padding-two--left {
+	padding-left: $two;
+}
+
+.padding-two--right {
+	padding-right: $two;
+}
+
+.padding-two--bottom {
+	padding-bottom: $two;
+}
+
+.padding-two--top {
+	padding-top: $two;
+}
+
+.padding-three--all {
+	padding: $three;
+}
+
+.padding-three--sides {
+	padding-left: $three;
+	padding-right: $three;
+}
+
+.padding-three--ends {
+	padding-top: $three;
+	padding-bottom: $three;
+}
+
+.padding-three--left {
+	padding-left: $three;
+}
+
+.padding-three--right {
+	padding-right: $three;
+}
+
+.padding-three--bottom {
+	padding-bottom: $three;
+}
+
+.padding-three--top {
+	padding-top: $three;
+}
+
+.padding-four--all {
+	padding: $four;
+}
+
+.padding-four--sides {
+	padding-left: $four;
+	padding-right: $four;
+}
+
+.padding-four--ends {
+	padding-top: $four;
+	padding-bottom: $four;
+}
+
+.padding-four--left {
+	padding-left: $four;
+}
+
+.padding-four--right {
+	padding-right: $four;
+}
+
+.padding-four--bottom {
+	padding-bottom: $four;
+}
+
+.padding-four--top {
+	padding-top: $four;
+}

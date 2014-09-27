@@ -1,3 +1,5 @@
+
+
 @import "font-awesome/css/font-awesome.css";
 @import "bootstrap/dist/css/bootstrap.css";
 @import url('http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900');
@@ -35,6 +37,7 @@
 // App-wide Styles
 //
 
+
 .browsehappy {
     background #ccc;
     color #000;
@@ -42,18 +45,7 @@
     padding 0.2em 0;
   }
 
-// Component styles are injected through grunt
-// injector
-@import 'account/login/login.styl';
-@import 'admin/admin.styl';
-@import 'brackets/brackets.styl';
-@import 'files/files.styl';
-@import 'main/main.styl';
-@import 'projects/allProjects/allProjects.styl';
-@import 'styles/buttons.styl';
-@import 'styles/typography.styl';
-@import 'navbar/navbar.styl';
-// endinjector
+
 
 html {
   position: relative;
@@ -68,7 +60,6 @@ body {
   position: absolute;
   width: 100%;
   top: 0;
-  background-color: white;
 }
 
 .navbar-default .navbar-collapse {
@@ -102,3 +93,14 @@ body {
   	margin-top: 20px;
   }
 }
+
+@import 'styles/layout-helpers.styl';
+@import 'account/login/login.styl';
+@import 'admin/admin.styl';
+@import 'brackets/brackets.styl';
+@import 'files/files.styl';
+@import 'main/main.styl';
+@import 'projects/allProjects/allProjects.styl';
+@import 'styles/buttons.styl';
+@import 'styles/typography.styl';
+@import 'navbar/navbar.styl';
