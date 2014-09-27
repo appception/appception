@@ -282,7 +282,9 @@ angular.module('appceptionApp')
         controller: 'FilesCtrl',
         authenticate: true
       });
-  });;'use strict';
+  });;$(document).ready(function() {
+	console.log('javascript has loaded!')
+});'use strict';
 
 // This factory interacts with the Github API
 angular.module('appceptionApp')
