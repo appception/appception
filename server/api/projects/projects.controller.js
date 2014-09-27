@@ -9,6 +9,8 @@ var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
 var token = require('../../auth/github/passport');
+var forEachAsync = require('forEachAsync').forEachAsync
+    ;
 
 var GitHubApi = require("github");
 
@@ -113,24 +115,61 @@ exports.newRepo = function(req, res) {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
-      var htmlStream = fs.createReadStream('server/api/projects/filetemplates/index.html', {
-        encoding: 'base64'
-      })
+      fs.readdir('server/api/projects/filetemplates/', function(err, files) {
+        forEachAsync(files, function(next, fileTitle, index, array) {
+          console.log('fileTitle', fileTitle);
 
-      var response = '';
-      htmlStream.on('data', function(chunk) {
-        response = response + chunk
-      })
+          var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
+            encoding: 'base64'
+          })
 
-      htmlStream.on('end', function() {
-        exports.addFiletoRepo(githubLogin, repoName, 'index.html', 'Initial Commit', response)
+          var response = '';
+          stream.on('data', function(chunk) {
+            console.log('data for: ', fileTitle)
+            response = response + chunk
+          })
+
+          stream.on('end', function() {
+            console.log('end for: ', fileTitle)
+            console.log('next: ', next)
+            // exports.addFiletoRepo(githubLogin, repoName, fileTitle, 'Initial Commit for ' + fileTitle, response, next);
+
+            // if(!committer) {
+            var committer = {
+                "name" : "appception",
+                "email" : "appception@gmail.com"
+              }
+            // }
+
+            github.repos.createFile({
+              user: githubLogin,
+              repo: repoName,
+              path: fileTitle,
+              message: 'Initial Commit for ' + fileTitle,
+              content: response,
+              committer: committer
+            }, function(err, res) {
+              if(err) {
+                console.log('projects.controller.js: create file error', err, res)
+              }else {
+                console.log('projects.controller.js: create file success')
+                console.log('res: ', res)
+                next()
+              }
+            })
+
+          })
+        }).then(function() {
+          console.log('All done!')
+        })
       })
     }
   })
 }
 
-exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, committer) {
 
+exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, cb, committer) {
+  console.log('cb: ', cb)
   if(!committer) {
     committer = {
       "name" : "appception",
@@ -151,43 +190,10 @@ exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, 
     }else {
       console.log('projects.controller.js: create file success')
       console.log('res: ', res)
+      cb()
     }
   })
 }
-
-// // Creates a new projects in the DB.
-// exports.create = function(req, res) {
-//   Projects.create(req.body, function(err, projects) {
-//     if(err) { return handleError(res, err); }
-//     return res.json(201, projects);
-//   });
-// };
-
-// // Updates an existing projects in the DB.
-// exports.update = function(req, res) {
-//   if(req.body._id) { delete req.body._id; }
-//   Projects.findById(req.params.id, function (err, projects) {
-//     if (err) { return handleError(res, err); }
-//     if(!projects) { return res.send(404); }
-//     var updated = _.merge(projects, req.body);
-//     updated.save(function (err) {
-//       if (err) { return handleError(res, err); }
-//       return res.json(200, projects);
-//     });
-//   });
-// };
-
-// // Deletes a projects from the DB.
-// exports.destroy = function(req, res) {
-//   Projects.findById(req.params.id, function (err, projects) {
-//     if(err) { return handleError(res, err); }
-//     if(!projects) { return res.send(404); }
-//     projects.remove(function(err) {
-//       if(err) { return handleError(res, err); }
-//       return res.send(204);
-//     });
-//   });
-// };
 
 function handleError(res, err) {
   return res.send(500, err);
