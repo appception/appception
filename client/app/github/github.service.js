@@ -37,9 +37,23 @@ angular.module('appceptionApp')
       })
     };
 
+    var createCommit = function(githubLogin, repoName, message) {
+      console.log('inside createCommit')
+      return $http({
+        method: 'GET',
+        url: '/api/projects/commit',
+        params: {
+          githubLogin: 'kwalker3690',
+          repoName: 'app',
+          message: 'create commit api'
+        }
+      })
+    }
+
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
-      createRepo: createRepo
+      createRepo: createRepo,
+      createCommit: createCommit
     };
   });
