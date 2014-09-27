@@ -11,6 +11,7 @@ angular.module('appceptionApp')
       $scope.loading = true;
     	if(boolean === true){
     		var user = Auth.getCurrentUser()
+        console.log('user: ', user)
     		github.getRepos(user.github.login).then(function(res){
           $scope.projects = res.data;
           $scope.loading = false;

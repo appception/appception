@@ -69,11 +69,7 @@ module.exports = function (grunt) {
     open: {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
-      }//,
-//      edit: { // to open the project for SublimeText editing
-//        path: 'AppceptionSublimeProject.sublime-project',
-//        tasks: ['edit']
-//      }
+      }
     },
     watch: {
       injectJS: {
@@ -583,7 +579,9 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
+      return grunt.task.run(['build', 'env:all',
+      'injector:stylus',
+      'env:prod', 'express:prod', 'wait', 'open', 'express-keepalive']);
     }
 
     if (target === 'debug') {
