@@ -177,7 +177,22 @@ exports.commit = function(req, res) {
       console.log('get latest commit sha error', err)
     } else {
       console.log('get latest commit sha success')
-      var latestCommit = res.object.sha;
+      var latestCommitSha = res.object.sha;
+
+      github.gitdata.getCommit({
+        user: githubLogin,
+        repo: repoName,
+        sha: latestCommitSha
+      }, function(err, res) {
+        if(err) {
+          console.log('get info for latest commit error', err)
+        } else {
+          console.log('get info for latest commit success', res)
+
+          var baseTree = res.tree.sha
+          console.log('baseTree',baseTree)
+        }
+      })
     }
   })
 }
