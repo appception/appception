@@ -22,7 +22,6 @@ exports.setup = function (User, config) {
           name: profile.displayName,
           username: profile.username,
           role: 'user',
-          appToken: token,
           provider: 'github',
           github: profile._json
         });
