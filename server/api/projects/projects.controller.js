@@ -14,18 +14,11 @@ var forEachAsync = require('forEachAsync').forEachAsync
 var GitHubApi = require("github");
 
 var github = new GitHubApi({
-    // required
     version: "3.0.0",
-    // optional
     debug: true
-    // protocol: "https",
-    // host:  "http",
-    // pathP refix: "/api/v3", // for some GHEs
-    // timeout: 5000
 });
 
-
-// get
+// authenicate the app using the app's OATH crendi
 github.authenticate({
     type: "oauth",
     key: process.env.GITHUB_ID,
@@ -77,19 +70,74 @@ exports.files = function(req, res) {
       encoding: null
     }, function(err, resp, body) {
       if(err) throw err;
-      fs.writeFile(filePath, body, function(err) {
-        console.log("file written!");
-        fs.createReadStream(filePath).pipe(unzip.Parse())
-          .pipe(fstream.Writer('server/tempfiles/'));
 
-        return res.json({
-          zipFile: filePath
-          })
-      });
+      console.log('body', body);
+
+      // console.log('resp', resp);
+
+      // fs.writeFile(filePath, body, function(err) {
+      //   console.log("file written!");
+      //   fs.createReadStream(filePath).pipe(unzip.Parse())
+      //     .pipe(fstream.Writer('server/tempfiles/'));
+
+      //   return res.json({
+      //     zipFile: filePath
+      //     })
+      // });
+
+      return res.send(body);
+
+
     });
 
   })
 };
+
+
+
+// // Get a single projects files
+// exports.files = function(req, res) {
+//     console.log('inside projects.files')
+//   var githubLogin = req.query.githubLogin;
+//   var githubRepo = req.query.githubRepo;
+
+//   // Get the url for the requested repo zip archive
+//   github.repos.getArchiveLink({
+//     user: githubLogin,
+//     repo: githubRepo,
+//     archive_format: 'zipball'
+//   }, function(err, data) {
+//     if(err) {
+//       console.log('projects.controller.js: get files error', err)
+//     }
+//     console.log('projects.controller.js: get files success')
+
+//     var file = data.meta.location;
+
+//     // if we wanted to let users pick a different branch to look at we can change 'master' here
+//     file = file.replace(/:ref/g, 'master')
+
+//     var filePath = 'server/tempfiles/' + githubRepo + '.zip';
+
+//     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
+//     request.get({
+//       url: file,
+//       encoding: null
+//     }, function(err, resp, body) {
+//       if(err) throw err;
+//       fs.writeFile(filePath, body, function(err) {
+//         console.log("file written!");
+//         fs.createReadStream(filePath).pipe(unzip.Parse())
+//           .pipe(fstream.Writer('server/tempfiles/'));
+
+//         return res.json({
+//           zipFile: filePath
+//           })
+//       });
+//     });
+
+//   })
+// };
 
 
 // Create a new repo
