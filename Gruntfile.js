@@ -406,6 +406,7 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', [
     'express:dev',
     'wait',
+    'open',
     'watch'
   ]);
 
@@ -414,3 +415,13 @@ module.exports = function (grunt) {
     'serve'
   ]);
 }; // end Gruntfile
+
+/******************************
+ * We might need grunt to issue the following commands during build:
+ *
+ *   cd nimble // to enter the nimble directory
+ *   npm install --recursive // to recursively install npm packages
+ *   git submodule update --init // to initialize NIMBLE's submodules!
+ *
+ * This is to enable the nimble submodule to function over Azure.
+******************************/
