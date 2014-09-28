@@ -147,6 +147,16 @@ git submodule update --recursive
 The git config file in '.git/config' has specified that updates are to be executed
 using the 'merge' strategy.
 
+Now do the following in order to get a working Nimble:
+
+```
+cd nimble // to enter the nimble directory
+npm install --recursive // to recursively install npm packages
+git submodule update --init // to initialize NIMBLE's submodules!
+  POSSIBLY run again:  npm install --recursive // to recursively install npm packages
+
+```
+
 ### Guidelines
 
 1. Uphold the current code standard:
