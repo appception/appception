@@ -131,6 +131,22 @@ else, just repeat again.
 
 Thanks for contributing!
 
+### A note on Submodules
+
+This repo has a submodule in the folder 'nimble'. You are strongly encouraged to read
+up on submodules here:
+
+[[http://git-scm.com/book/en/Git-Tools-Submodules]]
+
+You will want to update the submodule by issuing the following commands:
+```
+git submodule init
+git submodule update --recursive
+```
+
+The git config file in '.git/config' has specified that updates are to be executed
+using the 'merge' strategy.
+
 ### Guidelines
 
 1. Uphold the current code standard:
