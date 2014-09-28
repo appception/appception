@@ -189,8 +189,35 @@ exports.commit = function(req, res) {
         } else {
           console.log('get info for latest commit success', res)
 
-          var baseTree = res.tree.sha
-          console.log('baseTree',baseTree)
+          var baseTreeSha = res.tree.sha
+
+          github.authenticate({
+            type: "oauth",
+            token: token.token
+          });
+
+          github.gitdata.createTree({
+            user: githubLogin,
+            repo: repoName,
+            tree: [{
+              "path" : "index.html",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "hello"
+            }],
+            base_tree: baseTreeSha
+          }, function(err, res) {
+            if(err) {
+              console.log('create tree error', err)
+            } else {
+              console.log('create tree success', res)
+
+              var newTreeSha = res.sha
+              console.log('newTreeSha', newTreeSha)
+            }
+
+          })
         }
       })
     }
