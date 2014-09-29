@@ -10,6 +10,10 @@ angular.module('appceptionApp')
     {
       'title': 'Files',
       'link': '/files'
+    },
+    {
+      'title': 'Create a New Project',
+      'link': '/newproject'
     }
     ];
 

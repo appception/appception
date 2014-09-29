@@ -8,6 +8,7 @@ exports.setup = function (User, config) {
     callbackURL: config.github.callbackURL
   },
   function(token, tokenSecret, profile, done) {
+    // console.log('token', token);
     User.findOne({
       'github.id_str': profile.id
     }, function(err, user) {
@@ -15,6 +16,8 @@ exports.setup = function (User, config) {
         return done(err);
       }
       if (!user) {
+        console.log('token !user', token)
+        exports.token = token
         user = new User({
           name: profile.displayName,
           username: profile.username,
@@ -27,9 +30,12 @@ exports.setup = function (User, config) {
           return done(err, user);
         });
       } else {
+        console.log('token user', token)
         return done(err, user);
       }
     });
     }
   ));
 };
+
+exports.token = '';

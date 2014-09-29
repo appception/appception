@@ -17,7 +17,8 @@
     "angular-ui-router": "~0.2.10",
     "angular-mocks": ">=1.2.*",
     "angular-scenario": ">=1.2.*",
-    "angularjs-indexedDB": "*"
+    "angularjs-indexedDB": "*",
+    "filer": "~0.0.29"
   },
   "devDependencies": {}
 }

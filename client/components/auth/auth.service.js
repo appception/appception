@@ -4,6 +4,7 @@ angular.module('appceptionApp')
   .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
+      console.log("$cookieStore.get('token')",$cookieStore.get('token'))
       currentUser = User.get();
       console.log('auth.service.js: get.(token)');
     }
@@ -117,7 +118,7 @@ angular.module('appceptionApp')
        */
       isLoggedInAsync: function(cb) {
         if(currentUser.hasOwnProperty('$promise')) {
-          console.log(currentUser, cb)
+          // console.log(currentUser, cb)
           currentUser.$promise.then(function() {
             console.log('cb called')
             cb(true);

@@ -1,25 +1,20 @@
 'use strict';
 
 var _ = require('lodash');
-// var AdmZip = require('adm-zip');
 var zlib = require('zlib');
 var fs = require('fs');
-var fstream = require('fstream');
+// var fstream = require('fstream');
 var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
+var token = require('../../auth/github/passport');
+var forEachAsync = require('forEachAsync').forEachAsync;
 
 var GitHubApi = require("github");
 
 var github = new GitHubApi({
-    // required
     version: "3.0.0",
-    // optional
     debug: true
-    // protocol: "https",
-    // host:  "http",
-    // pathP refix: "/api/v3", // for some GHEs
-    // timeout: 5000
 });
 
 
@@ -47,7 +42,8 @@ exports.index = function(req, res) {
 
 // Get a single projects files
 exports.files = function(req, res) {
-    console.log('inside projects.files')
+  console.log('inside projects.files')
+
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
 
@@ -56,6 +52,7 @@ exports.files = function(req, res) {
     user: githubLogin,
     repo: githubRepo,
     archive_format: 'zipball'
+    // archive_format: 'tarball'
   }, function(err, data) {
     if(err) {
       console.log('projects.controller.js: get files error', err)
@@ -75,54 +72,239 @@ exports.files = function(req, res) {
       encoding: null
     }, function(err, resp, body) {
       if(err) throw err;
-      fs.writeFile(filePath, body, function(err) {
-        console.log("file written!");
-        fs.createReadStream(filePath).pipe(unzip.Parse())
-          .pipe(fstream.Writer('server/tempfiles/'));
 
-        return res.json({
-          zipFile: filePath
-          })
+      var results = [];
+      var i = 0;
+
+      fs.writeFile(filePath, body, function(err) {
+        if(err) throw err;
+
+        console.log("file written!");
+        var r =fs.createReadStream(filePath)
+          // unzip file
+          .pipe(unzip.Parse())
+              //for each item in the zipped file,
+              // create an entry object that has path and content properties
+            .on("entry", function (e) {
+              results.push([]);
+              var entry = {};
+              entry.path = e.props.path;
+              e.on("data", function (c) {
+                entry.content = c.toString();
+              })
+              e.on("end", function () {
+                results[i].push(entry);
+                i++;
+              })
+            })
+            // when we are done unzipping, return the results
+            .on('close', function(){
+              return res.send(results)
+            })
       });
     });
-
   })
 };
 
 
-// // Creates a new projects in the DB.
-// exports.create = function(req, res) {
-//   Projects.create(req.body, function(err, projects) {
-//     if(err) { return handleError(res, err); }
-//     return res.json(201, projects);
-//   });
-// };
+// Create a new repo
+exports.newRepo = function(req, res) {
+  console.log('inside server new repo')
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
 
-// // Updates an existing projects in the DB.
-// exports.update = function(req, res) {
-//   if(req.body._id) { delete req.body._id; }
-//   Projects.findById(req.params.id, function (err, projects) {
-//     if (err) { return handleError(res, err); }
-//     if(!projects) { return res.send(404); }
-//     var updated = _.merge(projects, req.body);
-//     updated.save(function (err) {
-//       if (err) { return handleError(res, err); }
-//       return res.json(200, projects);
-//     });
-//   });
-// };
+  console.log('token.token', token.token)
+  github.authenticate({
+      type: "oauth",
+      token: token.token
+  });
 
-// // Deletes a projects from the DB.
-// exports.destroy = function(req, res) {
-//   Projects.findById(req.params.id, function (err, projects) {
-//     if(err) { return handleError(res, err); }
-//     if(!projects) { return res.send(404); }
-//     projects.remove(function(err) {
-//       if(err) { return handleError(res, err); }
-//       return res.send(204);
-//     });
-//   });
-// };
+  // Creating a new repo using github node module
+  github.repos.create({
+    name: repoName,
+    auto_init: true
+  }, function(err, res) {
+    if(err) {
+      console.log('projects.controller.js: create repo error', err, res)
+    }else {
+      console.log('projects.controller.js: create repo success')
+      console.log('res: ', res)
+
+      // Once new repo has been created, read the directory that contains the template files.
+      fs.readdir('server/api/projects/filetemplates/', function(err, files) {
+
+        // Async read each file name in the array returned.
+        forEachAsync(files, function(next, fileTitle, index, array) {
+          // Get file contents
+          var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
+            encoding: 'base64'
+          })
+
+          var response = '';
+          stream.on('data', function(chunk) {
+            response = response + chunk
+          })
+
+          stream.on('end', function() {
+            // Using github module, create a file on github based on data read from file
+            github.repos.createFile({
+              user: githubLogin,
+              repo: repoName,
+              path: fileTitle,
+              message: 'Initial Commit for ' + fileTitle,
+              content: response,
+              committer: {
+                "name" : "appception",
+                "email" : "appception@gmail.com"
+              }
+            }, function(err, res) {
+              if(err) {
+                console.log('projects.controller.js: create file error', err, res)
+              }else {
+                console.log('projects.controller.js: create file success')
+                next()
+              }
+            })
+
+          })
+        }).then(function() {
+          console.log('All done!')
+        })
+      })
+    }
+  })
+}
+
+
+exports.commit = function(req, response) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+  var message = req.query.message;
+
+  // Get reference to head of branch
+  // NOTE: if we want to commit to a different branch we can change that in ref
+  github.gitdata.getReference({
+    user: githubLogin,
+    repo: repoName,
+    ref: 'heads/master'
+  }, function(err, res) {
+    if(err) {
+      console.log('get latest commit sha error', err)
+    } else {
+      console.log('get latest commit sha success')
+      var latestCommitSha = res.object.sha;
+
+      // Get last commit info
+      github.gitdata.getCommit({
+        user: githubLogin,
+        repo: repoName,
+        sha: latestCommitSha
+      }, function(err, res) {
+        if(err) {
+          console.log('get info for latest commit error', err)
+        } else {
+          console.log('get info for latest commit success')
+
+          var baseTreeSha = res.tree.sha
+
+          github.authenticate({
+            type: "oauth",
+            token: token.token
+          });
+
+          // Create a new tree with changed content, based on the last commit
+          github.gitdata.createTree({
+            user: githubLogin,
+            repo: repoName,
+            tree: [{
+              "path" : "index.html",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "hello this is NOT dog"
+            },{
+              "path" : "main.css",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "who is it?"
+            }],
+            base_tree: baseTreeSha
+          }, function(err, res) {
+            if(err) {
+              console.log('create tree error', err)
+            } else {
+              console.log('create tree success')
+
+              var newTreeSha = res.sha
+
+              // Create actual commit info
+              github.gitdata.createCommit({
+                user: githubLogin,
+                repo: repoName,
+                message: message,
+                tree: newTreeSha,
+                parents: [latestCommitSha]
+              }, function(err, res) {
+                if(err) {
+                  console.log('create commit error', err)
+                } else {
+                  console.log('create commit success')
+                  var newCommitSha = res.sha
+
+                  // Update head of branch to be current commit
+                  github.gitdata.updateReference({
+                    user: githubLogin,
+                    repo: repoName,
+                    ref: 'heads/master',
+                    sha: newCommitSha,
+                    force: true
+                  }, function(err, res) {
+                    if(err) {
+                      console.log('create reference error', err)
+                    } else {
+                      console.log('create reference success')
+
+                      return response.json('success!')
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+}
+
+
+exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, cb, committer) {
+  console.log('cb: ', cb)
+  if(!committer) {
+    committer = {
+      "name" : "appception",
+      "email" : "appception@gmail.com"
+    }
+  }
+
+  github.repos.createFile({
+    user: githubLogin,
+    repo: repoName,
+    path: path,
+    message: message,
+    content: content,
+    committer: committer
+  }, function(err, res) {
+    if(err) {
+      console.log('projects.controller.js: create file error', err, res)
+    }else {
+      console.log('projects.controller.js: create file success')
+      console.log('res: ', res)
+      cb()
+    }
+  })
+}
 
 function handleError(res, err) {
   return res.send(500, err);

@@ -11,10 +11,10 @@
           <li>Select a generator to set up your file structure </li>
         </ol>
 
-        <form action="">
+        <form action="" ng-submit="createRepo(repoName)">
           <p>
           <label for="repo_name" >Github Repo Name</label><br>
-          <input id="repo_name" placeholder="Repo Name" type="text">
+          <input id="repo_name" placeholder="Repo Name" type="text" ng-model="repoName">
           </p>
 
           <p>
