@@ -99,8 +99,7 @@
   },
   "scripts": {
     "start": "node server/app.js",
-    "postinstall": "git submodule update --init",
-    "postinstall": "grunt",
+    "install": "grunt",
     "postinstall": "npm run update-webdriver"
   },
   "private": true

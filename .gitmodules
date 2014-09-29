@@ -1,3 +1,0 @@
-[submodule "nimble"]
-	path = nimble
-	url = git://github.com/mozilla/nimble.git
