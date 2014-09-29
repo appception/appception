@@ -45,6 +45,40 @@ angular.module('appceptionApp')
       })
     };
 
+
+    var insertRepoIntoLocalDB = function(repo, items){
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback('makedrive')
+      });
+      
+      // iterate through the items from the repo.
+      for(var i =0; i < items.length; i++){
+        var item = items[i];
+
+        var filePath = '/'+repo + '/' + item[0].path.replace(/^.*?\//, '');
+
+        // if item has no content, create a directory
+        if(! item[0].hasOwnProperty('content')) {
+          filer.mkdir( filePath , function(err){
+            if(err) throw err;
+          })   
+        // if item has content, create a file           
+        }  else {
+          filer.writeFile(filePath , item[0].content, function(error) {
+            if(error) throw error;
+          });
+        }
+      }
+    }
+
+    var exportLocalDB = function(repo) {
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback('makedrive')
+      });
+    }
+
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
