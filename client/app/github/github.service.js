@@ -45,13 +45,25 @@ angular.module('appceptionApp')
       })
     };
 
+    var createCommit = function(githubLogin, repoName, message) {
+      console.log('inside createCommit')
+      return $http({
+        method: 'GET',
+        url: '/api/projects/commit',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName,
+          message: message
+        }
+      })
+    }
 
     var insertRepoIntoLocalDB = function(repo, items){
       var filer = new Filer.FileSystem({
         name: 'files',
         provider: new Filer.FileSystem.providers.Fallback('makedrive')
       });
-      
+
       // iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
@@ -62,8 +74,8 @@ angular.module('appceptionApp')
         if(! item[0].hasOwnProperty('content')) {
           filer.mkdir( filePath , function(err){
             if(err) throw err;
-          })   
-        // if item has content, create a file           
+          })
+        // if item has content, create a file
         }  else {
           filer.writeFile(filePath , item[0].content, function(error) {
             if(error) throw error;
@@ -82,6 +94,7 @@ angular.module('appceptionApp')
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
-      createRepo: createRepo
+      createRepo: createRepo,
+      createCommit: createCommit
     };
   });

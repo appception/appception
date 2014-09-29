@@ -119,6 +119,7 @@ exports.newRepo = function(req, res) {
       token: token.token
   });
 
+  // Creating a new repo using github node module
   github.repos.create({
     name: repoName,
     auto_init: true
@@ -129,45 +130,38 @@ exports.newRepo = function(req, res) {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
+      // Once new repo has been created, read the directory that contains the template files.
       fs.readdir('server/api/projects/filetemplates/', function(err, files) {
-        forEachAsync(files, function(next, fileTitle, index, array) {
-          console.log('fileTitle', fileTitle);
 
+        // Async read each file name in the array returned.
+        forEachAsync(files, function(next, fileTitle, index, array) {
+          // Get file contents
           var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
             encoding: 'base64'
           })
 
           var response = '';
           stream.on('data', function(chunk) {
-            console.log('data for: ', fileTitle)
             response = response + chunk
           })
 
           stream.on('end', function() {
-            console.log('end for: ', fileTitle)
-            console.log('next: ', next)
-            // exports.addFiletoRepo(githubLogin, repoName, fileTitle, 'Initial Commit for ' + fileTitle, response, next);
-
-            // if(!committer) {
-            var committer = {
-                "name" : "appception",
-                "email" : "appception@gmail.com"
-              }
-            // }
-
+            // Using github module, create a file on github based on data read from file
             github.repos.createFile({
               user: githubLogin,
               repo: repoName,
               path: fileTitle,
               message: 'Initial Commit for ' + fileTitle,
               content: response,
-              committer: committer
+              committer: {
+                "name" : "appception",
+                "email" : "appception@gmail.com"
+              }
             }, function(err, res) {
               if(err) {
                 console.log('projects.controller.js: create file error', err, res)
               }else {
                 console.log('projects.controller.js: create file success')
-                console.log('res: ', res)
                 next()
               }
             })
@@ -176,6 +170,109 @@ exports.newRepo = function(req, res) {
         }).then(function() {
           console.log('All done!')
         })
+      })
+    }
+  })
+}
+
+
+exports.commit = function(req, response) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+  var message = req.query.message;
+
+  // Get reference to head of branch
+  // NOTE: if we want to commit to a different branch we can change that in ref
+  github.gitdata.getReference({
+    user: githubLogin,
+    repo: repoName,
+    ref: 'heads/master'
+  }, function(err, res) {
+    if(err) {
+      console.log('get latest commit sha error', err)
+    } else {
+      console.log('get latest commit sha success')
+      var latestCommitSha = res.object.sha;
+
+      // Get last commit info
+      github.gitdata.getCommit({
+        user: githubLogin,
+        repo: repoName,
+        sha: latestCommitSha
+      }, function(err, res) {
+        if(err) {
+          console.log('get info for latest commit error', err)
+        } else {
+          console.log('get info for latest commit success')
+
+          var baseTreeSha = res.tree.sha
+
+          github.authenticate({
+            type: "oauth",
+            token: token.token
+          });
+
+          // Create a new tree with changed content, based on the last commit
+          github.gitdata.createTree({
+            user: githubLogin,
+            repo: repoName,
+            tree: [{
+              "path" : "index.html",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "hello this is NOT dog"
+            },{
+              "path" : "main.css",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "who is it?"
+            }],
+            base_tree: baseTreeSha
+          }, function(err, res) {
+            if(err) {
+              console.log('create tree error', err)
+            } else {
+              console.log('create tree success')
+
+              var newTreeSha = res.sha
+
+              // Create actual commit info
+              github.gitdata.createCommit({
+                user: githubLogin,
+                repo: repoName,
+                message: message,
+                tree: newTreeSha,
+                parents: [latestCommitSha]
+              }, function(err, res) {
+                if(err) {
+                  console.log('create commit error', err)
+                } else {
+                  console.log('create commit success')
+                  var newCommitSha = res.sha
+
+                  // Update head of branch to be current commit
+                  github.gitdata.updateReference({
+                    user: githubLogin,
+                    repo: repoName,
+                    ref: 'heads/master',
+                    sha: newCommitSha,
+                    force: true
+                  }, function(err, res) {
+                    if(err) {
+                      console.log('create reference error', err)
+                    } else {
+                      console.log('create reference success')
+
+                      return response.json('success!')
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
       })
     }
   })

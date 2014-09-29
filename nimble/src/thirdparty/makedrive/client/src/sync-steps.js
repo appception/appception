@@ -1,8 +1,0 @@
-module.exports = {
-  INIT: "SYNC INITIALIZED",
-  CHKSUM: "CHECKSUM",
-  DIFFS: "DIFFS",
-  PATCH: "PATCH",
-  SYNCED: "SYNCED",
-  FAILED: "FAILED"
-};

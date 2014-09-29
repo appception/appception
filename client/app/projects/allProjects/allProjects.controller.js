@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('AllProjectsCtrl', function ($q, $scope, github, Auth) {
+  .controller('AllProjectsCtrl', function ($q, $scope, $state, github, Auth) {
 
     $scope.projects;
     $scope.loading = false;
@@ -12,7 +12,7 @@ angular.module('appceptionApp')
       if(boolean === true){
         var user = Auth.getCurrentUser()
         // right now, it is making call to server to make a call to Github.
-        // Need to switch this to client side call to Github using Coors. 
+        // TODO: to make faster, switch this to client side call to Github using Coors.
         github.getRepos(user.github.login).then(function(res){
           $scope.projects = res.data;
           $scope.loading = false;
@@ -55,7 +55,7 @@ angular.module('appceptionApp')
               name: 'files',
               provider: new Filer.FileSystem.providers.Fallback('makedrive')
             });
-            
+
             // iterate through the items from the repo.
             for(var i =0; i < items.length; i++){
               var item = items[i];
@@ -66,14 +66,16 @@ angular.module('appceptionApp')
               if(! item[0].hasOwnProperty('content')) {
                 filer.mkdir( filePath , function(err){
                   if(err) throw err;
-                })   
-              // if item has content, create a file           
+                })
+              // if item has content, create a file
               }  else {
                 filer.writeFile(filePath , item[0].content, function(error) {
                   if(error) throw error;
                 });
               }
             }
+
+            $state.go('files', {repoName: repo})
 
           })
         }else {
