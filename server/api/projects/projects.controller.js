@@ -214,7 +214,6 @@ exports.commit = function(req, res) {
               console.log('create tree success', res)
 
               var newTreeSha = res.sha
-              console.log('newTreeSha', newTreeSha)
             }
 
           })
