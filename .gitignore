@@ -6,6 +6,7 @@ public
 .idea
 client/bower_components
 server/tempfiles
+nimble
 
 /server/config/local.env.js
 ~$*
