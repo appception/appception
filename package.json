@@ -63,7 +63,6 @@
     "request": "^2.44.0",
     "serve-favicon": "~2.0.1",
     "shelljs": "^0.3.0",
-    "swig": "^1.4.2",
     "time-grunt": "~0.3.1",
     "unzip": "^0.1.11"
   },
@@ -99,8 +98,8 @@
   },
   "scripts": {
     "start": "node server/app.js",
-    "test": "grunt test",
-    "update-webdriver-short": "npm run update-webdriver"
+    "install": "grunt",
+    "postinstall": "npm run update-webdriver"
   },
   "private": true
 }
