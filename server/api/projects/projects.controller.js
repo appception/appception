@@ -181,58 +181,9 @@ exports.commit = function(req, response) {
   var repoName = req.query.repoName;
   var message = req.query.message;
 
-  // // Get file sha
-  // github.repos.getContent({
-  //   user: githubLogin,
-  //   repo: repoName,
-  //   path: 'index.html',
-  //   ref: 'master'
-  // }, function(err, res) {
-  //   if(err) {
-  //     console.log('get content error', err)
-  //   }else {
-  //     console.log('get content success', res)
-  //     var fileSha = res.sha;
-  //     console.log('filesha', fileSha)
-
-  //     // TODO: should check to see if contents have actually changed at all
-
-  //     github.authenticate({
-  //       type: "oauth",
-  //       token: token.token
-  //     });
-
-  //     var stream = fs.createReadStream('server/api/projects/filetemplates/index2.html', {
-  //       encoding: 'base64'
-  //     })
-
-  //     var response = '';
-  //     stream.on('data', function(chunk) {
-  //       response = response + chunk
-  //     })
-
-  //     stream.on('end', function() {
-  //       github.repos.updateFile({
-  //         user: githubLogin,
-  //         repo: repoName,
-  //         path: 'index.html',
-  //         message: 'commit from api',
-  //         content: response,
-  //         sha: fileSha
-  //       }, function(err, res) {
-  //         if(err) {
-  //           console.log('update file error', err)
-  //         }else {
-  //           console.log('update file success', res)
-  //         }
-  //       })
-  //     })
-  //   }
-  // })
-
-  // Get latest commit sha
+  // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
-  return github.gitdata.getReference({
+  github.gitdata.getReference({
     user: githubLogin,
     repo: repoName,
     ref: 'heads/master'
@@ -243,7 +194,8 @@ exports.commit = function(req, response) {
       console.log('get latest commit sha success')
       var latestCommitSha = res.object.sha;
 
-      return github.gitdata.getCommit({
+      // Get last commit info
+      github.gitdata.getCommit({
         user: githubLogin,
         repo: repoName,
         sha: latestCommitSha
@@ -251,7 +203,7 @@ exports.commit = function(req, response) {
         if(err) {
           console.log('get info for latest commit error', err)
         } else {
-          console.log('get info for latest commit success', res)
+          console.log('get info for latest commit success')
 
           var baseTreeSha = res.tree.sha
 
@@ -260,7 +212,8 @@ exports.commit = function(req, response) {
             token: token.token
           });
 
-          return github.gitdata.createTree({
+          // Create a new tree with changed content, based on the last commit
+          github.gitdata.createTree({
             user: githubLogin,
             repo: repoName,
             tree: [{
@@ -268,18 +221,25 @@ exports.commit = function(req, response) {
               "mode" : "100644",
               "type" : "blob",
               "content":
-                "hello"
+                "hello this is NOT dog"
+            },{
+              "path" : "main.css",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "who is it?"
             }],
             base_tree: baseTreeSha
           }, function(err, res) {
             if(err) {
               console.log('create tree error', err)
             } else {
-              console.log('create tree success', res)
+              console.log('create tree success')
 
               var newTreeSha = res.sha
 
-              return github.gitdata.createCommit({
+              // Create actual commit info
+              github.gitdata.createCommit({
                 user: githubLogin,
                 repo: repoName,
                 message: message,
@@ -289,9 +249,10 @@ exports.commit = function(req, response) {
                 if(err) {
                   console.log('create commit error', err)
                 } else {
-                  console.log('create commit success', res)
+                  console.log('create commit success')
                   var newCommitSha = res.sha
 
+                  // Update head of branch to be current commit
                   github.gitdata.updateReference({
                     user: githubLogin,
                     repo: repoName,
@@ -302,7 +263,7 @@ exports.commit = function(req, response) {
                     if(err) {
                       console.log('create reference error', err)
                     } else {
-                      console.log('create reference success', res)
+                      console.log('create reference success')
 
                       return response.json('success!')
                     }
