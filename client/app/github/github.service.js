@@ -51,9 +51,9 @@ angular.module('appceptionApp')
         method: 'GET',
         url: '/api/projects/commit',
         params: {
-          githubLogin: 'kwalker3690',
-          repoName: 'app',
-          message: 'create commit api'
+          githubLogin: githubLogin,
+          repoName: repoName,
+          message: message
         }
       })
     }
