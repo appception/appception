@@ -48,6 +48,9 @@ angular.module('appceptionApp')
           message: 'create commit api'
         }
       })
+      .then(function(resp) {
+        // console.log('createCommit response sha', resp)
+      })
     }
 
     return {
