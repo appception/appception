@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('AllProjectsCtrl', function ($q, $scope, github, Auth) {
+  .controller('AllProjectsCtrl', function ($q, $scope, $state, github, Auth) {
 
     $scope.projects;
     $scope.loading = false;
@@ -74,6 +74,8 @@ angular.module('appceptionApp')
                 });
               }
             }
+
+            $state.go('files', {repoName: repo})
 
           })
         }else {
