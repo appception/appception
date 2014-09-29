@@ -181,153 +181,140 @@ exports.commit = function(req, response) {
   var repoName = req.query.repoName;
   var message = req.query.message;
 
-  // Get file sha
-  github.repos.getContent({
-    user: githubLogin,
-    repo: repoName,
-    path: 'index.html',
-    ref: 'master'
-  }, function(err, res) {
-    if(err) {
-      console.log('get content error', err)
-    }else {
-      console.log('get content success', res)
-      var fileSha = res.sha;
-      console.log('filesha', fileSha)
-
-      // TODO: should check to see if contents have actually changed at all
-
-      github.authenticate({
-        type: "oauth",
-        token: token.token
-      });
-
-      var stream = fs.createReadStream('server/api/projects/filetemplates/index2.html', {
-        encoding: 'base64'
-      })
-
-      var response = '';
-      stream.on('data', function(chunk) {
-        response = response + chunk
-      })
-
-      stream.on('end', function() {
-        github.repos.updateFile({
-          user: githubLogin,
-          repo: repoName,
-          path: 'index.html',
-          message: 'commit from api',
-          content: response,
-          sha: fileSha
-        }, function(err, res) {
-          if(err) {
-            console.log('update file error', err)
-          }else {
-            console.log('update file success', res)
-          }
-        })
-      })
-    }
-  })
-
-  // // Get latest commit sha
-  // // NOTE: if we want to commit to a different branch we can change that in ref
-  // return github.gitdata.getReference({
+  // // Get file sha
+  // github.repos.getContent({
   //   user: githubLogin,
   //   repo: repoName,
-  //   ref: 'heads/master'
+  //   path: 'index.html',
+  //   ref: 'master'
   // }, function(err, res) {
   //   if(err) {
-  //     console.log('get latest commit sha error', err)
-  //   } else {
-  //     console.log('get latest commit sha success')
-  //     var latestCommitSha = res.object.sha;
+  //     console.log('get content error', err)
+  //   }else {
+  //     console.log('get content success', res)
+  //     var fileSha = res.sha;
+  //     console.log('filesha', fileSha)
 
-  //     return github.gitdata.getCommit({
-  //       user: githubLogin,
-  //       repo: repoName,
-  //       sha: latestCommitSha
-  //     }, function(err, res) {
-  //       if(err) {
-  //         console.log('get info for latest commit error', err)
-  //       } else {
-  //         console.log('get info for latest commit success', res)
+  //     // TODO: should check to see if contents have actually changed at all
 
-  //         var baseTreeSha = res.tree.sha
+  //     github.authenticate({
+  //       type: "oauth",
+  //       token: token.token
+  //     });
 
-  //         github.authenticate({
-  //           type: "oauth",
-  //           token: token.token
-  //         });
+  //     var stream = fs.createReadStream('server/api/projects/filetemplates/index2.html', {
+  //       encoding: 'base64'
+  //     })
 
-  //         return github.gitdata.createTree({
-  //           user: githubLogin,
-  //           repo: repoName,
-  //           tree: [{
-  //             "path" : "index.html",
-  //             "mode" : "100644",
-  //             "type" : "blob",
-  //             "content":
-  //               "hello"
-  //           }],
-  //           base_tree: baseTreeSha
-  //         }, function(err, res) {
-  //           if(err) {
-  //             console.log('create tree error', err)
-  //           } else {
-  //             console.log('create tree success', res)
+  //     var response = '';
+  //     stream.on('data', function(chunk) {
+  //       response = response + chunk
+  //     })
 
-  //             var newTreeSha = res.sha
-
-  //             return github.gitdata.createCommit({
-  //               user: githubLogin,
-  //               repo: repoName,
-  //               message: message,
-  //               tree: newTreeSha,
-  //               parents: [latestCommitSha]
-  //             }, function(err, res) {
-  //               if(err) {
-  //                 console.log('create commit error', err)
-  //               } else {
-  //                 console.log('create commit success', res)
-  //                 var newCommitSha = res.sha
-
-  //                 github.gitdata.createReference({
-  //                   user: githubLogin,
-  //                   repo: repoName,
-  //                   ref: 'refs/heads/master',
-  //                   sha: newCommitSha,
-  //                   force: true
-  //                 }, function(err, res) {
-  //                     if(err)
-  //                       console.log('create reference error', err)
-  //                     // } else {
-  //                     //   console.log('create reference success', res)
-
-  //                       github.gitdata.updateReference({
-  //                         user: githubLogin,
-  //                         repo: repoName,
-  //                         ref: 'refs/heads/master',
-  //                         sha: newCommitSha,
-  //                         force: true
-  //                       }, function(err, res) {
-  //                           if(err) {
-  //                             console.log('create reference error', err)
-  //                           } else {
-  //                             console.log('create reference success', res)
-  //                           }
-  //                       })
-
-  //                 })
-  //               }
-  //             })
-  //           }
-
-  //         })
-  //       }
+  //     stream.on('end', function() {
+  //       github.repos.updateFile({
+  //         user: githubLogin,
+  //         repo: repoName,
+  //         path: 'index.html',
+  //         message: 'commit from api',
+  //         content: response,
+  //         sha: fileSha
+  //       }, function(err, res) {
+  //         if(err) {
+  //           console.log('update file error', err)
+  //         }else {
+  //           console.log('update file success', res)
+  //         }
+  //       })
   //     })
   //   }
   // })
+
+  // Get latest commit sha
+  // NOTE: if we want to commit to a different branch we can change that in ref
+  return github.gitdata.getReference({
+    user: githubLogin,
+    repo: repoName,
+    ref: 'heads/master'
+  }, function(err, res) {
+    if(err) {
+      console.log('get latest commit sha error', err)
+    } else {
+      console.log('get latest commit sha success')
+      var latestCommitSha = res.object.sha;
+
+      return github.gitdata.getCommit({
+        user: githubLogin,
+        repo: repoName,
+        sha: latestCommitSha
+      }, function(err, res) {
+        if(err) {
+          console.log('get info for latest commit error', err)
+        } else {
+          console.log('get info for latest commit success', res)
+
+          var baseTreeSha = res.tree.sha
+
+          github.authenticate({
+            type: "oauth",
+            token: token.token
+          });
+
+          return github.gitdata.createTree({
+            user: githubLogin,
+            repo: repoName,
+            tree: [{
+              "path" : "index.html",
+              "mode" : "100644",
+              "type" : "blob",
+              "content":
+                "hello"
+            }],
+            base_tree: baseTreeSha
+          }, function(err, res) {
+            if(err) {
+              console.log('create tree error', err)
+            } else {
+              console.log('create tree success', res)
+
+              var newTreeSha = res.sha
+
+              return github.gitdata.createCommit({
+                user: githubLogin,
+                repo: repoName,
+                message: message,
+                tree: newTreeSha,
+                parents: [latestCommitSha]
+              }, function(err, res) {
+                if(err) {
+                  console.log('create commit error', err)
+                } else {
+                  console.log('create commit success', res)
+                  var newCommitSha = res.sha
+
+                  github.gitdata.updateReference({
+                    user: githubLogin,
+                    repo: repoName,
+                    ref: 'heads/master',
+                    sha: newCommitSha,
+                    force: true
+                  }, function(err, res) {
+                    if(err) {
+                      console.log('create reference error', err)
+                    } else {
+                      console.log('create reference success', res)
+
+                      return response.json('success!')
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
 }
 
 

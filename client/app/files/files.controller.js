@@ -9,7 +9,7 @@ angular.module('appceptionApp')
 	    		var user = Auth.getCurrentUser()
 	        console.log('user: ', user)
 	    		github.createCommit('commit from api').then(function(res){
-	          console.log('success!', res.data);
+	          console.log('success!', res);
 		    	})
 	    	}else {
 	    		console.log('Sorry, an error has occurred while committing');

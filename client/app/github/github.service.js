@@ -56,9 +56,7 @@ angular.module('appceptionApp')
           message: 'create commit api'
         }
       })
-      .then(function(resp) {
-        // console.log('createCommit response sha', resp)
-      })
+    }
 
     var insertRepoIntoLocalDB = function(repo, items){
       var filer = new Filer.FileSystem({
