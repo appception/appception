@@ -3,25 +3,18 @@
 var _ = require('lodash');
 var zlib = require('zlib');
 var fs = require('fs');
-var fstream = require('fstream');
+// var fstream = require('fstream');
 var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
 var token = require('../../auth/github/passport');
-var forEachAsync = require('forEachAsync').forEachAsync
-    ;
+var forEachAsync = require('forEachAsync').forEachAsync;
 
 var GitHubApi = require("github");
 
 var github = new GitHubApi({
-    // required
     version: "3.0.0",
-    // optional
     debug: true
-    // protocol: "https",
-    // host:  "http",
-    // pathP refix: "/api/v3", // for some GHEs
-    // timeout: 5000
 });
 
 
@@ -49,7 +42,8 @@ exports.index = function(req, res) {
 
 // Get a single projects files
 exports.files = function(req, res) {
-    console.log('inside projects.files')
+  console.log('inside projects.files')
+
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
 
@@ -58,6 +52,7 @@ exports.files = function(req, res) {
     user: githubLogin,
     repo: githubRepo,
     archive_format: 'zipball'
+    // archive_format: 'tarball'
   }, function(err, data) {
     if(err) {
       console.log('projects.controller.js: get files error', err)
@@ -77,17 +72,37 @@ exports.files = function(req, res) {
       encoding: null
     }, function(err, resp, body) {
       if(err) throw err;
-      fs.writeFile(filePath, body, function(err) {
-        console.log("file written!");
-        fs.createReadStream(filePath).pipe(unzip.Parse())
-          .pipe(fstream.Writer('server/tempfiles/'));
 
-        return res.json({
-          zipFile: filePath
-          })
+      var results = [];
+      var i = 0;
+
+      fs.writeFile(filePath, body, function(err) {
+        if(err) throw err;
+
+        console.log("file written!");
+        var r =fs.createReadStream(filePath)
+          // unzip file
+          .pipe(unzip.Parse())
+              //for each item in the zipped file,
+              // create an entry object that has path and content properties
+            .on("entry", function (e) {
+              results.push([]);
+              var entry = {};
+              entry.path = e.props.path;
+              e.on("data", function (c) {
+                entry.content = c.toString();
+              })
+              e.on("end", function () {
+                results[i].push(entry);
+                i++;
+              })
+            })
+            // when we are done unzipping, return the results
+            .on('close', function(){
+              return res.send(results)
+            })
       });
     });
-
   })
 };
 

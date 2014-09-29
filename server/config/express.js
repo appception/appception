@@ -16,7 +16,6 @@ var path = require('path');
 var config = require('./environment');
 var passport = require('passport');
 var compression = require('compression');
-var swig  = require('swig');
 
 // files for Nimble code editor
 var env = require( "./lib/environment" ),
@@ -26,6 +25,9 @@ var env = require( "./lib/environment" ),
 module.exports = function(app) {
   var env = app.get('env');
 
+  app.set('views', config.root + '/server/views');
+  app.engine('html', require('ejs').renderFile);
+  app.set('view engine', 'html');
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
