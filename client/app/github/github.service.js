@@ -48,7 +48,6 @@ angular.module('appceptionApp')
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
-      createRepo: createRepo,
-      getArchiveLink: getArchiveLink
+      createRepo: createRepo
     };
   });
