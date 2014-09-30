@@ -203,6 +203,7 @@ exports.newRepo = function (req, res) {
 
           })
         }).then(function () {
+          exports.createBranch(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
         }); // end forEachAsync
       }); // end fs.readdir
@@ -364,5 +365,40 @@ exports.doesUserHaveUserPage = function (username) {
   }); // end github.repos.getFromUser
 }; // end doesUserHaveUserPage
 
+exports.createBranch = function(username, repoName, baseBranchName, newBranchName) {
+  // get https://api.github.com/repos/<AUTHOR>/<REPO>/git/refs/heads sha
 
+  github.gitdata.getReference({
+    user: username,
+    repo: repoName,
+    ref: 'heads/' + baseBranchName
+  }, function(err, res) {
+    if(err) {
+      console.log('create branch get reference error:', err)
+    } else {
+      console.log('create branch get reference success:', res)
+      var referenceSha = res.object.sha
+
+      github.authenticate({
+        type: "oauth",
+        token: token.token
+      });
+
+      github.gitdata.createReference({
+        user: username,
+        repo: repoName,
+        ref: 'refs/heads/' + newBranchName,
+        sha: referenceSha
+      }, function(err, res) {
+        if(err) {
+          console.log('create branch create reference error:', err)
+        } else {
+          console.log('create branch create reference success:', res)
+        }
+      })
+    }
+  })
+
+  // post https://api.github.com/repos/<AUTHOR>/<REPO>/git/refs
+}
 

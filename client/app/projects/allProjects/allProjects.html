@@ -13,14 +13,12 @@
           <table ng-hide="loading" class="projects table table-striped table-responsive">
             <thead>
               <th>Repo Name</th>
-              <th>Description</th>
               <th>Created At</th>
               <th>Last Updated At</th>
             </thead>
             <tbody>
               <tr ng-repeat='project in projects'>
                 <td><a href="" ng-click="getRepoFiles(project.name)">{{project.name}}</a></td>
-                <td>{{project.description}}</td>
                 <td>{{project.created_at | date:'h:mm a, MMM d, y'}}</td>
                 <td>{{project.updated_at | date:'h:mm a, MMM d, y'}}</td>
               </tr>
