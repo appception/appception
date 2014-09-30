@@ -45,6 +45,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-autoprefixer')
   // require('grunt-express-server')(express); // Aaron made this an include instead of part of the jit...
 
   // grunt.loadNpmTasks('grunt-usemin');
@@ -258,6 +259,17 @@ module.exports = function (grunt) {
     '---'   '(_,_) '---'  '.(_,_).' '--'    '--'`--'   `'-'            `-..-'         '-----'      ``-'`-''  (_I_)
 *************************************************************/
 
+    autoprefixer: {
+      options: {
+        browsers: ['> 1%']
+      },
+      dist: {
+        files: {
+          'client/app/app.css' : 'client/app/app.css'
+        }
+      }
+    },
+
 
     concat: { // concatenate js and css files
       options: {
@@ -267,10 +279,6 @@ module.exports = function (grunt) {
         src: ['client/**/*.js', '!client/**/*.cat.js', '!client/**/*.min.js', '!client/bower_components/**/*.*'],
         dest: 'client/app/min/app.cat.js'
       }, // end .js
-      css: {
-        src: ['client/**/*.css', '!client/**/*.cat.css', '!client/**/*.min.css', '!client/bower_components/**/*.*'],
-        dest: 'client/app/min/app.cat.css'
-      } // end .css
     }, // end concat
 
     cssmin: { // minifies css
@@ -279,7 +287,7 @@ module.exports = function (grunt) {
       },
       css: {
         files: [{
-          src: ['client/app/min/app.cat.css', '!client/**/*.min.css'],
+          src: ['client/app/app.css', '!client/**/*.min.css'],
           dest: 'client/app/min/app.min.css'
         }] // end files[]
       }
@@ -302,7 +310,7 @@ module.exports = function (grunt) {
     watch: {
       stylus: {
         files: ['client/app/**/*.styl', 'client/components/**/*.styl'],
-        tasks: ['stylus'] // , 'autoprefixer']
+        tasks: ['stylus', 'cssmin'] // , 'autoprefixer']
       }, // end stylus
       gruntfile: {
         files: ['Gruntfile.js']
@@ -397,6 +405,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'stylus',
+    'autoprefixer',
     'clean',
     'concat',
     'cssmin',

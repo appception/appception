@@ -1,28 +1,41 @@
-.navbar.navbar-default {
-  position: absolute;
-  width: 100%;
-  top: 0;
+.navbar {
   background-color: white;
-}
+  height: $five;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $two;
 
-.navbar-default .navbar-collapse {
-  background-color: rgba(255, 255, 255, 0.9)
-
-  .navbar-default .navbar-nav > li > a {
-    color: #000;
-    font-size: 20px;
+  a {
+    text-decoration: none;
   }
 }
 
-.navbar-default .navbar-brand {
+.navbar-header {
+  padding: $one-and-half 0;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+
+  .navbar-nav > li {
+    float: left;
+    padding-right: $two;
+
+    a {
+      color: #000;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    p {
+      opacity: 0.6;
+    }
+  }
+}
+
+.navbar-brand {
   font-family: 'Source Code Pro', monospace;
   color: #000;
-}
-
-.navbar-default .navbar-nav > li > a{
-  color: black;
-}
-
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-  background-color: transparent;
+  font-size: $two;
+  margin-right: $three;
+  position: relative;
+  top: -5px;
 }
