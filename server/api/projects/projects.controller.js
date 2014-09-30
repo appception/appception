@@ -9,39 +9,73 @@ var request = require('request');
 var Projects = require('./projects.model');
 var token = require('../../auth/github/passport');
 var forEachAsync = require('forEachAsync').forEachAsync;
+var doesThisUserHaveUserPage = require('./projects.controller').doesUserHaveUserPage;
+var createNewRepo = require('./projects.controller').newRepo;
 
 var GitHubApi = require("github");
 
 var github = new GitHubApi({
-    version: "3.0.0",
-    debug: true
+  version: "3.0.0",
+  debug: true
 });
 
 
 // get
 github.authenticate({
-    type: "oauth",
-    key: process.env.GITHUB_ID,
-    secret: process.env.GITHUB_SECRET
+  type: "oauth",
+  key: process.env.GITHUB_ID,
+  secret: process.env.GITHUB_SECRET
 });
 
-
 // Get list of projects
-exports.index = function(req, res) {
-  // console.log(req)
+exports.index = function(req, response) {
   var githubLogin = req.query.githubLogin;
-  console.log('inside projects.index', githubLogin)
+  var userPageName = '' + githubLogin + '.github.io';
 
-  github.repos.getFromUser({ user: githubLogin }, function(err, data) {
-    if(err){  console.log("projects.controller.js: get all repos error", err); }
-    console.log("projects.controller.js: get all repos success")
-    return res.json(data)
-  });
+  // get list of repos
+  github.repos.getFromUser({
+    user: githubLogin
+  }, function(err, data) {
+    if (err) {
+      console.log("ERROR: projects.controller.js: get all repos", err);
+    } // end if (error)
+    console.log("SUCCESS: projects.controller.js: get all repos")
 
-};
+    // 'data' is all the data back from GH. Iterate and check for userPageNamme.
+    for (var key in data) {
+      if (data[key].name === userPageName) { // user has User Page
+        //console.log("\n\nFOUND USE PAGE: ", data[key].name, ", proceeding with Projects page load...");
+        return response.json(data);
+      } // end if (user has user page)
+    } // end for (key in data)
+
+    // We must pass an authentication token before creating the page.
+    github.authenticate({
+      type: "oauth",
+      token: token.token
+    });
+
+    // Create the user page if it doesn't exist
+    // console.log("\n\nNO USER PAGE - creating one now!\n\n");
+
+    // Creating a new repo using github node module
+    github.repos.create({
+      name: userPageName,
+      auto_init: true
+    }, function(err, res) {
+      if (err) {
+        console.log('\n\nERROR during create User Page', err, res);
+      } else {
+        console.log('\n\nSUCCESS during create User Page, proceeding with Projects page load...');
+        return response.json(data);
+      } // end else
+    }) // end github.repos.create()
+  }); // end github.repos.getFromUser()
+}; // end index
+
 
 // Get a single projects files
-exports.files = function(req, res) {
+exports.files = function (req, res) {
   console.log('inside projects.files')
 
   var githubLogin = req.query.githubLogin;
@@ -53,8 +87,8 @@ exports.files = function(req, res) {
     repo: githubRepo,
     archive_format: 'zipball'
     // archive_format: 'tarball'
-  }, function(err, data) {
-    if(err) {
+  }, function (err, data) {
+    if (err) {
       console.log('projects.controller.js: get files error', err)
     }
     console.log('projects.controller.js: get files success')
@@ -70,37 +104,37 @@ exports.files = function(req, res) {
     request.get({
       url: file,
       encoding: null
-    }, function(err, resp, body) {
-      if(err) throw err;
+    }, function (err, resp, body) {
+      if (err) throw err;
 
       var results = [];
       var i = 0;
 
-      fs.writeFile(filePath, body, function(err) {
-        if(err) throw err;
+      fs.writeFile(filePath, body, function (err) {
+        if (err) throw err;
 
         console.log("file written!");
-        var r =fs.createReadStream(filePath)
+        var r = fs.createReadStream(filePath)
           // unzip file
           .pipe(unzip.Parse())
-              //for each item in the zipped file,
-              // create an entry object that has path and content properties
-            .on("entry", function (e) {
-              results.push([]);
-              var entry = {};
-              entry.path = e.props.path;
-              e.on("data", function (c) {
-                entry.content = c.toString();
-              })
-              e.on("end", function () {
-                results[i].push(entry);
-                i++;
-              })
+          //for each item in the zipped file,
+          // create an entry object that has path and content properties
+          .on("entry", function (e) {
+            results.push([]);
+            var entry = {};
+            entry.path = e.props.path;
+            e.on("data", function (c) {
+              entry.content = c.toString();
             })
-            // when we are done unzipping, return the results
-            .on('close', function(){
-              return res.send(results)
+            e.on("end", function () {
+              results[i].push(entry);
+              i++;
             })
+          })
+          // when we are done unzipping, return the results
+          .on('close', function () {
+            return res.send(results)
+          })
       });
     });
   })
@@ -108,44 +142,45 @@ exports.files = function(req, res) {
 
 
 // Create a new repo
-exports.newRepo = function(req, res) {
+exports.newRepo = function (req, res) {
+
   console.log('inside server new repo')
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
 
   console.log('token.token', token.token)
   github.authenticate({
-      type: "oauth",
-      token: token.token
+    type: "oauth",
+    token: token.token
   });
 
   // Creating a new repo using github node module
   github.repos.create({
     name: repoName,
     auto_init: true
-  }, function(err, res) {
-    if(err) {
+  }, function (err, res) {
+    if (err) {
       console.log('projects.controller.js: create repo error', err, res)
-    }else {
+    } else {
       console.log('projects.controller.js: create repo success')
       console.log('res: ', res)
 
       // Once new repo has been created, read the directory that contains the template files.
-      fs.readdir('server/api/projects/filetemplates/', function(err, files) {
+      fs.readdir('server/api/projects/filetemplates/', function (err, files) {
 
         // Async read each file name in the array returned.
-        forEachAsync(files, function(next, fileTitle, index, array) {
+        forEachAsync(files, function (next, fileTitle, index, array) {
           // Get file contents
           var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
             encoding: 'base64'
           })
 
           var response = '';
-          stream.on('data', function(chunk) {
+          stream.on('data', function (chunk) {
             response = response + chunk
           })
 
-          stream.on('end', function() {
+          stream.on('end', function () {
             // Using github module, create a file on github based on data read from file
             github.repos.createFile({
               user: githubLogin,
@@ -154,41 +189,42 @@ exports.newRepo = function(req, res) {
               message: 'Initial Commit for ' + fileTitle,
               content: response,
               committer: {
-                "name" : "appception",
-                "email" : "appception@gmail.com"
+                "name": "appception",
+                "email": "appception@gmail.com"
               }
-            }, function(err, res) {
-              if(err) {
+            }, function (err, res) {
+              if (err) {
                 console.log('projects.controller.js: create file error', err, res)
-              }else {
+              } else {
                 console.log('projects.controller.js: create file success')
                 next()
               }
             })
 
           })
-        }).then(function() {
+        }).then(function () {
           console.log('All done!')
-        })
-      })
+        }); // end forEachAsync
+      }); // end fs.readdir
     }
-  })
-}
+  }); // end github.repos.create()
+} // end newRepo()
 
 
-exports.commit = function(req, response) {
+exports.commit = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var message = req.query.message;
 
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
+  // NOTE: to deploy project, we need to add a branch called 'gh-pages'
   github.gitdata.getReference({
     user: githubLogin,
     repo: repoName,
     ref: 'heads/master'
-  }, function(err, res) {
-    if(err) {
+  }, function (err, res) {
+    if (err) {
       console.log('get latest commit sha error', err)
     } else {
       console.log('get latest commit sha success')
@@ -199,8 +235,8 @@ exports.commit = function(req, response) {
         user: githubLogin,
         repo: repoName,
         sha: latestCommitSha
-      }, function(err, res) {
-        if(err) {
+      }, function (err, res) {
+        if (err) {
           console.log('get info for latest commit error', err)
         } else {
           console.log('get info for latest commit success')
@@ -217,21 +253,19 @@ exports.commit = function(req, response) {
             user: githubLogin,
             repo: repoName,
             tree: [{
-              "path" : "index.html",
-              "mode" : "100644",
-              "type" : "blob",
-              "content":
-                "hello this is NOT dog"
-            },{
-              "path" : "main.css",
-              "mode" : "100644",
-              "type" : "blob",
-              "content":
-                "who is it?"
+              "path": "index.html",
+              "mode": "100644",
+              "type": "blob",
+              "content": "hello this is NOT dog"
+            }, {
+              "path": "main.css",
+              "mode": "100644",
+              "type": "blob",
+              "content": "who is it?"
             }],
             base_tree: baseTreeSha
-          }, function(err, res) {
-            if(err) {
+          }, function (err, res) {
+            if (err) {
               console.log('create tree error', err)
             } else {
               console.log('create tree success')
@@ -245,8 +279,8 @@ exports.commit = function(req, response) {
                 message: message,
                 tree: newTreeSha,
                 parents: [latestCommitSha]
-              }, function(err, res) {
-                if(err) {
+              }, function (err, res) {
+                if (err) {
                   console.log('create commit error', err)
                 } else {
                   console.log('create commit success')
@@ -259,8 +293,8 @@ exports.commit = function(req, response) {
                     ref: 'heads/master',
                     sha: newCommitSha,
                     force: true
-                  }, function(err, res) {
-                    if(err) {
+                  }, function (err, res) {
+                    if (err) {
                       console.log('create reference error', err)
                     } else {
                       console.log('create reference success')
@@ -279,12 +313,12 @@ exports.commit = function(req, response) {
 }
 
 
-exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, cb, committer) {
+exports.addFiletoRepo = function (githubLogin, repoName, path, message, content, cb, committer) {
   console.log('cb: ', cb)
-  if(!committer) {
+  if (!committer) {
     committer = {
-      "name" : "appception",
-      "email" : "appception@gmail.com"
+      "name": "appception",
+      "email": "appception@gmail.com"
     }
   }
 
@@ -295,10 +329,10 @@ exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, 
     message: message,
     content: content,
     committer: committer
-  }, function(err, res) {
-    if(err) {
+  }, function (err, res) {
+    if (err) {
       console.log('projects.controller.js: create file error', err, res)
-    }else {
+    } else {
       console.log('projects.controller.js: create file success')
       console.log('res: ', res)
       cb()
@@ -309,3 +343,26 @@ exports.addFiletoRepo = function(githubLogin, repoName, path, message, content, 
 function handleError(res, err) {
   return res.send(500, err);
 }
+
+exports.doesUserHaveUserPage = function (username) {
+  var userPageName = '' + username + '.github.io';
+  console.log("\n\n\nIN doesUserHaveUserPage...\n\n\n")
+
+  github.repos.getFromUser({user: username}, function (err, data) {
+    if (err) {
+      console.log("get all repos error", err);
+    } // end if (error)
+
+    // 'data' is all the data back from GH. Iterate and check for repo names.
+    for (var key in data) {
+      if (data[key].name === userPageName) { // user has User Page
+        console.log("\n\nFOUND PAGE: ", data[key].name);
+        return true;
+      } // end if (user has user page)
+    } // end for (key in data)
+    return false;
+  }); // end github.repos.getFromUser
+}; // end doesUserHaveUserPage
+
+
+

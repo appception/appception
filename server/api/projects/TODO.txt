@@ -1,0 +1,25 @@
+Deploy Pages TODO:
+
+* Check to see if user has a project named:
+  username.github.io
+
+* IF NOT: Create a USER PAGE.
+  * This is a repo with the following format:
+    username.github.io
+
+* NOTE: Auto Page Generator here: https://help.github.com/articles/creating-pages-with-the-automatic-generator
+
+* To make PROJECT PAGES (https://help.github.com/articles/user-organization-and-project-pages):
+  * Project repo must have the branch:
+    gh-pages
+
+  * URL for page is
+    http://username.github.io/projectname
+    https://username.github.io/projectname
+  * 
+
+
+  OPTIONS:
+  1) Can make default branch 'gh-pages'
+  2) THEN send to GH page creator...?
+  3) I think this accomplishes what we need...

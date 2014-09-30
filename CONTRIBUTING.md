@@ -133,29 +133,26 @@ Thanks for contributing!
 
 ### A note on Submodules
 
-This repo has a submodule in the folder 'nimble'. You are strongly encouraged to read
-up on submodules here:
-
+This repo has converted a series of submodules ('nimble', and several modules
+inside nimble, and a few modules inside those modules (most notably 
+'mustache') into regular directories in the project tree. It is likely that
+future work - for instance, updating Nimble - will add submodules back into
+the project. In this case the submodules must be made a part of the core project.
+We encourage you to read up on submodules here:
 [[http://git-scm.com/book/en/Git-Tools-Submodules]]
 
-You will want to update the submodule by issuing the following commands:
+You will want to remove the submodules by issuing the following commands:
 ```
-git submodule init
-git submodule update --recursive
+git rm --cached submodule_path   # delete reference to submodule HEAD (no trailing slash)
+git rm .gitmodules               # if you have more than one submodules you
+                                 # need to edit this file instead of deleting!
+rm -rf submodule_path/.git       # you may want a backup before doing this
+git add submodule_path           # will add files instead of commit reference
+git commit -m "remove submodule" # obviously commit only when ready.
 ```
 
-The git config file in '.git/config' has specified that updates are to be executed
-using the 'merge' strategy.
-
-Now do the following in order to get a working Nimble:
-
-```
-cd nimble // to enter the nimble directory
-npm install --recursive // to recursively install npm packages
-git submodule update --init // to initialize NIMBLE's submodules!
-  POSSIBLY run again:  npm install --recursive // to recursively install npm packages
-
-```
+Thanks to StackOverflow for the information:
+[[http://stackoverflow.com/questions/1759587/un-submodule-a-git-submodule]]
 
 ### Guidelines
 
