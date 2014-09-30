@@ -11,6 +11,7 @@
 @import 'main/main.styl';
 @import 'projects/allProjects/allProjects.styl';
 @import 'navbar/navbar.styl';
+@import 'footer/footer.styl';
 
 html {
   position: relative;
@@ -21,24 +22,15 @@ html {
 
 body {
    // Margin bottom by footer height
-  margin-bottom: 60px;
+  margin-bottom: $five;
 }
 
 .page-wrapper {
-  margin-top: 60px;
+  margin-top: $five;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 0;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  background-color: $white;
-
-  p {
-  	margin-top: 20px;
-  }
+.header {
+  margin-bottom: 20px;
 }
+
 

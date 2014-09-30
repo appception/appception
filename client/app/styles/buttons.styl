@@ -1,14 +1,27 @@
 button {
 	appearance: none;
 	-webkit-appearance: none;
+	font-family: $source-code
+
+	&:hover {
+		cursor: pointer;
+	}
 }
 
 .btn {
 	outline: none;
+	font-family: $source-code;
 	font-size: $one-and-half;
 	padding: $half $one;
 	border-radius: $half;
 	border: none;
+	transition: border-radius .2s, background-color .2s;
+	text-transform: uppercase;
+
+	&:hover {
+		border-radius: 0;
+		text-decoration: none;
+	}
 }
 
 .btn-lg {
@@ -18,14 +31,28 @@ button {
 	border-radius: $one;
 }
 
-.btn-blue {
-	background-color: $blue;
-}
 .btn-lg .fa {
 	font-size: 33px;
 	margin: 0 10px 0px 0px;
 }
 
-button {
-	outline: none;
+.btn-blue {
+	background-color: $true-blue;
+	color: $white;
+
+	&:hover {
+		background-color: $true-blue;
+	}
+}
+
+.btn-outline {
+	border: 1px solid black;
+	background: transparent;
+	color: $white;
+	// transition: color .2s, border-color .2s;
+
+	// &:hover {
+	// 	color: $blue;
+	// 	border-color: $blue
+	// }
 }

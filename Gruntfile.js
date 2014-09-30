@@ -265,7 +265,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          'client/app/app.css' : 'client/app/app.css'
+          'client/app/app.build.css' : 'client/app/app.css'
         }
       }
     },
@@ -287,7 +287,7 @@ module.exports = function (grunt) {
       },
       css: {
         files: [{
-          src: ['client/app/app.css', '!client/**/*.min.css'],
+          src: ['client/app/app.build.css', '!client/**/*.min.css'],
           dest: 'client/app/min/app.min.css'
         }] // end files[]
       }
@@ -310,7 +310,7 @@ module.exports = function (grunt) {
     watch: {
       stylus: {
         files: ['client/app/**/*.styl', 'client/components/**/*.styl'],
-        tasks: ['stylus', 'cssmin'] // , 'autoprefixer']
+        tasks: ['stylus', 'autoprefixer', 'cssmin'] // , 'autoprefixer']
       }, // end stylus
       gruntfile: {
         files: ['Gruntfile.js']

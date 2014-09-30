@@ -1,10 +1,16 @@
 .main {
-	background: #050104;
 	color: white;
+	background:
+		linear-gradient(0,#050104,rgba(5,1,4,.93),rgba(5, 1, 4, 0.36)),url(../images/stars2.jpg) no-repeat center center;
+	background-size: cover;
 
 	.navbar {
   	background-color: transparent;
   	color: white;
+
+  	.navbar-header {
+  		border-bottom: 1px solid rgba(255,255,255,0.5);
+  	}
 	}
 
 	.navbar-brand {
@@ -24,31 +30,25 @@
 			padding-bottom: 140px;
 		}
 	}
-}
 
+	footer {
+		background: #050104;
 
-.group {
-	.align-center{
-		text-align: center;
+		.container {
+			border-top: 1px solid rgba(255,255,255, 0.5)
+
+			a {
+				color: white
+
+				&:hover {
+					color: $blue
+				}
+			}
+		}
+	}
+
+	.btn-outline {
+		border-color: $white;
 	}
 }
 
-.hero {
-
-	.text-center{
-	}
-
-	.background {
-		background: url('images/stars2.jpg') no-repeat center center;
-		background-size: cover;
-	}
-}
-
-.support {
-	z-index: 5;
-	color: white;
-	// background-image: linear-gradient(0,#050104 1%,#241d24 69%,rgba(36, 29, 36, 0.87) 80%,rgba(36, 29, 36, 0.48) 90%,rgba(36,29,36,0.09) 98%,rgba(36, 29, 36, 0) 100%);
-}
-
-.cta {
-}

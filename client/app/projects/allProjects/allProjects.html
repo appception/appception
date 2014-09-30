@@ -4,14 +4,13 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <div class="header">
+        <div class="header clear-after">
           <h1 class="pull-left">Your Projects</h1>
-          <a href="/newproject" class="pull-right btn btn-default">Create a new project</a>
-          <div class="clearfix"></div>
+          <a href="/newproject" class="pull-right btn btn-default btn-blue">Create a new project</a>
         </div>
         <div>
           <h4 ng-show="loading">Loading...</h4>
-          <table ng-hide="loading" class="projects table table-striped">
+          <table ng-hide="loading" class="projects table table-striped table-responsive">
             <thead>
               <th>Repo Name</th>
               <th>Description</th>
@@ -32,3 +31,5 @@
     </div>
   </div>
 </div>
+
+<div ng-include="'components/footer/footer.html'"></div>
