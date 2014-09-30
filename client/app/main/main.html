@@ -1,21 +1,16 @@
 <div class="main">
   <div ng-include="'components/navbar/navbar.html'"></div>
-  <!-- <div class="debug">
-    <label><input type="checkbox"> Debug</label>
-  </div> -->
 
   <div class="group hero">
     <div class="background">
       <div class="container">
         <div class="row text-center">
-          <div class="col-md-12">
-      	   	<h1>A Web App to Make Web Apps</h1>
-      	    <p>Appception has made it easier than ever to start programming. Sign in with Github to see for yourself!</p>
-      	    <button class="btn btn-default btn-lg" ng-click="loginOauth('github')">
-              <i class="fa fa-github"></i>
-              <span>Login with Github</span>
-            </button>
-          </div>
+    	   	<h1>A Web App to Make Web Apps</h1>
+    	    <p class="large thin">Appception has made it easier than ever to start programming. Sign in with Github to see for yourself!</p>
+    	    <button class="btn btn-outline btn-lg" ng-click="loginOauth('github')">
+            <i class="fa fa-github"></i>
+            <span>Login with Github</span>
+          </button>
         </div>
       </div>
     </div>
@@ -24,29 +19,25 @@
   <div class="group support">
     <div class="layer layer--base">
       <div class="container">
-        <div class="row align-center">
-          <div class="col-md-4">
+        <div class="align-center clear-after">
+          <div class="third float-left">
           	<h2>Do this awesome thing</h2>
           	<p>No omnes qualisque repudiare vix, ad postea possim ceteros qui. Has noluisse consectetuer id, eos dicta viris intellegebat ei, sed ad vidit corrumpit.</p>
           </div>
-          <div class="col-md-4">
+          <div class="third float-left">
           	<h2>Do this other awesome thing</h2>
           	<p>Nec doming putent cotidieque ea, ei oporteat salutandi intellegebat ius. Pri omnes dicunt complectitur an, nonumy argumentum an sit.</p>
           </div>
-          <div class="col-md-4">
-          	<h2>There's seriously more?!</h2>
+          <div class="third float-left">
+          	<h2>There's really more?!</h2>
           	<p> Et mea quod dicta, eam in percipit tacimates. Te mei nominati patrioque, sed ea epicuri insolens disputationi.</p>
           </div>
-          <div class="clearfix"></div>
 
-          <button class="btn btn-default btn-lg" ng-click="loginOauth('github')">
-            <i class="fa fa-github"></i>
-            Login with Github
-          </button>
         </div>
       </div>
     </div>
   </div>
+  <div ng-include="'components/footer/footer.html'"></div>
 </div>
 
 
