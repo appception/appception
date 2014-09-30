@@ -366,8 +366,6 @@ exports.doesUserHaveUserPage = function (username) {
 }; // end doesUserHaveUserPage
 
 exports.createBranch = function(username, repoName, baseBranchName, newBranchName) {
-  // get https://api.github.com/repos/<AUTHOR>/<REPO>/git/refs/heads sha
-
   github.gitdata.getReference({
     user: username,
     repo: repoName,
@@ -398,7 +396,5 @@ exports.createBranch = function(username, repoName, baseBranchName, newBranchNam
       })
     }
   })
-
-  // post https://api.github.com/repos/<AUTHOR>/<REPO>/git/refs
 }
 
