@@ -144,7 +144,7 @@ exports.files = function (req, res) {
 
 
 // Create a new repo
-exports.newRepo = function (req, res) {
+exports.newRepo = function (req, response) {
 
   console.log('inside server new repo')
   var githubLogin = req.query.githubLogin;
@@ -207,6 +207,7 @@ exports.newRepo = function (req, res) {
         }).then(function () {
           createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
+          return response.json('Complete')
         }); // end forEachAsync
       }); // end fs.readdir
     }
