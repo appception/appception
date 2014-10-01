@@ -98,8 +98,8 @@
   },
   "scripts": {
     "start": "node server/app.js",
-    "install": "grunt",
-    "postinstall": "npm run update-webdriver"
+    "install": "bower install",
+    "postinstall": "grunt"
   },
   "private": true
 }

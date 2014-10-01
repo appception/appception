@@ -215,24 +215,131 @@ describe('Directive: brackets', function () {
 });;'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, github, Auth) {
+  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state) {
 
   	$scope.repoName = $stateParams.repoName;
+    $scope.isDeployed = false;
+    $scope.isLoaded = false;
+
+		Auth.isLoggedInAsync(function(boolean) {
+    	if(boolean === true){
+	  		var user = Auth.getCurrentUser()
+	  		$scope.username = user.github.login
+
+        // Get all the branches to look and see if they have a gh-pages branch for deployment
+        github.getBranches($scope.username, $scope.repoName)
+          .then(function(res){
+            for(var i = 0; i < res.data.length; i++) {
+              if (res.data[i]["name"] === 'gh-pages'){
+                $scope.isDeployed = true;
+              }
+            }
+            $scope.isLoaded = true;
+          });
+	  	}else {
+  			console.log('Sorry, an error has occurred while loading the user');
+  		}
+	  });
 
   	$scope.createCommit = function(message) {
   		var message = prompt('Enter a commit message:')
-  		Auth.isLoggedInAsync(function(boolean) {
-	    	if(boolean === true){
-	    		var user = Auth.getCurrentUser()
-	        console.log('user: ', user)
-	    		github.createCommit(user.github.login, $scope.repoName, message).then(function(res){
-	          console.log('success!', res.data);
-		    	})
-	    	}else {
-	    		console.log('Sorry, an error has occurred while committing');
-	    	}
-		  });
-  	}
+  		github.createCommit($scope.username, $scope.repoName, message)
+  			.then(function(res){
+        	console.log('success!', res.data);
+	    	});
+  	};
+
+    $scope.addDeployBranch = function() {
+      // Create a gh-pages branch
+      github.createBranch($scope.username, $scope.repoName, 'master', 'gh-pages')
+        .then(function(res) {
+          console.log('addDeployBranch success!', res)
+          $scope.isDeployed = true;
+        })
+    }
+
+    var filer = new Filer.FileSystem({
+      name: 'files',
+      provider: new Filer.FileSystem.providers.Fallback('makedrive')
+    });
+
+    var shell = filer.Shell();
+
+    var exportLocalDB = function(callback){
+
+      // get list of all files and directories in user's browsers local DB
+      shell.ls('/', {recursive: true}, function(err, entries){
+        console.log('entries', entries[0])
+        var results = [];
+        if (err) throw err;
+
+
+        var traverseDirectory = function(item, fullpath){
+          var itemObj = {};
+
+          //  add path of directory to results
+          results.push({path: fullpath})
+          // console.log('directory:', fullpath);
+
+          // loop through every item in a directory
+          item.contents.forEach(function(result, i){
+            var entry = item.contents[i];
+            var itemPath = fullpath + '/' + entry.path
+
+            // if item is a file, add  file path and content to results
+            if(entry.type === 'FILE'){
+              filer.readFile(itemPath, function(err, data){
+                // console.log('file2:', itemPath, data);
+                results.push({path: itemPath, content: data.toString()})
+              })
+
+            // if item is directory, recursively traverse the directory
+            } else if (entry.type === 'DIRECTORY') {
+              traverseDirectory(entry, itemPath );
+            }
+          })
+
+        }
+
+        if(entries[0] && entries[0].type==="DIRECTORY"){
+          traverseDirectory(entries[0], '/' + entries[0].path)
+        } else {
+          alert('You need a folder folder at the root of your project.')
+        }
+
+        setTimeout(function(){
+          callback(results);
+        }, 1000);
+
+
+      });
+    };
+
+
+    $scope.getProjectFiles = function(){
+
+      var files = exportLocalDB(function(results){
+
+        console.log(results)
+
+      });
+
+    }
+
+    $scope.createCommit = function(message) {
+      var message = prompt('Enter a commit message:')
+      Auth.isLoggedInAsync(function(boolean) {
+        if(boolean === true){
+          var user = Auth.getCurrentUser()
+          console.log('user: ', user)
+          github.createCommit(user.github.login, $scope.repoName, message).then(function(res){
+            console.log('success!', res.data);
+          })
+        }else {
+          console.log('Sorry, an error has occurred while committing');
+        }
+      });
+    }
   });
 ;'use strict';
 
@@ -340,11 +447,37 @@ angular.module('appceptionApp')
       });
     }
 
+    var getBranches = function(githubLogin, repoName) {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/branches',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName
+        }
+      })
+    };
+
+    var createBranch = function(githubLogin, repoName, baseBranchName, newBranchName) {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/createbranch',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName,
+          baseBranchName: baseBranchName,
+          newBranchName: newBranchName
+        }
+      })
+    }
+
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
       createRepo: createRepo,
-      createCommit: createCommit
+      createCommit: createCommit,
+      createBranch: createBranch,
+      getBranches: getBranches
     };
   });
 ;'use strict';
@@ -437,18 +570,33 @@ angular.module('appceptionApp')
       }
     });
 
-    // $scope.getRepoFiles = function(repo) {
-    //   Auth.isLoggedInAsync(function(boolean) {
-    //     if(boolean === true){
-    //       var user = Auth.getCurrentUser()
-    //       github.getRepoFiles(user.github.login, repo).then(function(res) {
-    //         $scope.files = res.data
-    //       })
-    //     }else {
-    //       $scope.files = 'Sorry, no files have been found';
-    //     }
-    //   })
-    // }
+
+    var insertRepoIntoLocalDB = function(repo, items) {
+
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback('makedrive')
+      });
+      
+      // iterate through the items from the repo.
+      for(var i =0; i < items.length; i++){
+        var item = items[i];
+
+        var filePath = '/'+repo + '/' + item[0].path.replace(/^.*?\//, '');
+
+        // if item has no content, create a directory
+        if(! item[0].hasOwnProperty('content')) {
+          filer.mkdir( filePath , function(err){
+            if(err) throw err;
+          });
+        // if item has content, create a file
+        }  else {
+          filer.writeFile(filePath , item[0].content, function(error) {
+            if(error) throw error;
+          })
+        }
+      }
+    };
 
 
     // Makes a call to Github API to get the files for a particular repo.
@@ -456,42 +604,20 @@ angular.module('appceptionApp')
     $scope.getRepoFiles = function(repo) {
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
-          var user = Auth.getCurrentUser()
+          var user = Auth.getCurrentUser();
 
           // Fetches the files for a particular repo
           github.getRepoFiles(user.github.login, repo)
           .then(function(res) {
-            console.log('downloading zip file')
 
-            var items = res.data;
-
-            var filer = new Filer.FileSystem({
-              name: 'files',
-              provider: new Filer.FileSystem.providers.Fallback('makedrive')
-            });
-
-            // iterate through the items from the repo.
-            for(var i =0; i < items.length; i++){
-              var item = items[i];
-
-              var filePath = '/'+repo + '/' + item[0].path.replace(/^.*?\//, '');
-
-              // if item has no content, create a directory
-              if(! item[0].hasOwnProperty('content')) {
-                filer.mkdir( filePath , function(err){
-                  if(err) throw err;
-                })
-              // if item has content, create a file
-              }  else {
-                filer.writeFile(filePath , item[0].content, function(error) {
-                  if(error) throw error;
-                });
-              }
-            }
+            console.log('downloading zip file');
+            // insert the files into the user's browser local database 
+            insertRepoIntoLocalDB(repo, res.data);
 
             $state.go('files', {repoName: repo})
 
-          })
+          });
+
         }else {
           $scope.files = 'Sorry, no files have been found';
         }
@@ -602,9 +728,7 @@ angular.module('appceptionApp')
   .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
-      console.log("$cookieStore.get('token')",$cookieStore.get('token'))
       currentUser = User.get();
-      console.log('auth.service.js: get.(token)');
     }
 
     return {
@@ -716,9 +840,7 @@ angular.module('appceptionApp')
        */
       isLoggedInAsync: function(cb) {
         if(currentUser.hasOwnProperty('$promise')) {
-          // console.log(currentUser, cb)
           currentUser.$promise.then(function() {
-            console.log('cb called')
             cb(true);
           }).catch(function() {
             cb(false);
