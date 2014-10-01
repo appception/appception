@@ -34,7 +34,8 @@ exports.index = function(req, response) {
 
   // get list of repos
   github.repos.getFromUser({
-    user: githubLogin
+    user: githubLogin,
+    per_page: 100
   }, function(err, data) {
     if (err) {
       console.log("ERROR: projects.controller.js: get all repos", err);
@@ -45,6 +46,7 @@ exports.index = function(req, response) {
     for (var key in data) {
       if (data[key].name === userPageName) { // user has User Page
         //console.log("\n\nFOUND USE PAGE: ", data[key].name, ", proceeding with Projects page load...");
+        console.log(data)
         return response.json(data);
       } // end if (user has user page)
     } // end for (key in data)
