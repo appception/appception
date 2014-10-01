@@ -45,7 +45,7 @@ angular.module('appceptionApp')
       })
     };
 
-    var createCommit = function(githubLogin, repoName, message) {
+    var createCommit = function(githubLogin, repoName, message, filesArray) {
       console.log('inside createCommit')
       return $http({
         method: 'GET',
@@ -53,7 +53,8 @@ angular.module('appceptionApp')
         params: {
           githubLogin: githubLogin,
           repoName: repoName,
-          message: message
+          message: message,
+          filesArray: filesArray
         }
       })
     }

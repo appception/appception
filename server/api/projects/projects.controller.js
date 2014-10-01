@@ -218,6 +218,26 @@ exports.commit = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var message = req.query.message;
+  var filesArray = req.query.filesArray;
+
+  console.log('filesArray before parse',filesArray)
+
+  for(var i = 0; i < filesArray.length; i++) {
+    filesArray[i] = JSON.parse(filesArray[i])
+  }
+
+  console.log('filesArray after parse',filesArray)
+  console.log('hard coded array of objects',[{
+    "path": "index.html",
+    "mode": "100644",
+    "type": "blob",
+    "content": "hello this is NOT dog"
+  }, {
+    "path": "main.css",
+    "mode": "100644",
+    "type": "blob",
+    "content": "who is it?"
+  }])
 
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
@@ -255,17 +275,7 @@ exports.commit = function (req, response) {
           github.gitdata.createTree({
             user: githubLogin,
             repo: repoName,
-            tree: [{
-              "path": "index.html",
-              "mode": "100644",
-              "type": "blob",
-              "content": "hello this is NOT dog"
-            }, {
-              "path": "main.css",
-              "mode": "100644",
-              "type": "blob",
-              "content": "who is it?"
-            }],
+            tree: filesArray,
             base_tree: baseTreeSha
           }, function (err, res) {
             if (err) {

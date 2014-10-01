@@ -114,16 +114,28 @@ angular.module('appceptionApp')
 
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
-      Auth.isLoggedInAsync(function(boolean) {
-        if(boolean === true){
-          var user = Auth.getCurrentUser()
-          console.log('user: ', user)
-          github.createCommit(user.github.login, $scope.repoName, message).then(function(res){
-            console.log('success!', res.data);
-          })
-        }else {
-          console.log('Sorry, an error has occurred while committing');
+      exportLocalDB(function(filesArray) {
+
+        for(var i = 0; i < filesArray.length; i++) {
+          filesArray[i]["mode"] = '100644';
+          filesArray[i]["type"] = 'blob';
+          filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
+          // JSON.parse(filesArray[i])
         }
-      });
+        filesArray.shift()
+        console.log(filesArray)
+
+        Auth.isLoggedInAsync(function(boolean) {
+          if(boolean === true){
+            var user = Auth.getCurrentUser()
+            console.log('user: ', user)
+            github.createCommit(user.github.login, $scope.repoName, message, filesArray).then(function(res){
+              console.log('success!', res.data);
+            })
+          }else {
+            console.log('Sorry, an error has occurred while committing');
+          }
+        });
+      })
     }
   });
