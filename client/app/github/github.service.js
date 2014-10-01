@@ -91,10 +91,36 @@ angular.module('appceptionApp')
       });
     }
 
+    var getBranches = function(githubLogin, repoName) {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/branches',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName
+        }
+      })
+    };
+
+    var createBranch = function(githubLogin, repoName, baseBranchName, newBranchName) {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/createbranch',
+        params: {
+          githubLogin: githubLogin,
+          repoName: repoName,
+          baseBranchName: baseBranchName,
+          newBranchName: newBranchName
+        }
+      })
+    }
+
     return {
       getRepos: getRepos,
       getRepoFiles: getRepoFiles,
       createRepo: createRepo,
-      createCommit: createCommit
+      createCommit: createCommit,
+      createBranch: createBranch,
+      getBranches: getBranches
     };
   });

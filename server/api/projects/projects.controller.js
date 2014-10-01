@@ -34,7 +34,8 @@ exports.index = function(req, response) {
 
   // get list of repos
   github.repos.getFromUser({
-    user: githubLogin
+    user: githubLogin,
+    per_page: 100
   }, function(err, data) {
     if (err) {
       console.log("ERROR: projects.controller.js: get all repos", err);
@@ -45,6 +46,7 @@ exports.index = function(req, response) {
     for (var key in data) {
       if (data[key].name === userPageName) { // user has User Page
         //console.log("\n\nFOUND USE PAGE: ", data[key].name, ", proceeding with Projects page load...");
+        console.log(data)
         return response.json(data);
       } // end if (user has user page)
     } // end for (key in data)
@@ -203,6 +205,7 @@ exports.newRepo = function (req, res) {
 
           })
         }).then(function () {
+          createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
         }); // end forEachAsync
       }); // end fs.readdir
@@ -364,5 +367,66 @@ exports.doesUserHaveUserPage = function (username) {
   }); // end github.repos.getFromUser
 }; // end doesUserHaveUserPage
 
+exports.getBranches = function(req, response) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
 
+  github.repos.getBranches({
+    user: githubLogin,
+    repo: repoName
+  }, function(err, res) {
+    if(err) {
+      console.log('get branches error:', err)
+    } else {
+      console.log('get branches success:', res)
+
+      return response.json(res)
+
+    }
+  })
+}
+
+exports.createBranch = function(req, res) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+  var baseBranchName = req.query.baseBranchName;
+  var newBranchName = req.query.newBranchName;
+
+  return res.json(createBranchHelper(githubLogin, repoName, baseBranchName, newBranchName))
+}
+
+
+var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
+  github.gitdata.getReference({
+    user: username,
+    repo: repoName,
+    ref: 'heads/' + baseBranchName
+  }, function(err, res) {
+    if(err) {
+      console.log('create branch get reference error:', err)
+    } else {
+      console.log('create branch get reference success:', res)
+      var referenceSha = res.object.sha
+
+      github.authenticate({
+        type: "oauth",
+        token: token.token
+      });
+
+      github.gitdata.createReference({
+        user: username,
+        repo: repoName,
+        ref: 'refs/heads/' + newBranchName,
+        sha: referenceSha
+      }, function(err, res) {
+        if(err) {
+          console.log('create branch create reference error:', err)
+        } else {
+          console.log('create branch create reference success:', res)
+          return res
+        }
+      })
+    }
+  })
+}
 
