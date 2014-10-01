@@ -218,6 +218,25 @@ exports.commit = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var message = req.query.message;
+  var filesArray = req.query.filesArray;
+
+  console.log(filesArray)
+
+  // for(var i = 0; i < filesArray.length; i++) {
+  //   filesArray[iJSON.parse
+  // }
+
+  console.log([{
+              "path": "index.html",
+              "mode": "100644",
+              "type": "blob",
+              "content": "hello this is NOT dog"
+            }, {
+              "path": "main.css",
+              "mode": "100644",
+              "type": "blob",
+              "content": "who is it?"
+            }])
 
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
