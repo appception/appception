@@ -117,11 +117,12 @@ angular.module('appceptionApp')
       exportLocalDB(function(filesArray) {
 
         for(var i = 0; i < filesArray.length; i++) {
-          filesArray[i]["mode"] = 100644;
+          filesArray[i]["mode"] = '100644';
           filesArray[i]["type"] = 'blob';
           filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
           // JSON.parse(filesArray[i])
         }
+        filesArray.shift()
         console.log(filesArray)
 
         Auth.isLoggedInAsync(function(boolean) {
