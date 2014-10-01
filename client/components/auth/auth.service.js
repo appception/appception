@@ -116,7 +116,6 @@ angular.module('appceptionApp')
        */
       isLoggedInAsync: function(cb) {
         if(currentUser.hasOwnProperty('$promise')) {
-          // console.log(currentUser, cb)
           currentUser.$promise.then(function() {
             cb(true);
           }).catch(function() {
