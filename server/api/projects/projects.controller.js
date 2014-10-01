@@ -203,7 +203,7 @@ exports.newRepo = function (req, res) {
 
           })
         }).then(function () {
-          exports.createBranch(githubLogin, repoName, 'master', 'gh-pages')
+          createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
         }); // end forEachAsync
       }); // end fs.readdir
@@ -365,7 +365,36 @@ exports.doesUserHaveUserPage = function (username) {
   }); // end github.repos.getFromUser
 }; // end doesUserHaveUserPage
 
-exports.createBranch = function(username, repoName, baseBranchName, newBranchName) {
+exports.getBranches = function(req, response) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+
+  github.repos.getBranches({
+    user: githubLogin,
+    repo: repoName
+  }, function(err, res) {
+    if(err) {
+      console.log('get branches error:', err)
+    } else {
+      console.log('get branches success:', res)
+
+      return response.json(res)
+
+    }
+  })
+}
+
+exports.createBranch = function(req, res) {
+  var githubLogin = req.query.githubLogin;
+  var repoName = req.query.repoName;
+  var baseBranchName = req.query.baseBranchName;
+  var newBranchName = req.query.newBranchName;
+
+  return res.json(createBranchHelper(githubLogin, repoName, baseBranchName, newBranchName))
+}
+
+
+var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
     user: username,
     repo: repoName,
@@ -392,6 +421,7 @@ exports.createBranch = function(username, repoName, baseBranchName, newBranchNam
           console.log('create branch create reference error:', err)
         } else {
           console.log('create branch create reference success:', res)
+          return res
         }
       })
     }
