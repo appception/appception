@@ -144,7 +144,7 @@ exports.files = function (req, res) {
 
 
 // Create a new repo
-exports.newRepo = function (req, res) {
+exports.newRepo = function (req, response) {
 
   console.log('inside server new repo')
   var githubLogin = req.query.githubLogin;
@@ -207,6 +207,7 @@ exports.newRepo = function (req, res) {
         }).then(function () {
           createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
+          return response.json('Complete')
         }); // end forEachAsync
       }); // end fs.readdir
     }
@@ -225,19 +226,6 @@ exports.commit = function (req, response) {
   for(var i = 0; i < filesArray.length; i++) {
     filesArray[i] = JSON.parse(filesArray[i])
   }
-
-  console.log('filesArray after parse',filesArray)
-  console.log('hard coded array of objects',[{
-    "path": "index.html",
-    "mode": "100644",
-    "type": "blob",
-    "content": "hello this is NOT dog"
-  }, {
-    "path": "main.css",
-    "mode": "100644",
-    "type": "blob",
-    "content": "who is it?"
-  }])
 
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref

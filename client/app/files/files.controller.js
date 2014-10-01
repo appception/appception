@@ -5,7 +5,10 @@ angular.module('appceptionApp')
 
   	$scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;
-    $scope.isLoaded = false;
+    $scope.checkBranches = false;
+    $scope.success = false;
+    $scope.failure = false;
+    $scope.committing = false;
 
 		Auth.isLoggedInAsync(function(boolean) {
     	if(boolean === true){
@@ -20,20 +23,12 @@ angular.module('appceptionApp')
                 $scope.isDeployed = true;
               }
             }
-            $scope.isLoaded = true;
+            $scope.checkBranches = true;
           });
 	  	}else {
   			console.log('Sorry, an error has occurred while loading the user');
   		}
 	  });
-
-  	$scope.createCommit = function(message) {
-  		var message = prompt('Enter a commit message:')
-  		github.createCommit($scope.username, $scope.repoName, message)
-  			.then(function(res){
-        	console.log('success!', res.data);
-	    	});
-  	};
 
     $scope.addDeployBranch = function() {
       // Create a gh-pages branch
@@ -114,28 +109,37 @@ angular.module('appceptionApp')
 
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
+      $scope.committing = true;
       exportLocalDB(function(filesArray) {
 
         for(var i = 0; i < filesArray.length; i++) {
           filesArray[i]["mode"] = '100644';
           filesArray[i]["type"] = 'blob';
           filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
-          // JSON.parse(filesArray[i])
         }
         filesArray.shift()
-        console.log(filesArray)
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
             var user = Auth.getCurrentUser()
             console.log('user: ', user)
-            github.createCommit(user.github.login, $scope.repoName, message, filesArray).then(function(res){
-              console.log('success!', res.data);
-            })
+            github.createCommit(user.github.login, $scope.repoName, message, filesArray)
+              .then(function(res){
+                console.log('success!', res.data);
+                $scope.committing = false;
+                $scope.success = true;
+              })
           }else {
             console.log('Sorry, an error has occurred while committing');
+            $scope.committing = false;
+            $scope.failure = true
           }
         });
       })
+    }
+
+    $scope.dismissNotification = function() {
+      $scope.success = false;
+      $scope.failure = false;
     }
   });
