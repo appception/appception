@@ -1,0 +1,28 @@
+{
+  "name": "filer-dialogs",
+  "main": "filer-dialogs.js",
+  "authors": [
+    "scottdowne <scott.downe@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "4.1.0"
+  },
+  "homepage": "https://github.com/ScottDowne/filer-dialogs",
+  "_release": "77f88127f0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "77f88127f01a5c707330e5f241fd97a8a63055ab"
+  },
+  "_source": "https://github.com/ScottDowne/filer-dialogs.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/ScottDowne/filer-dialogs.git"
+}

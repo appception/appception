@@ -1,0 +1,19 @@
+{
+  "name": "filer-dialogs",
+  "main": "filer-dialogs.js",
+  "version": "0.0.0",
+  "authors": [
+    "scottdowne <scott.downe@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "4.1.0"
+  }
+}

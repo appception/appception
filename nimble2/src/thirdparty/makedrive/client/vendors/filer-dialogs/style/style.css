@@ -1,0 +1,205 @@
+.file-dialog-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  overflow: auto;
+  display: table;
+}
+.file-dialog-inner-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+.file-dialog-backdrop {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 1040;
+  background-color: #000;
+  opacity: 0.4;
+}
+.makedrive-file-dialog {
+  position: relative;
+  background-color: #DFE2E2;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  top: 0px;
+  margin: auto;
+  z-index: 1051;
+  width: 600px;
+  border-radius: 6px;
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
+  background-clip: padding-box;
+  outline: medium none;
+}
+.makedrive-file-dialog .dialog-button {
+  cursor: pointer;
+  border-radius: 2px;
+}
+.makedrive-file-dialog .file-dialog-title {
+  color: #000;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: normal;
+}
+.makedrive-file-dialog .file-dialog-footer .open-button {
+  background-color: #E0F0FA;
+}
+.makedrive-file-dialog .file-dialog-footer .open-button.disabled {
+  cursor: not-allowed;
+}
+.makedrive-file-dialog .dialog-button:focus {
+  border: 1px solid #3F8EB5;
+  box-shadow: none;
+}
+.makedrive-file-dialog .file-dialog-header .input-label {
+  width: 40px;
+  vertical-align: middle;
+  display: inline-block;
+}
+.makedrive-file-dialog .file-dialog-header,
+.makedrive-file-dialog .file-dialog-footer {
+  background-color: #F5F5F5;
+}
+.makedrive-file-dialog .file-icon {
+  font-family: FontAwesome;
+  font-size: 38px;
+  cursor: pointer;
+  padding: 3px;
+  opacity: 0.5;
+}
+.makedrive-file-dialog .file-icon.fa-file-code-o {
+  color: #4CB574;
+}
+.makedrive-file-dialog .file-icon.fa-video-code-o {
+  color: #B54C4C;
+}
+.makedrive-file-dialog .file-icon.fa-audio-code-o {
+  color: #B54C4C;
+}
+.makedrive-file-dialog .file-icon.fa-folder {
+  color: #B5994C;
+}
+.makedrive-file-dialog .file-icon.fa-file-text-o {
+  color: #4C81B5;
+}
+.makedrive-file-dialog .file-icon.fa-file-image-o {
+  color: #AB4CB5;
+}
+.makedrive-file-dialog .file-name-container,
+.makedrive-file-dialog .file-path {
+  position: relative;
+}
+.makedrive-file-dialog .file-name-container .fa-icon,
+.makedrive-file-dialog .file-path .fa-icon {
+  position: absolute;
+  font-family: FontAwesome;
+  color: #888;
+  bottom: 3px;
+  width: 14px;
+}
+.makedrive-file-dialog .file-name-container .drop-down,
+.makedrive-file-dialog .file-path .drop-down {
+  cursor: pointer;
+  right: 10px;
+}
+.makedrive-file-dialog .file-selector-box {
+  position: absolute;
+}
+.makedrive-file-dialog .file-name-container .floppy-icon,
+.makedrive-file-dialog .file-path .floppy-icon,
+.makedrive-file-dialog .file-name-container .back-button,
+.makedrive-file-dialog .file-path .back-button {
+  cursor: pointer;
+  left: 48px;
+}
+.makedrive-file-dialog .file {
+  position: relative;
+  padding: 15px 0 40px;
+  display: inline-block;
+  width: 95px;
+  max-height: 40px;
+  text-align: center;
+}
+.makedrive-file-dialog .selected div .file-icon {
+  opacity: 1;
+}
+.makedrive-file-dialog .file-name {
+  margin-top: 8px;
+  color: #666;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+.makedrive-file-dialog .file-name div {
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.makedrive-file-dialog .file:hover .file-name div,
+.makedrive-file-dialog .file.selected .file-name div {
+  word-wrap: break-word;
+  white-space: normal;
+  color: #000;
+}
+.makedrive-file-dialog .file-dialog-body {
+  padding: 15px;
+  overflow-y: auto;
+  max-height: 317px;
+  height: 317px;
+  background-color: #FFF;
+}
+.makedrive-file-dialog .save-as-name {
+  padding-bottom: 8px;
+}
+.makedrive-file-dialog .file-dialog-header {
+  padding: 9px 15px;
+  border-radius: 4px 4px 0px 0px;
+  border-bottom: 1px solid #C3C6C5;
+}
+.makedrive-file-dialog .file-dialog-footer {
+  text-align: right;
+  border-top: 1px solid #C3C6C5;
+  box-shadow: none;
+  padding: 10px 15px 10px;
+  white-space: nowrap;
+  border-radius: 0px 0px 4px 4px;
+}
+.makedrive-file-dialog .file-dialog-footer button {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  border: 1px solid #B2B5B5;
+  border-radius: 3px;
+  box-shadow: 0px 1px 0px #F3F3F3 inset;
+  padding: 4px 12px;
+  margin-bottom: 0px;
+  margin-left: 5px;
+}
+.makedrive-file-dialog .file-dialog-header div {
+  padding-top: 10px;
+}
+.makedrive-file-dialog .file-dialog-header div input {
+  border-radius: 2px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: 2px;
+  color: #666;
+  padding-bottom: 3px;
+  border: 1px solid #888;
+  transition: border 0.25s ease 0s;
+}
+.makedrive-file-dialog .file-dialog-header div input:focus {
+  color: #000;
+  border: 1px solid #3F8EB5;
+}
+.makedrive-file-dialog .file-dialog-header div input.folder-name {
+  width: 480px;
+}
+

@@ -1,0 +1,29 @@
+{
+  "name": "filer",
+  "version": "0.0.9",
+  "main": "dist/filer.js",
+  "devDependencies": {
+    "mocha": "1.17.1",
+    "chai": "1.9.0"
+  },
+  "ignore": [
+    "build",
+    "examples",
+    "package.json",
+    "tests",
+    "gruntfile.js",
+    "node_modules",
+    "src",
+    "tools"
+  ],
+  "homepage": "https://github.com/filerjs/filer",
+  "_release": "0.0.9",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.9",
+    "commit": "61077760a2c245e1df10827425084f6bea7428ce"
+  },
+  "_source": "git://github.com/filerjs/filer.git",
+  "_target": "0.0.9",
+  "_originalSource": "filer"
+}

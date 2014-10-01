@@ -1,0 +1,19 @@
+{
+  "name": "makedrive-syncicon",
+  "title": "MakeDrive Sync Icon for Brackets",
+  "description": "Dropbox-styled status icon for MakeDrive syncing in Brackets",
+  "homepage": "https://github.com/cdot-brackets-extensions/makedrive-sync-icon",
+  "version": "0.0.1",
+  "author": "The CDOT Team (https://github.com/cdot-brackets-extensions)",
+  "license": "MIT",
+  "engines": {
+    "brackets": ">=0.28.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-jshint": "^0.10.0"
+  },
+  "scripts": {
+    "test": "grunt"
+  }
+}

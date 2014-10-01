@@ -1,0 +1,105 @@
+<!doctype html>
+
+<html lang="en" dir="ltr" xmlns:ng="http://angularjs.org" ng-app="makedriveApp" id="ng-app">
+  <head>
+    <meta charset="utf-8">
+    <!-- Force the latest IE version, in various cases when it may fall back to IE7 mode. But It is invalid html. -->
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <title>Webmaker MakeDrive Demo</title>
+    <meta name="description" content="Mozilla MakeDrive Demo">
+    <meta name="viewport" content="width=device-width">
+    <meta name="keywords" content="Mozilla MakeDrive" />
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css" />
+    <script type='text/javascript' src='../dist/makedrive.js'></script>
+
+  </head>
+  <body>
+
+    <div ng-controller="createUserController"></div>
+    <div id="wrapper" ng-controller="init">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper" >
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand" ng-controller="make">
+            <a ng-click="mkfile(path)"><i class="fa fa-file-o save"></i></a>
+            <a ng-click="open()"><i class="fa fa-folder-open-o save" ></i></a>
+            <a ng-disabled="canSave" ng-click="save()"><i class="fa fa-floppy-o save" ng-class="{'canSave': !canSave }"></i></a>
+            <a ng-disabled="selectedPath" ng-click="delete()"><i class="fa fa-trash-o save" ng-class="{'canSave': !selectedPath }"></i></a>
+            <a ng-disabled="canSave" ng-click="rename()"><i class="fa fa-pencil save" ng-class="{'canSave': !canSave }"></i></a>
+          </li>
+          <li>
+            <div id="jstree"></div>
+          </li>
+        </ul>
+      </div>
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Mozilla MakeDrive</a>
+          </div>
+
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+              <div ng-include="'/demo/partials/user.html'"></div>
+
+              </li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+        <!-- /#sidebar-wrapper -->
+        <div>
+        <div id="success" class="alert alert-success">
+          <span class="fa fa-check"></span>
+            Sync completed!
+        </div>
+        <div id="error" class="alert alert-danger">
+          <span class="fa fa-times"></span>
+            Oops! You have an error in your sync process: {{error}}
+        </div>
+        </div>
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div class="row">
+            <div ng-controller="clickToggle">
+              <span class="editor-button side-bar-button" ng-class="{'side-bar-open': !toggled }">
+                <i ng-click="toggle()" title="show/hide sidebar" ng-hide="toggled" class="fa fa-arrow-circle-left" ng-cloak></i>
+                <i ng-click="toggle()" title="show/hide sidebar" ng-show="toggled" class="fa fa-arrow-circle-right" ng-cloak></i>
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+<pre ng-controller="editor" id="editor">
+function callback(x) {
+  log('received "' + x + '"');
+}
+
+function request() {
+    $.get('request', callback);
+}
+
+request();</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+
+    </div>
+    <script src="/demo/js/compiled/dependencies.min.js"></script>
+    <script src="https://login.persona.org/include.js"></script>
+    <script src="/demo/js/compiled/app.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+
+  <testsuite name="CommandManager" errors="0" tests="6" failures="0" time="0.035" timestamp="2014-10-01T18:09:55.339Z">
+    
+      <testcase assertions="10" classname="CommandManager" name="register and get a command and validate parameters" time="0.023">
+        
+      </testcase>
+    
+      <testcase assertions="1" classname="CommandManager" name="execute a command" time="0.001">
+        
+      </testcase>
+    
+      <testcase assertions="1" classname="CommandManager" name="not execute a disabled command" time="0.001">
+        
+      </testcase>
+    
+      <testcase assertions="2" classname="CommandManager" name="set enabled state and trigger enabledStateChange" time="0.001">
+        
+      </testcase>
+    
+      <testcase assertions="2" classname="CommandManager" name="set checked state and trigger checkedStateChange" time="0.001">
+        
+      </testcase>
+    
+      <testcase assertions="2" classname="CommandManager" name="rename command trigger nameChange" time="0.003">
+        
+      </testcase>
+    
+  </testsuite>
+
+</testsuites>
