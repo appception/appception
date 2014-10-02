@@ -133,14 +133,14 @@ angular.module('appceptionApp')
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
       $scope.committing = true;
-      exportLocalDB(function(filesArray) {
+      exportLocalDB().then(function(filesArray) {
 
         for(var i = 0; i < filesArray.length; i++) {
           filesArray[i]["mode"] = '100644';
           filesArray[i]["type"] = 'blob';
           filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
         }
-        filesArray.shift()
+        //filesArray.shift()
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
