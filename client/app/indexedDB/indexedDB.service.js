@@ -3,13 +3,15 @@
 angular.module('appceptionApp')
   .factory('indexedDB', function ($q) {
 
-    // insert files and directories for a given repo
-    // into the user's browsers local database
+    var databaseName = 'makedrive';
+
+    // Insert files and directories for a given repo
+    // into the user's browsers local database.
     var insertRepoIntoLocalDB = function(repo, items) {
 
       var filer = new Filer.FileSystem({
         name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback('makedrive')
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
       });
       
       // iterate through the items from the repo.
@@ -32,12 +34,14 @@ angular.module('appceptionApp')
       }
     };
 
-    // export files and directories from the user's browsers local database
+    // Export files and directories from the user's browsers local database.
+    // exportLocalDB() returns a flat array containing information about 
+    // all the files and folders.
     var exportLocalDB = function(){
 
       var filer = new Filer.FileSystem({
         name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback('makedrive')
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
       });
       var shell = filer.Shell();
 
@@ -47,13 +51,16 @@ angular.module('appceptionApp')
       // turn shell.ls callback into a promise
       var defer = $q.defer();
 
-      // shell.ls get list of all files and directories in user's browsers local DB
+      // shell.ls returns a  nested list of all files and directories 
+      //in user's browsers local DB
       shell.ls('/', {recursive: true}, function(err, entries){
         // console.log('entries', entries[0])
         if (err) throw err;
         // counter keeps track of the number of promises
         var counter = 0;
 
+        // traverse the nested directory structure to produce a flat array
+        // of files and folders. 
         var traverseDirectory = function(item, fullpath){
 
           // loop through every item in a directory
@@ -62,7 +69,7 @@ angular.module('appceptionApp')
             var itemPath = fullpath + '/' + entry.path;
 
             // if item is a file, read the file,  
-            // and add  file path and content to promises
+            // and add  file path and content 
             if(entry.type === 'FILE'){
 
               (function(i) {
@@ -77,7 +84,7 @@ angular.module('appceptionApp')
                 }) 
               })(counter++)
 
-            // if item is directory, add directory path to promises, and 
+            // if item is directory, add directory path, and 
             //  recursively traverse the directory
             } else if (entry.type === 'DIRECTORY') {
              // console.log('directory:', itemPath);
@@ -114,9 +121,45 @@ angular.module('appceptionApp')
 
     };
 
+    // Empty the user's local database so there will only be one repo
+    // in the local database at a time
+    var emptyLocalDB = function() {
+
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
+      var shell = filer.Shell();
+
+      // gets  every directory file at the root
+      filer.readdir('/', function(err, files){
+        if (err) throw err;
+        console.log(files)
+
+        // delete each root file and directory
+        angular.forEach(files, function(file, i){
+          console.log(file)
+
+          shell.rm(file, {recursive : true }, function(err){
+            if (err) throw err;
+            console.log(file, ' from indexedDB is cleared.')
+          })
+        })
+
+      })
+
+
+
+      // shell.rm('/test3', {recursive : true }, function(err){
+      //   if (err) throw err;
+      //   console.log('indexedDB is cleared.')
+      // });
+    }
+
     return {
       exportLocalDB: exportLocalDB,
-      insertRepoIntoLocalDB: insertRepoIntoLocalDB
+      insertRepoIntoLocalDB: insertRepoIntoLocalDB,
+      emptyLocalDB: emptyLocalDB
     }
 
   });

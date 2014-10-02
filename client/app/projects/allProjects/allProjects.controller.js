@@ -23,6 +23,10 @@ angular.module('appceptionApp')
       }
     });
 
+    $scope.emptyLocalDB = function(){
+      indexedDB.emptyLocalDB();
+    }
+
 
     // Makes a call to Github API to get the files for a particular repo.
     // Filer inserts the files into the client's browser local database.
