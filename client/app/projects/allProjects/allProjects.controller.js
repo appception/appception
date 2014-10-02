@@ -35,6 +35,10 @@ angular.module('appceptionApp')
         if(boolean === true){
           var user = Auth.getCurrentUser();
 
+          // empties the user's browser's local database so there is only
+          // one project in the local database at a time.
+          indexedDB.emptyLocalDB();
+
           // Fetches the files for a particular repo
           github.getRepoFiles(user.github.login, repo)
           .then(function(res) {
