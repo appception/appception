@@ -1,4 +1,4 @@
-/***********************************
+/**********************************
 ***        GRUNT   TASKS        ***
 * You can issue the following tasks:
 *
@@ -38,42 +38,18 @@ module.exports = function (grunt) {
   });
 
   //? Optional??? grunt.loadNpmTasks('grunt-express-server'); // this was originally in require(jit-...)
-  grunt.loadNpmTasks('grunt-contrib-stylus');
+  grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  // grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-autoprefixer')
-  // require('grunt-express-server')(express); // Aaron made this an include instead of part of the jit...
+  grunt.loadNpmTasks('grunt-exec'); // for executing command lines ==> https://github.com/jharding/grunt-exec
 
-  // grunt.loadNpmTasks('grunt-usemin');
-  // grunt.loadNpmTasks('grunt-angular-templates');
-  // grunt.loadNpmTasks('grunt-google-cdn');
-  // grunt.loadNpmTasks('grunt-protractor-runner');
-  // grunt.loadNpmTasks('grunt-asset-injector');
-  // grunt.loadNpmTasks('grunt-build-control');
-  // require('grunt-angular-templates')(ngTemplates);
-  // require('grunt-express-server')(express); // Aaron made this an include instead of part of the jit...
-  // useminPrepare: 'grunt-usemin',
-  // ngtemplates: 'grunt-angular-templates',
-  // cdnify: 'grunt-google-cdn',
-  // protractor: 'grunt-protractor-runner',
-  // injector: 'grunt-asset-injector',
-  // buildcontrol: 'grunt-build-control'
   // require('express')(express);
-  // require('useminPrepare')(useminPrepare);
-  // require('ngtemplates')(ngtemplates);
-  // require('cdnify')(cdnify);
-  // require('protractor')(protractor);
-  // require('injector')(injector);
-  // require('buildcontrol')(buildcontrol);
-
-  // grunt.loadNpmTasks('grunt-contrib-jshint');
-  // grunt.loadNpmTasks('grunt-build-control');
-
-
   require('time-grunt')(grunt); // Time how long tasks take (for optimizing)
 
   ////////////////////////////////////////////////////
@@ -142,7 +118,6 @@ module.exports = function (grunt) {
     }, // end env
 
 
-
     /***********************************
      ***   Main task configs here:   ***
      * clean
@@ -163,19 +138,6 @@ module.exports = function (grunt) {
       // serverFiles: 'server/tempfiles'
     }, // end clean
 
-
-    /*************************************************************
- _        _______  _        _                         _______  _        _______  _  _  _
-| \    /\(  ____ \( \      ( \   |\     /|  |\     /|(  ____ \( \      (  ____ )( )( )( )
-|  \  / /| (    \/| (      | (   ( \   / )  | )   ( || (    \/| (      | (    )|| || || |
-|  (_/ / | (__    | |      | |    \ (_) /   | (___) || (__    | |      | (____)|| || || |
-|   _ (  |  __)   | |      | |     \   /    |  ___  ||  __)   | |      |  _____)| || || |
-|  ( \ \ | (      | |      | |      ) (     | (   ) || (      | |      | (      (_)(_)(_)
-|  /  \ \| (____/\| (____/\| (____/\| |     | )   ( || (____/\| (____/\| )       _  _  _
-|_/    \/(_______/(_______/(_______/\_/     |/     \|(_______/(_______/|/       (_)(_)(_)
-
-*************************************************************/
-
     stylus: { // Compiles Stylus to CSS
       compile: {
         options: {
@@ -192,10 +154,8 @@ module.exports = function (grunt) {
       } // end compile
     }, // end stylus
 
-
     // injector: {
     //   options: {
-
     //   },
     //   // Inject component styl into app.styl
     //   stylus: {
@@ -245,20 +205,6 @@ module.exports = function (grunt) {
       }
     }, // wiredep
 
-
-
-    /*************************************************************
-,---------. .---.  .---.    ____    ,---.   .--..--.   .--.             ____     __   ,-----.      ___    _  .---.
-\          \|   |  |_ _|  .'  __ `. |    \  |  ||  | _/  /              \   \   /  /.'  .-,  '.  .'   |  | | \   /
- `--.  ,---'|   |  ( ' ) /   '  \  \|  ,  \ |  || (`' ) /                \  _. /  '/ ,-.|  \ _ \ |   .'  | | |   |
-    |   \   |   '-(_{;}_)|___|  /  ||  |\_ \|  ||(_ ()_)                  _( )_ .';  \  '_ /  | :.'  '_  | |  \ /
-    :_ _:   |      (_,_)    _.-`   ||  _( )_\  || (_,_)   __          ___(_ o _)' |  _`,/ \ _/  |'   ( \.-.|   v
-    (_I_)   | _ _--.   | .'   _    || (_ o _)  ||  |\ \  |  |        |   |(_,_)'  : (  '\_/ \   ;' (`. _` /|  _ _
-   (_(=)_)  |( ' ) |   | |  _( )_  ||  (_,_)\  ||  | \ `'   /        |   `-'  /    \ `"/  \  ) / | (_ (_) _) (_I_)
-    (_I_)   (_{;}_)|   | \ (_ o _) /|  |    |  ||  |  \    /          \      /      '. \_/``".'   \ /  . \ /(_(=)_)
-    '---'   '(_,_) '---'  '.(_,_).' '--'    '--'`--'   `'-'            `-..-'         '-----'      ``-'`-''  (_I_)
-*************************************************************/
-
     autoprefixer: {
       options: {
         browsers: ['> 1%']
@@ -269,7 +215,6 @@ module.exports = function (grunt) {
         }
       }
     },
-
 
     concat: { // concatenate js and css files
       options: {
@@ -337,9 +282,81 @@ module.exports = function (grunt) {
           nospawn: true // Without this option specified express won't be reloaded
         }
       }, // end express
-    } // end watch
+    }, // end watch
 
 
+    /************************************************
+     *              exec:
+     * command (alias: cmd): The shell command to be executed. Must be a string or a function that returns a string.
+     * stdout: If true, stdout will be printed. Defaults to true.
+     * stderr: If true, stderr will be printed. Defaults to true.
+     * cwd: Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
+     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match. Defaults to 0. Can be an array for multiple allowed exit codes.
+     * callback: The callback function passed child_process.exec. Defaults to a noop.
+     * If the configuration is instead a simple string, it will be interpreted as a full command itself:
+     * 
+     *   exec: {
+     *     echo_something: 'echo "This is something"'
+     *   }
+     ***********************************************/
+    exec: { // executes on the command line
+      startExec: {
+        cmd: 'echo " = = = = Installing NPM and Bower components = = = ="'
+      },
+      appception: {
+        command: 'bower install --recursive' // install bower but NOT npm, or we'll be in a loop!!!
+      },
+      nimble: {  // package
+        cwd: './nimble',
+        command: 'npm install --recursive && grunt build',
+        exitCode: 6
+      },
+      mustache: {  // package
+        cwd: './nimble/src/thirdparty/mustache',
+        command: 'npm install --recursive'
+      },
+      acorn: {  // package
+        cwd: './nimble/src/extensions/default/JavaScriptCodeHints/thirdparty/acorn',
+        command: 'npm install --recursive'
+      },
+      tern: {  // package
+        cwd: './nimble/src/extensions/default/JavaScriptCodeHints/thirdparty/tern',
+        command: 'npm install --recursive'
+      },
+      makedriveSyncIcon: {  // package  &&  bower
+        cwd: './nimble/src/extensions/default/makedrive-sync-icon',
+        command: 'npm install --recursive --force'
+      },
+      codemirror: {  // package  &&  bower
+        cwd: './nimble/src/thirdparty/CodeMirror2',
+        command: 'npm install --recursive && bower install --recursive'
+      },
+      makedrive: {  // package  &&  bower
+        cwd: './nimble/src/thirdparty/makedrive',
+        command: 'npm install --recursive && bower install --recursive'
+      },
+      requirejs: {  // package
+        cwd: './nimble/src/thirdparty/requirejs',
+        command: 'npm install --recursive'
+      },
+      text: {  // NO INSTALL package. Keeping for reference to "main" in package.json (which may be meaningless)
+        cwd: './nimble/src/thirdparty/text',
+        command: 'npm install --recursive'
+      }
+      // JSLint: {  // NOTHING
+      //   cwd: './nimble/src/extensions/default/JSLint/thirdparty/jslint',
+      //   command: 'npm install --recursive'
+      // },
+      // i18n: {  // NOTHING
+      //   cwd: './nimble/src/thirdparty/i18n',
+      //   command: 'npm install --recursive'
+      // },
+      // pathUtils: {  // NOTHING
+      //   cwd: './nimble/src/thirdparty/path-utils',
+      //   command: 'npm install --recursive'
+      // },
+    } // end exec
+    
     /**********************************************
      *     END init config
      *********************************************/
@@ -386,15 +403,16 @@ module.exports = function (grunt) {
  **********************************/
 
   grunt.registerTask('test', [
-
-    'injector',
-    'wiredep',
-    'useminPrepare',
-    'autoprefixer',
-    'ngtemplates',
-    'ngAnnotate',
-    'cdnify',
-    'usemin'
+    'exec',
+    'exec:changeDir'
+    // 'injector',
+    // 'wiredep',
+    // 'useminPrepare',
+    // 'autoprefixer',
+    // 'ngtemplates',
+    // 'ngAnnotate',
+    // 'cdnify',
+    // 'usemin'
   ]);
 
 
@@ -412,6 +430,11 @@ module.exports = function (grunt) {
     'uglify'
   ]);
 
+  grunt.registerTask('deploy', [
+    'build',
+    'exec'
+  ]);
+
   grunt.registerTask('serve', [
     'express:dev',
     'wait',
@@ -424,13 +447,3 @@ module.exports = function (grunt) {
     'serve'
   ]);
 }; // end Gruntfile
-
-/******************************
- * We might need grunt to issue the following commands during build:
- *
- *   cd nimble // to enter the nimble directory
- *   npm install --recursive // to recursively install npm packages
- *   git submodule update --init // to initialize NIMBLE's submodules!
- *
- * This is to enable the nimble submodule to function over Azure.
-******************************/
