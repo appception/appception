@@ -308,8 +308,7 @@ module.exports = function (grunt) {
       },
       nimble: {  // package
         cwd: './nimble',
-        command: 'npm install --recursive && grunt build',
-        exitCode: 6
+        command: 'npm install --recursive && grunt build'
       },
       mustache: {  // package
         cwd: './nimble/src/thirdparty/mustache',
