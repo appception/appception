@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var zlib = require('zlib');
 var fs = require('fs');
+var path = require('path')
 var config = require('../../config/environment');
 // var fstream = require('fstream');
 var unzip = require('unzip');
@@ -101,7 +102,7 @@ exports.files = function (req, res) {
     // if we wanted to let users pick a different branch to look at we can change 'master' here
     file = file.replace(/:ref/g, 'master')
 
-    var filePath = config.serverRoot + 'tempfiles/' + githubRepo + '.zip';
+    var filePath = path.normalize(config.serverRoot + 'tempfiles/' + githubRepo + '.zip');
 
     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
     request.get({
@@ -217,14 +218,16 @@ exports.newRepo = function (req, response) {
 
 
 exports.commit = function (req, response) {
-  var githubLogin = req.query.githubLogin;
-  var repoName = req.query.repoName;
-  var message = req.query.message;
-  var filesArray = req.query.filesArray;
-
-  for(var i = 0; i < filesArray.length; i++) {
-    filesArray[i] = JSON.parse(filesArray[i])
-  }
+  console.log('req', req)
+  var githubLogin = req.body.githubLogin;
+  var repoName = req.body.repoName;
+  var message = req.body.message;
+  var filesArray = req.body.filesArray;
+  console.log('filesArray before',filesArray)
+  // for(var i = 0; i < filesArray.length; i++) {
+  //   filesArray[i] = JSON.parse(filesArray[i])
+  // }
+  console.log('filesArray after',filesArray)
 
   createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
   createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
@@ -350,7 +353,6 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
 var createCommitHelper = function(githubLogin, repoName, branchName, filesArray, message) {
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
-  // NOTE: to deploy project, we need to add a branch called 'gh-pages'
   github.gitdata.getReference({
     user: githubLogin,
     repo: repoName,
