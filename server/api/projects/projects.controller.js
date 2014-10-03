@@ -218,14 +218,16 @@ exports.newRepo = function (req, response) {
 
 
 exports.commit = function (req, response) {
-  var githubLogin = req.query.githubLogin;
-  var repoName = req.query.repoName;
-  var message = req.query.message;
-  var filesArray = req.query.filesArray;
-
-  for(var i = 0; i < filesArray.length; i++) {
-    filesArray[i] = JSON.parse(filesArray[i])
-  }
+  console.log('req', req)
+  var githubLogin = req.body.githubLogin;
+  var repoName = req.body.repoName;
+  var message = req.body.message;
+  var filesArray = req.body.filesArray;
+  console.log('filesArray before',filesArray)
+  // for(var i = 0; i < filesArray.length; i++) {
+  //   filesArray[i] = JSON.parse(filesArray[i])
+  // }
+  console.log('filesArray after',filesArray)
 
   createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
   createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
@@ -351,7 +353,6 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
 var createCommitHelper = function(githubLogin, repoName, branchName, filesArray, message) {
   // Get reference to head of branch
   // NOTE: if we want to commit to a different branch we can change that in ref
-  // NOTE: to deploy project, we need to add a branch called 'gh-pages'
   github.gitdata.getReference({
     user: githubLogin,
     repo: repoName,

@@ -25,7 +25,7 @@ angular.module('appceptionApp')
             }
             $scope.checkBranches = true;
           });
-      }else {
+      } else {
         console.log('Sorry, an error has occurred while loading the user');
       }
     });
@@ -52,12 +52,23 @@ angular.module('appceptionApp')
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
 
+        console.log(filesArray)
+
+        filesArray.shift()
+        for(var i = filesArray.length-1; i >= 0; i--) {
+          if(!filesArray[i]["content"]){
+            console.log(filesArray[i])
+            filesArray.splice(i, 1);
+          }
+        }
+
         for(var i = 0; i < filesArray.length; i++) {
           filesArray[i]["mode"] = '100644';
           filesArray[i]["type"] = 'blob';
           filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
         }
         // filesArray.shift()
+        console.log(filesArray)
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
