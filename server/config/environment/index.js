@@ -19,6 +19,8 @@ var all = {
   // root: path.normalize(__dirname + '/../../..'),
   root: path.normalize(__dirname + '/../../..'),
 
+  serverRoot: process.env.SERVER_ROOT || 'server/',
+
   // Server port
   port: process.env.PORT || 9000,
 
