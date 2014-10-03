@@ -100,7 +100,7 @@ exports.files = function (req, res) {
     // if we wanted to let users pick a different branch to look at we can change 'master' here
     file = file.replace(/:ref/g, 'master')
 
-    var filePath = 'server/tempfiles/' + githubRepo + '.zip';
+    var filePath = './server/tempfiles/' + githubRepo + '.zip';
 
     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
     request.get({
