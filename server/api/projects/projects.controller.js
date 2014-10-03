@@ -170,12 +170,12 @@ exports.newRepo = function (req, response) {
       console.log('res: ', res)
 
       // Once new repo has been created, read the directory that contains the template files.
-      fs.readdir('server/api/projects/filetemplates/', function (err, files) {
+      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/'), function (err, files) {
 
         // Async read each file name in the array returned.
         forEachAsync(files, function (next, fileTitle, index, array) {
           // Get file contents
-          var stream = fs.createReadStream('server/api/projects/filetemplates/' + fileTitle, {
+          var stream = fs.createReadStream(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + fileTitle), {
             encoding: 'base64'
           })
 
