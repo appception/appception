@@ -101,7 +101,7 @@
     "start": "node server/app.js",
     "install": "grunt deploy",
     "postinstall": "npm run update-webdriver",
-    "postinstall": "grunt serve"
+    "postinstall": "grunt serve:production"
   },
   "private": true
 }
