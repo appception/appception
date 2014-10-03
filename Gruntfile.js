@@ -437,8 +437,7 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', [
     'express:dev',
     'wait',
-    'open',
-    'watch'
+    'open'
   ]);
 
   grunt.registerTask('default', [
