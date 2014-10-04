@@ -11,6 +11,3 @@ angular.module('appceptionApp')
       });
   });
 
-// var hideLoader = function() {
-// 	alert('im loaded')
-// }
