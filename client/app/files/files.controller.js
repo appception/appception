@@ -124,14 +124,6 @@ angular.module('appceptionApp')
     // };
 
 
-    $scope.getProjectFiles = function(){
-
-      indexedDB.exportLocalDB().then(function(result){
-        console.log('result', result)
-      });
-
-    }
-
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
       $scope.committing = true;

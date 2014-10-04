@@ -105,6 +105,11 @@ exports.index = function(req, response) {
 
 
 // Get a single projects files
+
+// Given a repo name and username,  files() will 
+// 1) download a zipped version of the repo from Github. 
+// 2) read the zipped file
+// 3) return an object that has the path and content of each file
 exports.files = function (req, res) {
   console.log('inside projects.files')
 
@@ -215,6 +220,7 @@ exports.newRepo = function (req, response) {
 
       // Once new repo has been created, read the directory that contains the template files.
       fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/'), function (err, files) {
+        var results = [];
 
         // Async read each file name in the array returned.
         forEachAsync(files, function (next, fileTitle, index, array) {
@@ -240,11 +246,17 @@ exports.newRepo = function (req, response) {
                 "name": "appception",
                 "email": "appception@gmail.com"
               }
+
+              
             }, function (err, res) {
               if (err) {
                 console.log('projects.controller.js: create file error', err, res)
               } else {
                 console.log('projects.controller.js: create file success')
+
+                var decodeResponse = new Buffer(response, 'base64').toString('ascii');
+
+                results.push({path: fileTitle, content: decodeResponse })
                 next()
               }
             })
@@ -253,10 +265,12 @@ exports.newRepo = function (req, response) {
         }).then(function () {
           createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
           console.log('All done!')
-          return response.json('Complete')
+          return response.json(results)
         }); // end forEachAsync
       }); // end fs.readdir
     }
+
+
   }); // end github.repos.create()
 } // end newRepo()
 
@@ -479,4 +493,3 @@ var createCommitHelper = function(githubLogin, repoName, branchName, filesArray,
     }
   })
 }
-
