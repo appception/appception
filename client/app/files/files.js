@@ -10,3 +10,7 @@ angular.module('appceptionApp')
         authenticate: true
       });
   });
+
+// var hideLoader = function() {
+// 	alert('im loaded')
+// }
