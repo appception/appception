@@ -8,6 +8,8 @@ client/bower_components
 server/tempfiles
 bower_components
 /server/config/local.env.js
+/client/app/min/app.cat.js
+/client/app/min/app.cat.css
 ~$*
 /data/*
 *sublime-*

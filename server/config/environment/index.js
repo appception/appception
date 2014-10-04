@@ -14,6 +14,9 @@ function requiredProcessEnv(name) {
 // ============================================
 var all = {
   env: process.env.NODE_ENV,
+  printTemp: (function() {console.log("process: ", process);
+                          // console.log("\n\nenv: ", env);
+                          })(),
 
   // Root path of server
   // root: path.normalize(__dirname + '/../../..'),

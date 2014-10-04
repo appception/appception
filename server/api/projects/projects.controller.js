@@ -22,12 +22,38 @@ var github = new GitHubApi({
 });
 
 
+// Move this up to variable declaration above???
+/*
+var github = new GitHubApi({
+  version: "3.0.0",
+  debug: true,
+  authenticate: {
+    type: "oauth",
+    key: process.env.GITHUB_ID,
+    secret: process.env.GITHUB_SECRET
+  }
+});
+
+  ????????????????????????????
+
+  | | | | | | |
+  V V V V V V V
+*/
+
 // get
 github.authenticate({
   type: "oauth",
   key: process.env.GITHUB_ID,
   secret: process.env.GITHUB_SECRET
 });
+
+  // key: process.env.GITHUB_ID,
+  // secret: process.env.GITHUB_SECRET
+  // key: '3ba9a626f936bca491ee',
+  // secret: '094043a8cf1602d42cf9921d978c75ad92662145'
+  // GITHUB_ID: '3ba9a626f936bca491ee',
+  // GITHUB_SECRET: '094043a8cf1602d42cf9921d978c75ad92662145',
+
 
 // Get list of projects
 exports.index = function(req, response) {
@@ -102,6 +128,7 @@ exports.files = function (req, res) {
     // if we wanted to let users pick a different branch to look at we can change 'master' here
     file = file.replace(/:ref/g, 'master')
 
+    // var filePath = './server/tempfiles/' + githubRepo + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
     var filePath = path.normalize(config.serverRoot + 'tempfiles/' + githubRepo + '.zip');
 
     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
@@ -158,7 +185,24 @@ exports.newRepo = function (req, response) {
     token: token.token
   });
 
-  // Creating a new repo using github node module
+  /**********************************************
+   * Creating a new repo using github node module - https://github.com/mikedeboer/node-github
+   *   msg (Object):        Object w/ parameters & values (sent to server).
+   *   callback (Function): (err, res), called after req finishes
+   *
+   *  msg = {
+   *    name (String):               Required. 
+   *    headers (Object):            Optional. Key/ value pair of request headers to pass along with the HTTP request. Valid headers are: 'If-Modified-Since', 'If-None-Match', 'Cookie', 'User-Agent', 'Accept', 'X-GitHub-OTP'.
+   *    description (String):        Optional. 
+   *    homepage (String):           Optional. 
+   *    private (Boolean):           Optional. True to create a private repository, false to create a public one. Creating private repositories requires a paid GitHub account. Default is false.
+   *    has_issues (Boolean):        Optional. True to enable issues for this repository, false to disable them. Default is true.
+   *    has_wiki (Boolean):          Optional. True to enable the wiki for this repository, false to disable it. Default is true.
+   *    has_downloads (Boolean):     Optional. True to enable downloads for this repository, false to disable them. Default is true.
+   *    auto_init (Boolean):         Optional. True to create an initial commit with empty README. Default is false
+   *    gitignore_template (String): Optional. Desired language or platform .gitignore template to apply. Ignored if auto_init parameter is not provided.
+   *  }
+   ***********************************************/
   github.repos.create({
     name: repoName,
     auto_init: true
@@ -306,6 +350,7 @@ exports.getBranches = function(req, response) {
   })
 }
 
+
 exports.createBranch = function(req, res) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
@@ -326,7 +371,7 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
       console.log('create branch get reference error:', err)
     } else {
       console.log('create branch get reference success:', res)
-      var referenceSha = res.object.sha
+      var referenceSha = res.object.sha // ?????
 
       github.authenticate({
         type: "oauth",
@@ -343,7 +388,7 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
           console.log('create branch create reference error:', err)
         } else {
           console.log('create branch create reference success:', res)
-          return res
+          return res;
         }
       })
     }
