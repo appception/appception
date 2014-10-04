@@ -16,6 +16,6 @@ router
   .get('/callback', passport.authenticate('heroku', {
     failureRedirect: '/signup',
     session: false
-  }), auth.setTokenCookie);
+  }), auth.setDeployTokenCookie);
 
 module.exports = router;

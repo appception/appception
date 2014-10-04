@@ -8,7 +8,7 @@ exports.setup = function (User, config) {
     callbackURL: config.heroku.callbackURL
   },
   function(token, tokenSecret, profile, done) {
-    // console.log('token', token);
+    console.log('passport token', token, tokenSecret, profile);
     User.findOne({
       'heroku.id_str': profile.id
     }, function(err, user) {
@@ -16,7 +16,6 @@ exports.setup = function (User, config) {
         return done(err);
       }
       if (!user) {
-        console.log('token !user', token)
         exports.token = token
         user = new User({
           name: profile.displayName,

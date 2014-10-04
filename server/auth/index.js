@@ -8,7 +8,7 @@ var User = require('../api/user/user.model');
 // Passport Configuration
 require('./local/passport').setup(User, config);
 require('./github/passport').setup(User, config);
-// require('./heroku/passport').setup(User, config);
+require('./heroku/passport').setup(User, config);
 
 var router = express.Router();
 

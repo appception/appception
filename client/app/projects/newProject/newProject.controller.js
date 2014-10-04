@@ -3,7 +3,7 @@
 angular.module('appceptionApp')
   .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB) {
 
-  	$scope.repoName = '';
+    $scope.repoName = '';
     $scope.creating = false;
 
     $scope.generator = 'beginner';
@@ -11,7 +11,7 @@ angular.module('appceptionApp')
     $scope.createRepo = function(repoName, generator) {
       console.log('generator', generator)
       $scope.creating = true;
-  		Auth.isLoggedInAsync(function(boolean) {
+      Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser()
           github.createRepo(user.github.login, repoName, generator).then(function(res) {
@@ -27,5 +27,5 @@ angular.module('appceptionApp')
           $scope.files = 'Sorry, there has been an error while creating your repo.';
         }
       })
-  	}
+    }
   });
