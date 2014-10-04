@@ -34,6 +34,43 @@ angular.module('appceptionApp')
       }
     };
 
+    // Insert file templates from  a given repo
+    // into the user's browsers local database.
+    var insertTemplateFilesIntoLocalDB = function(repo, items) {
+              console.log(items)
+
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
+
+      // create root folder for the project
+      filer.mkdir( '/' + repo , function(err){
+        if(err) throw err;
+      });
+      
+      // iterate through the items from the repo.
+      for(var i =0; i < items.length; i++){
+        var item = items[i];
+        console.log(item)
+
+
+        var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
+
+        // if item has no content, create a directory
+        if(! item.hasOwnProperty('content')) {
+          filer.mkdir( filePath , function(err){
+            if(err) throw err;
+          });
+        // if item has content, create a file
+        }  else {
+          filer.writeFile(filePath , item.content, function(error) {
+            if(error) throw error;
+          })
+        }
+      }
+    };
+
     // Export files and directories from the user's browsers local database.
     // exportLocalDB() returns a flat array containing information about 
     // all the files and folders.
@@ -159,7 +196,8 @@ angular.module('appceptionApp')
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
-      emptyLocalDB: emptyLocalDB
+      emptyLocalDB: emptyLocalDB,
+      insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 
   });
