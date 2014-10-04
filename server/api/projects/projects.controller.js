@@ -21,6 +21,7 @@ var github = new GitHubApi({
   debug: true
 });
 
+
 // Move this up to variable declaration above???
 /*
 var github = new GitHubApi({
@@ -45,6 +46,14 @@ github.authenticate({
   key: process.env.GITHUB_ID,
   secret: process.env.GITHUB_SECRET
 });
+
+  // key: process.env.GITHUB_ID,
+  // secret: process.env.GITHUB_SECRET
+  // key: '3ba9a626f936bca491ee',
+  // secret: '094043a8cf1602d42cf9921d978c75ad92662145'
+  // GITHUB_ID: '3ba9a626f936bca491ee',
+  // GITHUB_SECRET: '094043a8cf1602d42cf9921d978c75ad92662145',
+
 
 // Get list of projects
 exports.index = function(req, response) {
@@ -119,6 +128,7 @@ exports.files = function (req, res) {
     // if we wanted to let users pick a different branch to look at we can change 'master' here
     file = file.replace(/:ref/g, 'master')
 
+    // var filePath = './server/tempfiles/' + githubRepo + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
     var filePath = path.normalize(config.serverRoot + 'tempfiles/' + githubRepo + '.zip');
 
     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.

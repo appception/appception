@@ -310,6 +310,10 @@ module.exports = function (grunt) {
         cwd: './nimble',
         command: 'npm install --recursive && grunt build'
       },
+      extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
+        cwd: './nimble/src/extensibility/node',
+        command: 'npm install --recursive'
+      },
       mustache: {  // package
         cwd: './nimble/src/thirdparty/mustache',
         command: 'npm install --recursive'
