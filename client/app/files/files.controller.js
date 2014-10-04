@@ -9,6 +9,7 @@ angular.module('appceptionApp')
     $scope.success = false;
     $scope.failure = false;
     $scope.committing = false;
+    $scope.nimbleLoader = true;
 
     Auth.isLoggedInAsync(function(boolean) {
       if(boolean === true){
@@ -29,6 +30,11 @@ angular.module('appceptionApp')
         console.log('Sorry, an error has occurred while loading the user');
       }
     });
+
+    $scope.hideLoader = function() {
+      alert('hello')
+      $scope.nimbleLoader = false;
+    }
 
     $scope.addDeployBranch = function() {
       // Create a gh-pages branch
