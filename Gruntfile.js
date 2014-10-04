@@ -294,7 +294,7 @@ module.exports = function (grunt) {
      * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match. Defaults to 0. Can be an array for multiple allowed exit codes.
      * callback: The callback function passed child_process.exec. Defaults to a noop.
      * If the configuration is instead a simple string, it will be interpreted as a full command itself:
-     * 
+     *
      *   exec: {
      *     echo_something: 'echo "This is something"'
      *   }
@@ -359,7 +359,7 @@ module.exports = function (grunt) {
       //   command: 'npm install --recursive'
       // },
     } // end exec
-    
+
     /**********************************************
      *     END init config
      *********************************************/
@@ -438,11 +438,23 @@ module.exports = function (grunt) {
     'exec'
   ]);
 
-  grunt.registerTask('serve', [
-    'express:dev',
-    'wait',
-    'open'
-  ]);
+  grunt.registerTask('serve',function(target) {
+    if (target === 'production') {
+      return grunt.task.run([
+      'express:dev',
+      'wait',
+      'open'
+    ])}
+
+    else if (target === 'local') {
+      return grunt.task.run([
+        'express:dev',
+        'wait',
+        'open',
+        'watch'
+    ])}
+
+  });
 
   grunt.registerTask('default', [
     'build',

@@ -23,7 +23,11 @@
 		      	<a href="" ng-click="createCommit()" class="btn btn-default btn-blue">Commit Changes</a>
 		      </div>
 		    </div>
-	      <brackets></brackets>
+	      <div>
+				  <iframe class="bracketsiframe" allowtransparency="true" src="/nimble"></iframe>
+				  <p ng-show="nimbleLoader">Loading</p>
+				  <p class="small gray text-center padding-one--ends">Powered by <a href="http://brackets.io">brackets</a>/<a href="https://github.com/mozilla/nimble">Nimble</a></p>
+				</div>
 	    </div>
 	  </div>
 	</div>
