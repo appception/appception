@@ -13,13 +13,19 @@
           <table ng-hide="loading" class="projects table table-striped table-responsive">
             <thead>
               <th>Repo Name</th>
-              <!-- <th>Created At</th> -->
-              <th>Last Updated At</th>
+              <th>Branch</th>
+              <th>Last Updated</th>
             </thead>
             <tbody>
               <tr ng-repeat='project in projects'>
-                <td><a href="" ng-click="getRepoFiles(project.name)">{{project.name}}</a></td>
-                <!-- <td>{{project.created_at | date:'h:mm a, MMM d, y'}}</td> -->
+                <td><a href="" ng-click="getRepoFiles(project.name, selectedbranch)">{{project.name}}</a></td>
+
+                <td> 
+                  <select ng-model="selectedbranch"
+                    ng-options="opt.name as opt.name for opt in project.branches">
+                  </select>
+                </td>
+
                 <td>{{project.updated_at | date:'h:mm a, MMM d, y'}}</td>
               </tr>
             </tbody>
