@@ -362,14 +362,14 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', function(target) {
     if (target === 'production') {
       return grunt.task.run([
-      'express',
+      'express:dev',
       'wait',
       'open'
     ])}
 
     else if (target === 'local') {
       return grunt.task.run([
-        'express',
+        'express:dev',
         'wait',
         'open',
         'watch'
@@ -378,8 +378,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('deploy', [
     'build',
-    'exec',
-    'serve:production'
+    'exec'
+    //'serve:production'
   ]);
 
   grunt.registerTask('default', [
