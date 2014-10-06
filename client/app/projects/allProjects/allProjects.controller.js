@@ -15,8 +15,14 @@ angular.module('appceptionApp')
         // TODO: to make faster, switch this to client side call to Github using Coors.
         github.getRepos(user.github.login).then(function(res){
           $scope.projects = res.data;
+
+          $scope.projects.forEach(function(element, index, arrayBeingTraversed) {
+            // arrayBeingTraversed[index].currentbranch = 'master'; // for the default master branch selection
+            $scope.getBranchesForRepo(arrayBeingTraversed[index]);
+          }); // end $scope.projects.forEach()
+
           $scope.loading = false;
-        })
+        }); // end getRepos().then()
       }else {
         $scope.projects = 'Sorry, no projects have been found';
         $scope.loading = false;
@@ -26,6 +32,28 @@ angular.module('appceptionApp')
     $scope.emptyLocalDB = function(){
       indexedDB.emptyLocalDB();
     }
+
+    $scope.getBranchesForRepo = function(project) { // store $scope.project.branch.name{name, sha, url}
+
+      Auth.isLoggedInAsync(function(boolean) {
+        if(boolean === true){
+          var user = Auth.getCurrentUser();
+
+          github.getBranches(user.github.login, project.name).then(function(res) {
+            project.branches = res.data; // array of objects with {commit: {sha: "shaCode", url: "commitURL"}, name: "bug/packageJSON"}
+
+            // allBranches.forEach(function(element, index, array) { // POSSIBLY OBSOLETE. Creating array instead
+            //   project.branches[element.name] = {
+            //     'name': element.name,
+            //     'sha': element.commit.sha,
+            //     'url': element.commit.url
+            //   }; // end branch.name object
+            // }); // end allBranches.forEach()
+
+          }); // end github.getBranches().then()
+        } // end if
+      }) // end Auth.isLoggedInAsync
+    }; // end getBranchesForRepo
 
 
     // Makes a call to Github API to get the files for a particular repo.
