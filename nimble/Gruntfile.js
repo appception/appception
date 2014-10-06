@@ -296,13 +296,13 @@ module.exports = function (grunt) {
             options: {
                 jshintrc: '.jshintrc'
             }
-        },
-        shell: {
-            repo: grunt.option("shell-repo") || "../brackets-shell",
-            mac: "<%= shell.repo %>/installer/mac/staging/<%= pkg.name %>.app",
-            win: "<%= shell.repo %>/installer/win/staging/<%= pkg.name %>.exe",
-            linux: "<%= shell.repo %>/installer/linux/debian/package-root/opt/brackets/brackets"
-        }
+        }//,
+        // shell: {
+        //     repo: grunt.option("shell-repo") || "../brackets-shell",
+        //     mac: "<%= shell.repo %>/installer/mac/staging/<%= pkg.name %>.app",
+        //     win: "<%= shell.repo %>/installer/win/staging/<%= pkg.name %>.exe",
+        //     linux: "<%= shell.repo %>/installer/linux/debian/package-root/opt/brackets/brackets"
+        // }
     });
     
     // task: install
@@ -318,7 +318,7 @@ module.exports = function (grunt) {
 
     // task: build
     grunt.registerTask('build', [
-        'clean',
+        //'clean',
         'less',
         'targethtml',
         'useminPrepare',
@@ -332,5 +332,6 @@ module.exports = function (grunt) {
     ]);
 
     // Default task.
-    grunt.registerTask('default', ['install', 'build']);
+    // grunt.registerTask('default', ['install', 'build']); // <== ORIGINAL default task
+    grunt.registerTask('default', ['build']);
 };

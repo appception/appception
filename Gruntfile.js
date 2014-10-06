@@ -67,12 +67,6 @@ module.exports = function (grunt) {
         options: {
           script: 'server/app.js'
         }
-      },
-      debug: {
-        options: {
-          script: 'server/app.js',
-          debug: true
-        }
       }
     }, // end express
 
@@ -118,24 +112,12 @@ module.exports = function (grunt) {
     }, // end env
 
 
-    /***********************************
-     ***   Main task configs here:   ***
-     * clean
-     * stylus
-     * wiredep (bower)
-     * concat
-     * minify css
-     * uglify js
-     * start server
-     * load browser
-     **********************************/
     clean: {
       default: { // name that appears on this task. You can add more argument names at this heirarchy
         files: {
           src: 'client/app/min/*.*'
         }
-      }//,
-      // serverFiles: 'server/tempfiles'
+      }
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
@@ -255,7 +237,7 @@ module.exports = function (grunt) {
     watch: {
       stylus: {
         files: ['client/app/**/*.styl', 'client/components/**/*.styl'],
-        tasks: ['stylus', 'autoprefixer', 'cssmin'] // , 'autoprefixer']
+        tasks: ['cssmin'] // , 'autoprefixer']
       }, // end stylus
       gruntfile: {
         files: ['Gruntfile.js']
@@ -284,21 +266,6 @@ module.exports = function (grunt) {
       }, // end express
     }, // end watch
 
-
-    /************************************************
-     *              exec:
-     * command (alias: cmd): The shell command to be executed. Must be a string or a function that returns a string.
-     * stdout: If true, stdout will be printed. Defaults to true.
-     * stderr: If true, stderr will be printed. Defaults to true.
-     * cwd: Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
-     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match. Defaults to 0. Can be an array for multiple allowed exit codes.
-     * callback: The callback function passed child_process.exec. Defaults to a noop.
-     * If the configuration is instead a simple string, it will be interpreted as a full command itself:
-     *
-     *   exec: {
-     *     echo_something: 'echo "This is something"'
-     *   }
-     ***********************************************/
     exec: { // executes on the command line
       startExec: {
         cmd: 'echo " = = = = Installing NPM and Bower components = = = ="'
@@ -346,37 +313,13 @@ module.exports = function (grunt) {
         cwd: './nimble/src/thirdparty/text',
         command: 'npm install --recursive'
       }
-      // JSLint: {  // NOTHING
-      //   cwd: './nimble/src/extensions/default/JSLint/thirdparty/jslint',
-      //   command: 'npm install --recursive'
-      // },
-      // i18n: {  // NOTHING
-      //   cwd: './nimble/src/thirdparty/i18n',
-      //   command: 'npm install --recursive'
-      // },
-      // pathUtils: {  // NOTHING
-      //   cwd: './nimble/src/thirdparty/path-utils',
-      //   command: 'npm install --recursive'
-      // },
     } // end exec
-
-    /**********************************************
-     *     END init config
-     *********************************************/
   }); // end initConfig()
 
 
   /**********************************************
    *     Grunt tasks
    *********************************************/
-
-  // CHOICE SYNTAX:
-  //
-  //   if (target === 'debug') {
-  //     return grunt.task.run([
-  //       'clean:server'
-  //     ]);
-  //   }
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function() {
@@ -394,17 +337,6 @@ module.exports = function (grunt) {
     this.async();
   });
 
-/***********************************
- * There are 3 tasks below:
- *   test - for testing the current task we're working on
- *   clean - to clean temp files
- *   build - for all build tasks that CURRENTLY WORK
- *   serve - for the server.
- *
- * As tests pass, they should be added to 'build' or 'server'.
- * the default 'grunt' task will build, then serve.
- **********************************/
-
   grunt.registerTask('test', [
     'exec',
     'exec:changeDir'
@@ -418,46 +350,40 @@ module.exports = function (grunt) {
     // 'usemin'
   ]);
 
-
-  // grunt.registerTask('clean', [
-  //   'clean'
-  // ]);
-
-
   grunt.registerTask('build', [
+    'clean',
     'stylus',
     'autoprefixer',
-    'clean',
     'concat',
     'cssmin',
     'uglify'
   ]);
 
-  grunt.registerTask('deploy', [
-    'build',
-    'exec'
-  ]);
-
-  grunt.registerTask('serve',function(target) {
+  grunt.registerTask('serve', function(target) {
     if (target === 'production') {
       return grunt.task.run([
-      'express:dev',
+      'express',
       'wait',
       'open'
     ])}
 
     else if (target === 'local') {
       return grunt.task.run([
-        'express:dev',
+        'express',
         'wait',
         'open',
         'watch'
     ])}
+  }); // end 'serve'
 
-  });
+  grunt.registerTask('deploy', [
+    'build',
+    'exec',
+    'serve:production'
+  ]);
 
   grunt.registerTask('default', [
     'build',
-    'serve'
+    'serve:local'
   ]);
 }; // end Gruntfile
