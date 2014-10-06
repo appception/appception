@@ -18,66 +18,14 @@
             </thead>
             <tbody>
               <tr ng-repeat='project in projects'>
-                <td><a href="" ng-click="getRepoFiles(project.name)">{{project.name}}</a></td>
+                <td><a href="" ng-click="getRepoFiles(project.name, selectedbranch)">{{project.name}}</a></td>
+
                 <td> 
-
-            <select ng-model="selectbranches"
-                ng-options="opt as opt.name for opt in project.branches">
-            </select>
-<!--   
-
-                ng-options="opt as opt.name for opt in projects.branches">
-                ng-options="opt as opt.label for opt in options">
-
-    $scope.options = [
-    { label: 'one', value: 1 },
-    { label: 'two', value: 2 }
-  ]; -->
-
-
-<!-- name for (key , value) in object -->
-
-<!--    
-{{project.branches}} = 
-[{"name":"DeployMergeBranch","commit":{"sha":"7cdfbe1086129db4ae062bb2c1b036b2496dfb71","url":"https://api.github.com/repos/SterlingVix/appception/commits/7cdfbe1086129db4ae062bb2c1b036b2496dfb71"}},
-{"name":"DeployTest2","commit":{"sha":"5e82320edcf766b8567fadc1d8b988aff175b99b","url":"https://api.github.com/repos/SterlingVix/appception/commits/5e82320edcf766b8567fadc1d8b988aff175b99b"}},
-{"name":"bug/Deploy3","commit":{"sha":"a7c82725b681c297aeacde81a7aaf05208eacd82","url":"https://api.github.com/repos/SterlingVix/appception/commits/a7c82725b681c297aeacde81a7aaf05208eacd82"}},
-{"name":"bug/submod1","commit":{"sha":"45efaca45c0b805c055a42394f03c35d1af286eb","url":"https://api.github.com/repos/SterlingVix/appception/commits/45efaca45c0b805c055a42394f03c35d1af286eb"}},
-{"name":"createGHPagesRepo","commit":{"sha":"a4589cb6114ef787be7797aadfb060e183c5d2d6","url":"https://api.github.com/repos/SterlingVix/appception/commits/a4589cb6114ef787be7797aadfb060e183c5d2d6"}},
-{"name":"deploy","commit":{"sha":"0b51073470b0c4565275657d848d44d9d3cfee1c","url":"https://api.github.com/repos/SterlingVix/appception/commits/0b51073470b0c4565275657d848d44d9d3cfee1c"}},
-{"name":"deployNimbleFix","commit":{"sha":"1b2fc8482bafe73800b57d006dd632286c22ebd5","url":"https://api.github.com/repos/SterlingVix/appception/commits/1b2fc8482bafe73800b57d006dd632286c22ebd5"}},
-{"name":"deployRefactor","commit":{"sha":"2b49fd741ddbc8cecfc4d198c363d0993432124e","url":"https://api.github.com/repos/SterlingVix/appception/commits/2b49fd741ddbc8cecfc4d198c363d0993432124e"}},
-{"name":"feat/IDE/text","commit":{"sha":"0b51073470b0c4565275657d848d44d9d3cfee1c","url":"https://api.github.com/repos/SterlingVix/appception/commits/0b51073470b0c4565275657d848d44d9d3cfee1c"}},
-{"name":"feat/InitialRepoSetup","commit":{"sha":"6882d72424a4011349c503b6a33f22fd87fb9365","url":"https://api.github.com/repos/SterlingVix/appception/commits/6882d72424a4011349c503b6a33f22fd87fb9365"}},
-{"name":"feat/TestingSetup","commit":{"sha":"0152249a794cf599497d1a6f5669a0dc3c6c2d32","url":"https://api.github.com/repos/SterlingVix/appception/commits/0152249a794cf599497d1a6f5669a0dc3c6c2d32"}},
-{"name":"feature/createBranch","commit":{"sha":"1b59079aeef8eae76afbcad99307611c638cc712","url":"https://api.github.com/repos/SterlingVix/appception/commits/1b59079aeef8eae76afbcad99307611c638cc712"}},
-{"name":"feature/userCanCreateBranches","commit":{"sha":"ad08a785b9042364d8a9a5374eca7adf6c517fd7","url":"https://api.github.com/repos/SterlingVix/appception/commits/ad08a785b9042364d8a9a5374eca7adf6c517fd7"}},
-{"name":"fix/Brackets/LoadsAndWorks","commit":{"sha":"479a8c0323a09b299868cbb28ae1801213df7fa9","url":"https://api.github.com/repos/SterlingVix/appception/commits/479a8c0323a09b299868cbb28ae1801213df7fa9"}},
-{"name":"freshStart","commit":{"sha":"956864389cbfd959e42773c94b8c04b172bacd93","url":"https://api.github.com/repos/SterlingVix/appception/commits/956864389cbfd959e42773c94b8c04b172bacd93"}},
-{"name":"integrateNimbleLocallyForDeploy","commit":{"sha":"d1b769ac9b4b0470e7c2bff52fe38d9603642483","url":"https://api.github.com/repos/SterlingVix/appception/commits/d1b769ac9b4b0470e7c2bff52fe38d9603642483"}},
-{"name":"master","commit":{"sha":"305db3b0b64e9cf8b8372bd6e52e02f75776f6ac","url":"https://api.github.com/repos/SterlingVix/appception/commits/305db3b0b64e9cf8b8372bd6e52e02f75776f6ac"}},
-{"name":"submodularizeNimble","commit":{"sha":"ee604354ba4e7669c3092c5690bf51fc9debdd18","url":"https://api.github.com/repos/SterlingVix/appception/commits/ee604354ba4e7669c3092c5690bf51fc9debdd18"}},
-{"name":"test/Deploy3","commit":{"sha":"8df43c143800bd3bd6807fdb0d61fa68943b4e0e","url":"https://api.github.com/repos/SterlingVix/appception/commits/8df43c143800bd3bd6807fdb0d61fa68943b4e0e"}},
-{"name":"test/newBranchWithoutSubmodules","commit":{"sha":"3d0f8764f4bad7ea0330f3ba2004b1ef4d1
-
-
-
--->
-
-<!-- <a href="" ng-click="(function(project) {console.log(project)})()">display project</a> -->
-
-<!--             <select ng-model="projects.branches"
-                ng-options="project.branches for (key, value) in project.branches">
-            </select> -->
-
-
-<!--
-  thisProject.branches.[branchName].name
-  thisProject.branches.[branchName].sha
-  thisProject.branches.[branchName].url
--->
-
+                  <select ng-model="selectedbranch"
+                    ng-options="opt.name as opt.name for opt in project.branches">
+                  </select>
                 </td>
+
                 <td>{{project.updated_at | date:'h:mm a, MMM d, y'}}</td>
               </tr>
             </tbody>

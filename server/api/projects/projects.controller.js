@@ -73,13 +73,6 @@ exports.index = function(req, response) {
     // 'data' is all the data back from GH. Iterate and check for userPageNamme.
     for (var key in data) {
       if (data[key].name === userPageName) { // user has User Page
-
-
-
-        // console.log("\n\nFOUND USE PAGE: Key = ", key, ", data[key] = ", data[key]);
-
-        
-        //console.log(data)
         return response.json(data);
       } // end if (user has user page)
     } // end for (key in data)
@@ -91,17 +84,15 @@ exports.index = function(req, response) {
     });
 
     // Create the user page if it doesn't exist
-    // console.log("\n\nNO USER PAGE - creating one now!\n\n");
-
     // Creating a new repo using github node module
     github.repos.create({
       name: userPageName,
       auto_init: true
     }, function(err, res) {
       if (err) {
-        console.log('\n\nERROR during create User Page', err, res);
+        console.log('ERROR during create User Page', err, res);
       } else {
-        console.log('\n\nSUCCESS during create User Page, proceeding with Projects page load...');
+        console.log('SUCCESS during create User Page, proceeding with Projects page load...');
         return response.json(data);
       } // end else
     }) // end github.repos.create()
@@ -111,14 +102,13 @@ exports.index = function(req, response) {
 /**********************
  * Get a single project's files
  *
- * Given a repo name and username,  files() will 
+ * Given a repo name and username [and optional branch name], files() will 
  *   1) download a zipped version of the repo from Github. 
  *   2) read the zipped file
  *   3) return an object that has the path and content of each file
 **********************/
 exports.files = function (req, res) {
-  console.log('inside projects.files')
-
+  var branchToGet = req.query.githubBranch || 'master';
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
 
@@ -135,9 +125,7 @@ exports.files = function (req, res) {
     console.log('projects.controller.js: get files success')
 
     var file = data.meta.location;
-
-    // if we wanted to let users pick a different branch to look at we can change 'master' here
-    file = file.replace(/:ref/g, 'master')
+    file = file.replace(/:ref/g, branchToGet) // files to load based on selected branch
 
     // var filePath = './server/tempfiles/' + githubRepo + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
     var filePath = path.normalize(config.serverRoot + 'tempfiles/' + githubRepo + '.zip');
@@ -188,7 +176,6 @@ exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
 
-  //console.log('token.token', token.token)
   github.authenticate({
     type: "oauth",
     token: token.token
@@ -220,7 +207,6 @@ exports.newRepo = function (req, response) {
       console.log('projects.controller.js: create repo error', err, res)
     } else {
       console.log('projects.controller.js: create repo success')
-      //console.log('res: ', res)
 
       // Once new repo has been created, read the directory that contains the template files.
       fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/'), function (err, files) {
@@ -280,7 +266,6 @@ exports.newRepo = function (req, response) {
 
 
 exports.commit = function (req, response) {
-  //console.log('req', req)
   var githubLogin = req.body.githubLogin;
   var repoName = req.body.repoName;
   var message = req.body.message;
@@ -299,7 +284,6 @@ exports.commit = function (req, response) {
 
 
 exports.addFiletoRepo = function (githubLogin, repoName, path, message, content, cb, committer) {
-  //console.log('cb: ', cb)
   if (!committer) {
     committer = {
       "name": "appception",
@@ -319,7 +303,6 @@ exports.addFiletoRepo = function (githubLogin, repoName, path, message, content,
       console.log('projects.controller.js: create file error', err, res)
     } else {
       console.log('projects.controller.js: create file success')
-      //console.log('res: ', res)
       cb()
     }
   })
@@ -331,7 +314,6 @@ function handleError(res, err) {
 
 exports.doesUserHaveUserPage = function (username) {
   var userPageName = '' + username + '.github.io';
-  //console.log("\n\n\nIN doesUserHaveUserPage...\n\n\n")
 
   github.repos.getFromUser({user: username}, function (err, data) {
     if (err) {
@@ -341,7 +323,7 @@ exports.doesUserHaveUserPage = function (username) {
     // 'data' is all the data back from GH. Iterate and check for repo names.
     for (var key in data) {
       if (data[key].name === userPageName) { // user has User Page
-        console.log("\n\nFOUND PAGE: ", data[key].name);
+        console.log("\nFOUND PAGE: ", data[key].name);
         return true;
       } // end if (user has user page)
     } // end for (key in data)
@@ -389,7 +371,7 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
       console.log('create branch get reference error:', err)
     } else {
       console.log('create branch get reference success:')
-      var referenceSha = res.object.sha // ?????
+      var referenceSha = res.object.sha
 
       github.authenticate({
         type: "oauth",
