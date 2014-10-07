@@ -332,12 +332,9 @@ exports.createBranch = function(req, res) {
 }
 
 var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoName){
-  github.authenticate({
-        type: "oauth",
-        token: token.token
-      });
 
-  //TODO: NEED TO BUILD UP PATHS RECURSIVELY
+
+  //TODO: figure out how to
   var results = [];
   // Async read each file name in the array returned.
   forEachAsync(files, function (next, fileTitle, index, array) {
@@ -363,6 +360,10 @@ var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoNam
       })
 
       stream.on('end', function () {
+        github.authenticate({
+          type: "oauth",
+          token: token.token
+        });
         // Using github module, create a file on github based on data read from file
         github.repos.createFile({
           user: githubLogin,
