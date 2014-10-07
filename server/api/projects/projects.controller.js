@@ -222,7 +222,7 @@ exports.newRepo = function (req, response) {
       // Once new repo has been created, read the directory that contains the template files.
       fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/'), function (err, files) {
         console.log(files)
-        var results = createRepoRecurse('/', files, generator, githubLogin, repoName)
+        var results = createRepoRecurse('', files, generator, githubLogin, repoName)
         // return response.json(results)
       }); // end fs.readdir
     }
@@ -332,23 +332,15 @@ exports.createBranch = function(req, res) {
 }
 
 var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoName){
-
-
-  //TODO: figure out how to
+  //TODO: figure out how to get recursion to fully work
   var results = [];
   // Async read each file name in the array returned.
   forEachAsync(files, function (next, fileTitle, index, array) {
-    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + fileTitle);
+    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + rootDir + fileTitle);
     console.log('fs.lstatSync(fileOrDirPath).isDirectory()', fs.lstatSync(fileOrDirPath).isDirectory(), fileTitle)
+    console.log('========================================rootDir', rootDir)
 
-    if(fs.lstatSync(fileOrDirPath).isDirectory()){
-      rootDir = rootDir + fileTitle + '/';
-      console.log("path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileOrDirPath)", path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir))
-      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir), function (err, files) {
-          console.log('files',files)
-          createRepoRecurse(rootDir, files, generator, githubLogin, repoName)
-      })
-    } else {
+    if(!fs.lstatSync(fileOrDirPath).isDirectory()){
       // Get file contents
       var stream = fs.createReadStream(fileOrDirPath, {
         encoding: 'base64'
@@ -368,7 +360,7 @@ var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoNam
         github.repos.createFile({
           user: githubLogin,
           repo: repoName,
-          path: fileTitle,
+          path: rootDir + fileTitle,
           message: 'Initial Commit for ' + fileTitle,
           content: response,
           committer: {
@@ -389,11 +381,17 @@ var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoNam
             next()
           }
         })
-
+      })
+    } else {
+      rootDir = rootDir + fileTitle + '/';
+      console.log("path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileOrDirPath)", path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + rootDir))
+      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + rootDir), function (err, files) {
+          console.log('files',files)
+          createRepoRecurse(rootDir, files, generator, githubLogin, repoName)
       })
     }
   }).then(function () {
-    createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+    // createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
     console.log('All done!')
     return results
   }); // end forEachAsync
