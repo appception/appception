@@ -106,8 +106,8 @@ exports.index = function(req, response) {
 
 // Get a single projects files
 
-// Given a repo name and username,  files() will 
-// 1) download a zipped version of the repo from Github. 
+// Given a repo name and username,  files() will
+// 1) download a zipped version of the repo from Github.
 // 2) read the zipped file
 // 3) return an object that has the path and content of each file
 exports.files = function (req, res) {
@@ -183,6 +183,7 @@ exports.newRepo = function (req, response) {
   console.log('inside server new repo')
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
+  var generator = req.query.generator
 
   console.log('token.token', token.token)
   github.authenticate({
@@ -196,10 +197,10 @@ exports.newRepo = function (req, response) {
    *   callback (Function): (err, res), called after req finishes
    *
    *  msg = {
-   *    name (String):               Required. 
+   *    name (String):               Required.
    *    headers (Object):            Optional. Key/ value pair of request headers to pass along with the HTTP request. Valid headers are: 'If-Modified-Since', 'If-None-Match', 'Cookie', 'User-Agent', 'Accept', 'X-GitHub-OTP'.
-   *    description (String):        Optional. 
-   *    homepage (String):           Optional. 
+   *    description (String):        Optional.
+   *    homepage (String):           Optional.
    *    private (Boolean):           Optional. True to create a private repository, false to create a public one. Creating private repositories requires a paid GitHub account. Default is false.
    *    has_issues (Boolean):        Optional. True to enable issues for this repository, false to disable them. Default is true.
    *    has_wiki (Boolean):          Optional. True to enable the wiki for this repository, false to disable it. Default is true.
@@ -219,54 +220,10 @@ exports.newRepo = function (req, response) {
       console.log('res: ', res)
 
       // Once new repo has been created, read the directory that contains the template files.
-      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/'), function (err, files) {
-        var results = [];
-
-        // Async read each file name in the array returned.
-        forEachAsync(files, function (next, fileTitle, index, array) {
-          // Get file contents
-          var stream = fs.createReadStream(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + fileTitle), {
-            encoding: 'base64'
-          })
-
-          var response = '';
-          stream.on('data', function (chunk) {
-            response = response + chunk
-          })
-
-          stream.on('end', function () {
-            // Using github module, create a file on github based on data read from file
-            github.repos.createFile({
-              user: githubLogin,
-              repo: repoName,
-              path: fileTitle,
-              message: 'Initial Commit for ' + fileTitle,
-              content: response,
-              committer: {
-                "name": "appception",
-                "email": "appception@gmail.com"
-              }
-
-              
-            }, function (err, res) {
-              if (err) {
-                console.log('projects.controller.js: create file error', err, res)
-              } else {
-                console.log('projects.controller.js: create file success')
-
-                var decodeResponse = new Buffer(response, 'base64').toString('ascii');
-
-                results.push({path: fileTitle, content: decodeResponse })
-                next()
-              }
-            })
-
-          })
-        }).then(function () {
-          createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
-          console.log('All done!')
-          return response.json(results)
-        }); // end forEachAsync
+      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/'), function (err, files) {
+        console.log(files)
+        var results = createRepoRecurse('/', files, generator, githubLogin, repoName)
+        // return response.json(results)
       }); // end fs.readdir
     }
 
@@ -374,6 +331,72 @@ exports.createBranch = function(req, res) {
   return res.json(createBranchHelper(githubLogin, repoName, baseBranchName, newBranchName))
 }
 
+var createRepoRecurse = function(rootDir, files, generator, githubLogin, repoName){
+  github.authenticate({
+        type: "oauth",
+        token: token.token
+      });
+
+  //TODO: NEED TO BUILD UP PATHS RECURSIVELY
+  var results = [];
+  // Async read each file name in the array returned.
+  forEachAsync(files, function (next, fileTitle, index, array) {
+    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + fileTitle);
+    console.log('fs.lstatSync(fileOrDirPath).isDirectory()', fs.lstatSync(fileOrDirPath).isDirectory(), fileTitle)
+
+    if(fs.lstatSync(fileOrDirPath).isDirectory()){
+      rootDir = rootDir + fileTitle + '/';
+      console.log("path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileOrDirPath)", path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir))
+      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir), function (err, files) {
+          console.log('files',files)
+          createRepoRecurse(rootDir, files, generator, githubLogin, repoName)
+      })
+    } else {
+      // Get file contents
+      var stream = fs.createReadStream(fileOrDirPath, {
+        encoding: 'base64'
+      })
+
+      var response = '';
+      stream.on('data', function (chunk) {
+        response = response + chunk
+      })
+
+      stream.on('end', function () {
+        // Using github module, create a file on github based on data read from file
+        github.repos.createFile({
+          user: githubLogin,
+          repo: repoName,
+          path: fileTitle,
+          message: 'Initial Commit for ' + fileTitle,
+          content: response,
+          committer: {
+            "name": "appception",
+            "email": "appception@gmail.com"
+          }
+
+
+        }, function (err, res) {
+          if (err) {
+            console.log('projects.controller.js: create file error', err, res)
+          } else {
+            console.log('projects.controller.js: create file success')
+
+            var decodeResponse = new Buffer(response, 'base64').toString('ascii');
+
+            results.push({path: fileTitle, content: decodeResponse })
+            next()
+          }
+        })
+
+      })
+    }
+  }).then(function () {
+    createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+    console.log('All done!')
+    return results
+  }); // end forEachAsync
+}
 
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({

@@ -7,21 +7,24 @@
 
         <h1>Create a New Project</h1>
 
-        <form action="" ng-submit="createRepo(repoName)">
-          <p>
-          <label for="repo_name" >Github Repo Name</label><br>
+        <form action="" ng-submit="createRepo(repoName, generator)">
+          <label for="repo_name" >Github Repo Name</label>
           <input id="repo_name" placeholder="Repo Name" type="text" ng-model="repoName">
-          </p>
 
-          <p>
-          <label for="yeoman_type" > Generator </label><br>
-          <select name="" id="yeoman_type">
-            <option value="mean">MEAN (MongoDB, Express, Angular, Node)</option>
-          </select>
-          </p>
+          <label for="yeoman_type" > Generator </label>
+          <!-- <label ng-repeat="item in generators" >
+            <input type="radio" name="generator" ng-model="$parent.generator" value='item.name'>{{item.name}}
+          </label> -->
+          <label>
+            <input type='radio' ng-model="generator" value="beginner"> Beginner
+          </label>
+          <label>
+            <input type='radio' ng-model="generator" value="google-web-starter-kit"> Google Web Starter Kit
+          </label>
+          <p>{{generator}}</p>
 
           <button class="btn btn-default btn-lg btn-blue" type="submit" ng-hide="creating">Create</button>
-          <p class="success" ng-show="creating">Creating...</p>
+          <a class="success btn btn-default btn-lg" ng-show="creating">Creating...</a>
         </form>
 
       </div>

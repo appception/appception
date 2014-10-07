@@ -33,14 +33,15 @@ angular.module('appceptionApp')
       });
     };
 
-    var createRepo = function(githubLogin, repoName) {
+    var createRepo = function(githubLogin, repoName, generator) {
       console.log('inside service createRepo');
       return $http({
         method: 'GET',
         url: '/api/projects/new',
         params: {
           githubLogin: githubLogin,
-          repoName: repoName
+          repoName: repoName,
+          generator: generator
         }
       })
     };
