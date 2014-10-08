@@ -1,31 +1,43 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <div class="page-wrapper">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
+  <div class="container clear-after">
 
-        <h1>Create a New Project</h1>
 
-        <form action="" ng-submit="createRepo(repoName)">
-          <p>
-          <label for="repo_name" >Github Repo Name</label><br>
-          <input id="repo_name" placeholder="Repo Name" type="text" ng-model="repoName">
-          </p>
-
-          <p>
-          <label for="yeoman_type" > Generator </label><br>
-          <select name="" id="yeoman_type">
-            <option value="mean">MEAN (MongoDB, Express, Angular, Node)</option>
-          </select>
-          </p>
-
-          <button class="btn btn-default btn-lg btn-blue" type="submit" ng-hide="creating">Create</button>
-          <p class="success" ng-show="creating">Creating...</p>
-        </form>
-
+  <form action="" ng-submit="createRepo(repoName, generator)" class="new-repo">
+    <div class="header clear-after">
+      <h1 class="float-left">Create a New Project</h1>
+      <div class="float-right">
+        <button class="btn btn-default btn-lg btn-blue" type="submit" ng-hide="creating">Create</button>
+        <a class="success btn btn-default btn-lg" ng-show="creating">Creating...</a>
       </div>
     </div>
+    <h2>1. Github Repo Name</h2>
+    <input id="repo_name" placeholder="my-new-repo" type="text" ng-model="repoName">
+
+    <div class="clear-after">
+      <div class="float-left">
+        <h2>2. Generator </h2>
+        <label>
+          <input type='radio' ng-model="generator" value="beginner"> Beginner
+        </label>
+        <label>
+          <input type='radio' ng-model="generator" value="beginner-test"> Beginner Test
+        </label>
+        <label>
+          <input type='radio' ng-model="generator" value="google-web-starter-kit"> Google Web Starter Kit
+        </label>
+        <label>
+          <input type='radio' ng-model="generator" value="foundation"> Foundation
+        </label>
+        <p>{{generator}}</p>
+      </div>
+      <div>
+
+        <div ng-include="'app/projects/newProject/fileStructureTemplates/foundation.html'"></div>
+      </div>
+    </div>
+  </form>
   </div>
 </div>
 

@@ -72,11 +72,12 @@ exports.index = function(req, response) {
   }); // end github.repos.getFromUser()
 }; // end index
 
+
 /**********************
  * Get a single project's files
  *
- * Given a repo name and username [and optional branch name], files() will 
- *   1) download a zipped version of the repo from Github. 
+ * Given a repo name and username [and optional branch name], files() will
+ *   1) download a zipped version of the repo from Github.
  *   2) read the zipped file
  *   3) return an object that has the path and content of each file
 **********************/
@@ -148,47 +149,34 @@ exports.files = function (req, res) {
 exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
+  var generator = req.query.generator
 
   github.authenticate({
     type: "oauth",
     token: token.token
   });
 
-  /**********************************************
-   * Creating a new repo using github node module - https://github.com/mikedeboer/node-github
-   *   msg (Object):        Object w/ parameters & values (sent to server).
-   *   callback (Function): (err, res), called after req finishes
-   *
-   *  msg = {
-   *    name (String):               Required. 
-   *    headers (Object):            Optional. Key/ value pair of request headers to pass along with the HTTP request. Valid headers are: 'If-Modified-Since', 'If-None-Match', 'Cookie', 'User-Agent', 'Accept', 'X-GitHub-OTP'.
-   *    description (String):        Optional. 
-   *    homepage (String):           Optional. 
-   *    private (Boolean):           Optional. True to create a private repository, false to create a public one. Creating private repositories requires a paid GitHub account. Default is false.
-   *    has_issues (Boolean):        Optional. True to enable issues for this repository, false to disable them. Default is true.
-   *    has_wiki (Boolean):          Optional. True to enable the wiki for this repository, false to disable it. Default is true.
-   *    has_downloads (Boolean):     Optional. True to enable downloads for this repository, false to disable them. Default is true.
-   *    auto_init (Boolean):         Optional. True to create an initial commit with empty README. Default is false
-   *    gitignore_template (String): Optional. Desired language or platform .gitignore template to apply. Ignored if auto_init parameter is not provided.
-   *  }
-   ***********************************************/
   github.repos.create({
     name: repoName,
     auto_init: true
   }, function (err, res) {
     if (err) {
-      console.log('projects.controller.js: create repo error', err, res)
+      console.log('projects.controller.js: create repo error', err)
     } else {
       console.log('projects.controller.js: create repo success')
 
-      // Once new repo has been created, read the directory that contains the template files.
-      fs.readdir(path.normalize(config.serverRoot + 'api/projects/filetemplates/'), function (err, files) {
-        var results = [];
+      // Generate an array of all the file names for the generator, including the directories they are within
+      var allFiles =  recursivelyGetFileNames('', '', generator)
+      var results = [];
 
-        // Async read each file name in the array returned.
-        forEachAsync(files, function (next, fileTitle, index, array) {
-          // Get file contents
-          var stream = fs.createReadStream(path.normalize(config.serverRoot + 'api/projects/filetemplates/' + fileTitle), {
+      forEachAsync(allFiles, function (next, fileTitle, index, array) {
+        console.log('fileTitle', fileTitle)
+        var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileTitle);
+
+        // Check to see if path is a file
+        if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+          // If path is a file, get the contents of the file
+          var stream = fs.createReadStream(fileOrDirPath, {
             encoding: 'base64'
           })
 
@@ -198,41 +186,48 @@ exports.newRepo = function (req, response) {
           })
 
           stream.on('end', function () {
+              github.authenticate({
+                type: "oauth",
+                token: token.token
+              });
             // Using github module, create a file on github based on data read from file
-            github.repos.createFile({
-              user: githubLogin,
-              repo: repoName,
-              path: fileTitle,
-              message: 'Initial Commit for ' + fileTitle,
-              content: response,
-              committer: {
-                "name": "appception",
-                "email": "appception@gmail.com"
-              }
+            setTimeout(function(){
+              github.repos.createFile({
+                user: githubLogin,
+                repo: repoName,
+                path: fileTitle,
+                message: 'Initial Commit for ' + fileTitle,
+                content: response,
+                committer: {
+                  "name": "appception",
+                  "email": "appception@gmail.com"
+                }
+              }, function (err, res) {
+                if (err) {
+                  console.log('projects.controller.js: create file error', err, res)
+                } else {
+                  console.log('projects.controller.js: create file success')
 
-              
-            }, function (err, res) {
-              if (err) {
-                console.log('projects.controller.js: create file error', err, res)
-              } else {
-                console.log('projects.controller.js: create file success')
+                  var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-                var decodeResponse = new Buffer(response, 'base64').toString('ascii');
-
-                results.push({path: fileTitle, content: decodeResponse })
-                next()
-              }
-            })
-
+                  results.push([{path: repoName + '/' + fileTitle, content: decodeResponse }])
+                  next()
+                }
+              })
+            }, 600)
           })
-        }).then(function () {
-          createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
-          console.log('All done!')
-          return response.json(results)
-        }); // end forEachAsync
-      }); // end fs.readdir
-    }
-
+        } else {
+          // If path is a directory, add the folder name to the results array
+          results.push([{path: repoName + '/' + fileTitle,}])
+          next();
+        }
+      }).then(function(){
+        // Create a deploy branch for github pages
+        createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+        console.log('all done!')
+        return response.json(results)
+      }); // end forEachAsync
+    }; // end else
 
   }); // end github.repos.create()
 } // end newRepo()
@@ -333,6 +328,41 @@ exports.createBranch = function(req, res) {
   return res.json(createBranchHelper(githubLogin, repoName, baseBranchName, newBranchName))
 }
 
+var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
+  var allFiles = [];
+
+  var innerRecurse = function(rootDir, fileOrDirTitle) {
+    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + '/' + fileOrDirTitle);
+    // Check if path leads to a file
+    if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+      console.log('file: ', fileOrDirTitle)
+      // Clean the directory name if necessary
+      if(rootDir.charAt(0) === '/'){
+        rootDir = rootDir.substr(1)
+      }
+      // If file is not yet in the allFiles array, push it in
+      if(allFiles.indexOf(rootDir + fileOrDirTitle) === -1) {
+        allFiles.push(rootDir + fileOrDirTitle)
+      }
+    } else {
+      // If path leads to a directory, read the directory
+      var files = fs.readdirSync(fileOrDirPath)
+      rootDir = path.normalize(rootDir + fileOrDirTitle + '/');
+      // Push the cleaned directory name to the allFiles array
+      if(rootDir.charAt(0) === '/'){
+        var cleanRootDir = rootDir.substr(1)
+        allFiles.push(cleanRootDir)
+      }
+      // Look at each file in the directory and perform the entire function again on each
+      files.forEach(function (nextFileOrDirTitle, index, array) {
+        console.log('rootDir', rootDir)
+        return innerRecurse(rootDir, nextFileOrDirTitle)
+      })
+    }
+  }
+  innerRecurse(rootDir, fileOrDirTitle)
+  return allFiles
+}
 
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
