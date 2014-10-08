@@ -7,7 +7,7 @@ angular.module('appceptionApp')
       console.log('inside service listApps');
       return $http({
         method: 'GET',
-        url: '/api/deploy'
+        url: '/api/heroku'
       });
     };
 
@@ -15,7 +15,7 @@ angular.module('appceptionApp')
       console.log('inside service createApp');
       return $http({
         method: 'POST',
-        url: '/api/deploy/createApp'
+        url: '/api/heroku/createApp'
       });
     };
 
@@ -23,7 +23,7 @@ angular.module('appceptionApp')
       console.log('inside service updateApp');
       return $http({
         method: 'POST',
-        url: '/api/deploy/updateApp'
+        url: '/api/heroku/updateApp'
       });
     };
 

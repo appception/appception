@@ -1,9 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var Deploy = require('./deploy.model');
 var Heroku = require('heroku-client'),
-    // heroku = new Heroku({ token: HEROKU_API_TOKEN });
+    heroku = new Heroku({ token: '1efd38f3-b96c-42b1-9126-06e71191942d' });
 
  
 // Get list of all heroku apps
