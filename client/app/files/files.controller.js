@@ -10,18 +10,28 @@ angular.module('appceptionApp')
     $scope.failure = false;
     $scope.committing = false;
     $scope.nimbleLoader = true;
+    var repoName = $stateParams.repoName;
 
     Auth.isLoggedInAsync(function(boolean) {
       if(boolean === true){
         var user = Auth.getCurrentUser()
-        $scope.username = user.github.login
+        $scope.username = user.github.login;
+        var username = user.github.login;
 
-        // Get all the branches to look and see if they have a gh-pages branch for deployment
+
+        // Get all the branches to look and see if they have a gh-pages/heroku branch for deployment
         github.getBranches($scope.username, $scope.repoName)
           .then(function(res){
             for(var i = 0; i < res.data.length; i++) {
               if (res.data[i]["name"] === 'gh-pages'){
                 $scope.isDeployed = true;
+                $scope.deployedUrl = 'http://' + username + '.github.io/' + repoName;
+                $scope.deployedText =  username + '.github.io/' + repoName;
+
+              } else if (res.data[i]["name"] === 'heroku') {
+                $scope.isDeployed = true;
+                $scope.deployedUrl = 'http://' + username + '-' + repoName + '.herokuapp.com';
+                $scope.deployedText  = username + '-' + repoName + '.herokuapp.com';
               }
             }
             $scope.checkBranches = true;
