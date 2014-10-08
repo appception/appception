@@ -218,6 +218,11 @@ exports.newRepo = function (req, response) {
         // FOR TESTING
         // var fileOrDirPath = fs.readdirSync(path.normalize(config.serverRoot + 'api/projects/filetemplates/beginner/index.html'))
 
+        // var response = fs.readFileSync(fileOrDirPath {
+        //   encoding: 'base64'
+        // })
+
+        // !!!!ASYNC VERSION!!!!
         var stream = fs.createReadStream(fileOrDirPath, {
           encoding: 'base64'
         })
@@ -233,28 +238,30 @@ exports.newRepo = function (req, response) {
               token: token.token
             });
           // Using github module, create a file on github based on data read from file
-          github.repos.createFile({
-            user: githubLogin,
-            repo: repoName,
-            path: fileTitle,
-            message: 'Initial Commit for ' + fileTitle,
-            content: response,
-            committer: {
-              "name": "appception",
-              "email": "appception@gmail.com"
-            }
-          }, function (err, res) {
-            if (err) {
-              console.log('projects.controller.js: create file error', err, res)
-            } else {
-              console.log('projects.controller.js: create file success')
+          setTimeout(function(){
+            github.repos.createFile({
+              user: githubLogin,
+              repo: repoName,
+              path: fileTitle,
+              message: 'Initial Commit for ' + fileTitle,
+              content: response,
+              committer: {
+                "name": "appception",
+                "email": "appception@gmail.com"
+              }
+            }, function (err, res) {
+              if (err) {
+                console.log('projects.controller.js: create file error', err, res)
+              } else {
+                console.log('projects.controller.js: create file success')
 
-              // var decodeResponse = new Buffer(response, 'base64').toString('ascii');
+                // var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-              // results.push({path: fileOrDirTitle, content: decodeResponse })
-              next()
-            }
-          })
+                // results.push({path: fileOrDirTitle, content: decodeResponse })
+                next()
+              }
+            })
+          }, 400)
         })
       }).then(function(){
         console.log('all done!')
