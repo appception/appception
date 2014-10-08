@@ -185,75 +185,83 @@ exports.newRepo = function (req, response) {
   var repoName = req.query.repoName;
   var generator = req.query.generator
 
+  console.log('token', token.token)
   github.authenticate({
     type: "oauth",
     token: token.token
   });
 
-  // github.repos.create({
-  //   name: repoName,
-  //   auto_init: true
-  // }, function (err, res) {
-  //   if (err) {
-  //     console.log('projects.controller.js: create repo error', err, res)
-  //   } else {
-  //     console.log('projects.controller.js: create repo success')
-  //     console.log('res: ', res)
+  github.repos.create({
+    name: repoName,
+    auto_init: true
+  }, function (err, res) {
+    if (err) {
+      console.log('projects.controller.js: create repo error', err, res)
+    } else {
+      console.log('projects.controller.js: create repo success')
+      console.log('res: ', res)
 
-  //     // Once new repo has been created, read the directory that contains the template files.
+      // Once new repo has been created, read the directory that contains the template files.
 
-  //       var results = createRepoRecurse('', '', generator, githubLogin, repoName)
-  //       // return response.json(results)
-  //     // }); // end fs.readdir
-  //   }
+      // return response.json(results)
 
-  // }); // end github.repos.create()
-  var allFiles =  createRepoRecurse('', '', generator)
-  console.log('allFilesjealfnkgborepfksdmfx', allFiles);
-  var results = [];
+      var allFiles =  createRepoRecurse('', '', generator)
+      // FOR TESTING
+      // var allFiles = []
+      console.log('allFilesjealfnkgborepfksdmfx', allFiles);
+      var results = [];
 
-  forEachAsync(allFiles, function (next, fileTitle, index, array) {
-    console.log('fileTitle', fileTitle)
-    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileTitle);
-    // Get file contents
-    var stream = fs.createReadStream(fileOrDirPath, {
-      encoding: 'base64'
-    })
+      forEachAsync(allFiles, function (next, fileTitle, index, array) {
+        console.log('fileTitle', fileTitle)
+        var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileTitle);
+        // Get file contents
+        // FOR TESTING
+        // var fileOrDirPath = fs.readdirSync(path.normalize(config.serverRoot + 'api/projects/filetemplates/beginner/index.html'))
 
-    var response = '';
-    stream.on('data', function (chunk) {
-      response = response + chunk
-    })
+        var stream = fs.createReadStream(fileOrDirPath, {
+          encoding: 'base64'
+        })
 
-    stream.on('end', function () {
+        var response = '';
+        stream.on('data', function (chunk) {
+          response = response + chunk
+        })
 
-      // Using github module, create a file on github based on data read from file
-      github.repos.createFile({
-        user: githubLogin,
-        repo: repoName,
-        path: fileTitle,
-        message: 'Initial Commit for ' + fileTitle,
-        content: response,
-        committer: {
-          "name": "appception",
-          "email": "appception@gmail.com"
-        }
-      }, function (err, res) {
-        if (err) {
-          console.log('projects.controller.js: create file error', err, res)
-        } else {
-          console.log('projects.controller.js: create file success')
+        stream.on('end', function () {
+            github.authenticate({
+              type: "oauth",
+              token: token.token
+            });
+          // Using github module, create a file on github based on data read from file
+          github.repos.createFile({
+            user: githubLogin,
+            repo: repoName,
+            path: fileTitle,
+            message: 'Initial Commit for ' + fileTitle,
+            content: response,
+            committer: {
+              "name": "appception",
+              "email": "appception@gmail.com"
+            }
+          }, function (err, res) {
+            if (err) {
+              console.log('projects.controller.js: create file error', err, res)
+            } else {
+              console.log('projects.controller.js: create file success')
 
-          var decodeResponse = new Buffer(response, 'base64').toString('ascii');
+              // var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-          results.push({path: fileOrDirTitle, content: decodeResponse })
-          next()
-        }
+              // results.push({path: fileOrDirTitle, content: decodeResponse })
+              next()
+            }
+          })
+        })
+      }).then(function(){
+        console.log('all done!')
       })
-    })
-  }).then(function(){
-    console.log('all done!')
-  })
+    }
+
+  }); // end github.repos.create()
 } // end newRepo()
 
 
