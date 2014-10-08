@@ -1,16 +1,3 @@
-/**********************************
-***        GRUNT   TASKS        ***
-* You can issue the following tasks:
-*
-* grunt  ===================>  DEFAULT TASK.
-*   cleans old files, concats, minifies css, uglifies js,
-
-
-
-* starts server,
-* opens browser
-**********************************/
-
 module.exports = function (grunt) {
   var localConfig;
 
@@ -52,10 +39,10 @@ module.exports = function (grunt) {
   // require('express')(express);
   require('time-grunt')(grunt); // Time how long tasks take (for optimizing)
 
+
   ////////////////////////////////////////////////////
   // Main configuration tasks
   ////////////////////////////////////////////////////
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -66,6 +53,12 @@ module.exports = function (grunt) {
       dev: {
         options: {
           script: 'server/app.js'
+        }
+      },
+      debug: {
+        options: {
+          script: 'server/app.js',
+          debug: true
         }
       }
     }, // end express
@@ -112,12 +105,24 @@ module.exports = function (grunt) {
     }, // end env
 
 
+    /***********************************
+     ***   Main task configs here:   ***
+     * clean
+     * stylus
+     * wiredep (bower)
+     * concat
+     * minify css
+     * uglify js
+     * start server
+     * load browser
+     **********************************/
     clean: {
       default: { // name that appears on this task. You can add more argument names at this heirarchy
         files: {
           src: 'client/app/min/*.*'
         }
-      }
+      }//,
+      // serverFiles: 'server/tempfiles' // at the moment a bunch of zips are here... Cleaning this would remove old user zips, which I think we want to do...
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
@@ -136,47 +141,9 @@ module.exports = function (grunt) {
       } // end compile
     }, // end stylus
 
-    // injector: {
-    //   options: {
-    //   },
-    //   // Inject component styl into app.styl
-    //   stylus: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/app/', '');
-    //         filePath = filePath.replace('/client/components/', '');
-    //         return '@import \'' + filePath + '\';';
-    //       },
-    //       starttag: '// injector',
-    //       endtag: '// endinjector'
-    //     },
-    //     files: {
-    //       'client/app/app.styl': [
-    //         'client/{app,components}/**/*.styl',
-    //         '!client/app/app.styl'
-    //       ]
-    //     }
-    //   }, // end stylus
-
-    //   // Inject component css into index.html
-    //   css: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/', '');
-    //         filePath = filePath.replace('/.tmp/', '');
-    //         return '<link rel="stylesheet" href="' + filePath + '">';
-    //       }, // transform
-    //       starttag: '<!-- injector:css -->',
-    //       endtag: '<!-- endinjector -->'
-    //     },
-    //     files: {
-    //       'client/index.html': [
-    //         'client/{app,components}/**/*.css'
-    //       ]
-    //     }
-    //   } // end css
-    // }, // end injector
-
+    /**********************************
+     * Stylus injector tasks go here...
+    **********************************/
 
     // Automatically inject Bower components into the app
     wiredep: {
@@ -237,7 +204,7 @@ module.exports = function (grunt) {
     watch: {
       stylus: {
         files: ['client/app/**/*.styl', 'client/components/**/*.styl'],
-        tasks: ['cssmin'] // , 'autoprefixer']
+        tasks: ['stylus', 'autoprefixer', 'cssmin'] // , 'autoprefixer']
       }, // end stylus
       gruntfile: {
         files: ['Gruntfile.js']
@@ -266,6 +233,21 @@ module.exports = function (grunt) {
       }, // end express
     }, // end watch
 
+
+    /************************************************
+     *              exec:
+     * command (alias: cmd): The shell command to be executed. Must be a string or a function that returns a string.
+     * stdout: If true, stdout will be printed. Defaults to true.
+     * stderr: If true, stderr will be printed. Defaults to true.
+     * cwd: Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
+     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match. Defaults to 0. Can be an array for multiple allowed exit codes.
+     * callback: The callback function passed child_process.exec. Defaults to a noop.
+     * If the configuration is instead a simple string, it will be interpreted as a full command itself:
+     *
+     *   exec: {
+     *     echo_something: 'echo "This is something"'
+     *   }
+     ***********************************************/
     exec: { // executes on the command line
       startExec: {
         cmd: 'echo " = = = = Installing NPM and Bower components = = = ="'
@@ -277,10 +259,10 @@ module.exports = function (grunt) {
         cwd: './nimble',
         command: 'npm install --recursive && grunt build'
       },
-      extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
-        cwd: './nimble/src/extensibility/node',
-        command: 'npm install --recursive'
-      },
+      // extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
+      //   cwd: './nimble/src/extensibility/node',
+      //   command: 'npm install --recursive'
+      // },
       mustache: {  // package
         cwd: './nimble/src/thirdparty/mustache',
         command: 'npm install --recursive'
@@ -313,13 +295,37 @@ module.exports = function (grunt) {
         cwd: './nimble/src/thirdparty/text',
         command: 'npm install --recursive'
       }
+      // JSLint: {  // NOTHING
+      //   cwd: './nimble/src/extensions/default/JSLint/thirdparty/jslint',
+      //   command: 'npm install --recursive'
+      // },
+      // i18n: {  // NOTHING
+      //   cwd: './nimble/src/thirdparty/i18n',
+      //   command: 'npm install --recursive'
+      // },
+      // pathUtils: {  // NOTHING
+      //   cwd: './nimble/src/thirdparty/path-utils',
+      //   command: 'npm install --recursive'
+      // },
     } // end exec
+
+    /**********************************************
+     *     END init config
+     *********************************************/
   }); // end initConfig()
 
 
   /**********************************************
    *     Grunt tasks
    *********************************************/
+
+  // CHOICE SYNTAX:
+  //
+  //   if (target === 'debug') {
+  //     return grunt.task.run([
+  //       'clean:server'
+  //     ]);
+  //   }
 
   // Used for delaying livereload until after server has restarted
   grunt.registerTask('wait', function() {
@@ -337,6 +343,17 @@ module.exports = function (grunt) {
     this.async();
   });
 
+/***********************************
+ * There are 3 tasks below:
+ *   test - for testing the current task we're working on
+ *   clean - to clean temp files
+ *   build - for all build tasks that CURRENTLY WORK
+ *   serve - for the server.
+ *
+ * As tests pass, they should be added to 'build' or 'server'.
+ * the default 'grunt' task will build, then serve.
+ **********************************/
+
   grunt.registerTask('test', [
     'exec',
     'exec:changeDir'
@@ -350,16 +367,27 @@ module.exports = function (grunt) {
     // 'usemin'
   ]);
 
+
+  // grunt.registerTask('clean', [
+  //   'clean'
+  // ]);
+
+
   grunt.registerTask('build', [
-    'clean',
     'stylus',
     'autoprefixer',
+    'clean',
     'concat',
     'cssmin',
     'uglify'
   ]);
 
-  grunt.registerTask('serve', function(target) {
+  grunt.registerTask('deploy', [
+    'build',
+    'exec'
+  ]);
+
+  grunt.registerTask('serve',function(target) {
     if (target === 'production') {
       return grunt.task.run([
       'express:dev',
@@ -374,16 +402,61 @@ module.exports = function (grunt) {
         'open',
         'watch'
     ])}
-  }); // end 'serve'
-
-  grunt.registerTask('deploy', [
-    'build',
-    'exec'
-    //'serve:production'
-  ]);
+  }); // end registerTask(serve)
 
   grunt.registerTask('default', [
     'build',
-    'serve:local'
+    'serve'
   ]);
 }; // end Gruntfile
+
+
+
+
+
+/**************************************
+ * The OLD CODE GRAVEYARD!!!
+ * Keep this in case we want to resurrect it after testing...
+ *************************************/
+
+    // injector: {
+    //   options: {
+    //   },
+    //   // Inject component styl into app.styl
+    //   stylus: {
+    //     options: {
+    //       transform: function(filePath) {
+    //         filePath = filePath.replace('/client/app/', '');
+    //         filePath = filePath.replace('/client/components/', '');
+    //         return '@import \'' + filePath + '\';';
+    //       },
+    //       starttag: '// injector',
+    //       endtag: '// endinjector'
+    //     },
+    //     files: {
+    //       'client/app/app.styl': [
+    //         'client/{app,components}/**/*.styl',
+    //         '!client/app/app.styl'
+    //       ]
+    //     }
+    //   }, // end stylus
+
+    //   // Inject component css into index.html
+    //   css: {
+    //     options: {
+    //       transform: function(filePath) {
+    //         filePath = filePath.replace('/client/', '');
+    //         filePath = filePath.replace('/.tmp/', '');
+    //         return '<link rel="stylesheet" href="' + filePath + '">';
+    //       }, // transform
+    //       starttag: '<!-- injector:css -->',
+    //       endtag: '<!-- endinjector -->'
+    //     },
+    //     files: {
+    //       'client/index.html': [
+    //         'client/{app,components}/**/*.css'
+    //       ]
+    //     }
+    //   } // end css
+    // }, // end injector
+
