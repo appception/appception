@@ -121,8 +121,8 @@ module.exports = function (grunt) {
         files: {
           src: 'client/app/min/*.*'
         }
-      }//,
-      // serverFiles: 'server/tempfiles' // at the moment a bunch of zips are here... Cleaning this would remove old user zips, which I think we want to do...
+      },
+      serverFiles: 'server/tempfiles/*.*' // at the moment a bunch of zips are here... Cleaning this would remove old user zips, which I think we want to do...
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
@@ -240,7 +240,8 @@ module.exports = function (grunt) {
      * stdout: If true, stdout will be printed. Defaults to true.
      * stderr: If true, stderr will be printed. Defaults to true.
      * cwd: Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
-     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match. Defaults to 0. Can be an array for multiple allowed exit codes.
+     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match.
+     *   Defaults to 0. Can be an array for multiple allowed exit codes.
      * callback: The callback function passed child_process.exec. Defaults to a noop.
      * If the configuration is instead a simple string, it will be interpreted as a full command itself:
      *
@@ -257,7 +258,8 @@ module.exports = function (grunt) {
       },
       nimble: {  // package
         cwd: './nimble',
-        command: 'npm install --recursive && grunt build'
+        command: 'npm install --recursive && grunt build',
+        exitCode: [0, 1, 2, 3, 4, 5, 6, 7, 8] // adding to compensate for deploy errors. As of 10-8-14 this is not necessary, but a precaution.
       },
       // extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
       //   cwd: './nimble/src/extensibility/node',

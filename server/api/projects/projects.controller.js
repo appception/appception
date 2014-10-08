@@ -21,39 +21,12 @@ var github = new GitHubApi({
   debug: true
 });
 
-
-// Move this up to variable declaration above???
-/*
-var github = new GitHubApi({
-  version: "3.0.0",
-  debug: true,
-  authenticate: {
-    type: "oauth",
-    key: process.env.GITHUB_ID,
-    secret: process.env.GITHUB_SECRET
-  }
-});
-
-  ????????????????????????????
-
-  | | | | | | |
-  V V V V V V V
-*/
-
 // get
 github.authenticate({
   type: "oauth",
   key: process.env.GITHUB_ID,
   secret: process.env.GITHUB_SECRET
 });
-
-  // key: process.env.GITHUB_ID,
-  // secret: process.env.GITHUB_SECRET
-  // key: '3ba9a626f936bca491ee',
-  // secret: '094043a8cf1602d42cf9921d978c75ad92662145'
-  // GITHUB_ID: '3ba9a626f936bca491ee',
-  // GITHUB_SECRET: '094043a8cf1602d42cf9921d978c75ad92662145',
-
 
 // Get list of projects
 exports.index = function(req, response) {
