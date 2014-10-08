@@ -61,6 +61,7 @@
     "open": "~0.0.4",
     "passport": "~0.2.0",
     "passport-github": "^0.1.5",
+    "passport-heroku": "0.0.2",
     "passport-local": "~0.1.6",
     "request": "^2.44.0",
     "serve-favicon": "~2.0.1",

@@ -171,7 +171,7 @@ exports.newRepo = function (req, response) {
 
       forEachAsync(allFiles, function (next, fileTitle, index, array) {
         console.log('fileTitle', fileTitle)
-        var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileTitle);
+        var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + generator + '/' + fileTitle);
 
         // Check to see if path is a file
         if(!fs.lstatSync(fileOrDirPath).isDirectory()){
@@ -332,7 +332,7 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
   var allFiles = [];
 
   var innerRecurse = function(rootDir, fileOrDirTitle) {
-    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + '/' + fileOrDirTitle);
+    var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + generator + rootDir + '/' + fileOrDirTitle);
     // Check if path leads to a file
     if(!fs.lstatSync(fileOrDirPath).isDirectory()){
       console.log('file: ', fileOrDirTitle)
