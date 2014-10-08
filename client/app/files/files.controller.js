@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB) {
+  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window) {
 
     $scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;

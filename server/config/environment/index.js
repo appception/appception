@@ -50,6 +50,12 @@ var all = {
     clientID:     process.env.GITHUB_ID || 'b000475dfa18e133e84b',
     clientSecret: process.env.GITHUB_SECRET || '623daa76e878008111f88e15446017239fc9219c',
     callbackURL:  (process.env.DOMAIN || '') + '/auth/github/callback'
+  },
+
+  heroku: {
+    clientID:     process.env.HEROKU_ID || '9ef1cb31-aa27-4515-bfb6-761d28dbfc5a',
+    clientSecret: process.env.HEROKU_SECRET || '5c61d9d2-0a25-406b-9cb7-0be2f3d2792c',
+    callbackURL:  (process.env.DOMAIN || '') + '/auth/heroku/callback'
   }
 };
 

@@ -14,6 +14,7 @@ var config = require('./config/environment');
 module.exports = function(app) {
 
   // Insert routes below
+  app.use('/api/heroku', require('./api/heroku'));
   app.use('/api/projects', require('./api/projects'));
   app.use('/api/projects/files', require('./api/projects'))
   app.use('/api/testAPI', require('./api/testAPI'));
