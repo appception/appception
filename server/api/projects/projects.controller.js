@@ -148,6 +148,7 @@ exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var generator = req.query.generator
+  var deployment = req.query.deployment;
 
   github.authenticate({
     type: "oauth",
@@ -221,8 +222,8 @@ exports.newRepo = function (req, response) {
           next();
         }
       }).then(function(){
-        // Create a deploy branch for github pages
-        createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+        // Create a deploy branch for github pages/deployment
+        createBranchHelper(githubLogin, repoName, 'master', deployment)
         console.log('all done!')
         return response.json(results)
       }); // end forEachAsync
