@@ -1,0 +1,79 @@
+{[
+.bowerrc,     
+.editorconfig,     
+.gitattributes,     
+.gitignore,     
+.jshintrc,     
+.yo-rc.json,     
+app : {     
+  bower_components : {[
+    bootstrap-sass-official, 
+    ember, 
+    ember-data, 
+    ember-mocha-adapter, 
+    handlebars, 
+    jquery]} 
+app images,   
+app index.html,   
+app scripts {   
+app scripts app.js, 
+app scripts controllers, 
+app scripts models, 
+app scripts router.js, 
+app scripts routes  { 
+app scripts routes  application_route.js  }
+app scripts store.js, 
+app scripts views } 
+app styles  {   
+app styles  style.scss  } 
+app templates {   
+app templates application.hbs, 
+app templates index.hbs }}  
+bower.json,     
+Gruntfile.js,     
+node_modules  {     
+node_modules  .bin  {   
+node_modules  .bin  grunt-open.cmd, 
+node_modules  .bin  grunt-open  } 
+node_modules  connect-livereload  {   
+node_modules  connect-livereload  .npmignore, 
+node_modules  connect-livereload  .travis.yml, 
+node_modules  connect-livereload  index.js, 
+node_modules  connect-livereload  LICENSE, 
+node_modules  connect-livereload  package.json, 
+node_modules  connect-livereload  README.md } 
+node_modules  grunt,   
+node_modules  grunt-concurrent,   
+node_modules  grunt-contrib-clean,   
+node_modules  grunt-contrib-compass,   
+node_modules  grunt-contrib-concat,   
+node_modules  grunt-contrib-connect,   
+node_modules  grunt-contrib-copy,   
+node_modules  grunt-contrib-cssmin,   
+node_modules  grunt-contrib-htmlmin,   
+node_modules  grunt-contrib-imagemin,   
+node_modules  grunt-contrib-jshint,   
+node_modules  grunt-contrib-uglify,   
+node_modules  grunt-contrib-watch,   
+node_modules  grunt-ember-templates,   
+node_modules  grunt-mocha,   
+node_modules  grunt-neuter,   
+node_modules  grunt-open,   
+node_modules  grunt-replace,   
+node_modules  grunt-rev,   
+node_modules  grunt-svgmin,   
+node_modules  grunt-usemin,   
+node_modules  jshint-stylish,   
+node_modules  load-grunt-tasks,   
+node_modules  time-grunt  }   
+package.json,     
+test  {     
+test  .bowerrc,   
+test  bower.json,   
+test  bower_components  {   
+test  bower_components  chai, 
+test  bower_components  mocha } 
+test  index.html,   
+test  spec  {   
+test  spec  test.js }}  
+]}

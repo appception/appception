@@ -7,9 +7,10 @@ public
 client/bower_components
 server/tempfiles
 bower_components
-/server/config/local.env.js
-/client/app/min/app.cat.js
-/client/app/min/app.cat.css
+server/config/local.env.js
+client/app/min/app*
+client/app/app.build.css
 ~$*
 /data/*
 *sublime-*
+npm-debug.log

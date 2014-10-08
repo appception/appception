@@ -185,36 +185,6 @@ angular.module('appceptionApp', [
   });;'use strict';
 
 angular.module('appceptionApp')
-  .directive('brackets', function () {
-    return {
-      templateUrl: 'app/brackets/brackets.html',
-      restrict: 'EA',
-      link: function (scope, element, attrs) {
-      }
-    };
-  });;'use strict';
-
-describe('Directive: brackets', function () {
-
-  // load the directive's module and view
-  beforeEach(module('appceptionApp'));
-  beforeEach(module('app/brackets/brackets.html'));
-
-  var element, scope;
-
-  beforeEach(inject(function ($rootScope) {
-    scope = $rootScope.$new();
-  }));
-
-  it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<brackets></brackets>');
-    element = $compile(element)(scope);
-    scope.$apply();
-    expect(element.text()).toBe('this is the brackets directive');
-  }));
-});;'use strict';
-
-angular.module('appceptionApp')
   .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB) {
 
     $scope.repoName = $stateParams.repoName;
@@ -223,6 +193,7 @@ angular.module('appceptionApp')
     $scope.success = false;
     $scope.failure = false;
     $scope.committing = false;
+    $scope.nimbleLoader = true;
 
     Auth.isLoggedInAsync(function(boolean) {
       if(boolean === true){
@@ -265,92 +236,14 @@ angular.module('appceptionApp')
         })
     }; // end addBranch()
 
-    /**************************
-     * NOTE: Aaron is putting this codeblock
-     * back in but commenting out.
-     * This was missing during a merge, and
-     * it seems like something we *might* want
-     * to keep around for a day or 2.
-     **************************/
-
-     
-    // var filer = new Filer.FileSystem({
-    //   name: 'files',
-    //   provider: new Filer.FileSystem.providers.Fallback('makedrive')
-    // });
-
-    // var shell = filer.Shell();
-
-    // var exportLocalDB = function(callback){
-
-    //   // get list of all files and directories in user's browsers local DB
-    //   shell.ls('/', {recursive: true}, function(err, entries){
-    //     console.log('entries', entries[0])
-    //     var results = [];
-    //     if (err) throw err;
-
-
-    //     var traverseDirectory = function(item, fullpath){
-    //       var itemObj = {};
-
-    //       //  add path of directory to results
-    //       results.push({path: fullpath})
-    //       // console.log('directory:', fullpath);
-
-    //       // loop through every item in a directory
-    //       item.contents.forEach(function(result, i){
-    //         var entry = item.contents[i];
-    //         var itemPath = fullpath + '/' + entry.path
-
-    //         // if item is a file, add  file path and content to results
-    //         if(entry.type === 'FILE'){
-    //           filer.readFile(itemPath, function(err, data){
-    //             // console.log('file2:', itemPath, data);
-    //             results.push({path: itemPath, content: data.toString()})
-    //           })
-
-    //         // if item is directory, recursively traverse the directory
-    //         } else if (entry.type === 'DIRECTORY') {
-    //           traverseDirectory(entry, itemPath );
-    //         }
-    //       })
-
-    //     }
-
-    //     if(entries[0] && entries[0].type==="DIRECTORY"){
-    //       traverseDirectory(entries[0], '/' + entries[0].path)
-    //     } else {
-    //       alert('You need a folder folder at the root of your project.')
-    //     }
-
-    //     setTimeout(function(){
-    //       callback(results);
-    //     }, 1000);
-
-
-    //   });
-    // };
-
-
-    $scope.getProjectFiles = function(){
-
-      indexedDB.exportLocalDB().then(function(result){
-        console.log('result', result)
-      });
-
-    }
-
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
 
-        console.log(filesArray)
-
         filesArray.shift()
         for(var i = filesArray.length-1; i >= 0; i--) {
           if(!filesArray[i]["content"]){
-            console.log(filesArray[i])
             filesArray.splice(i, 1);
           }
         }
@@ -360,8 +253,6 @@ angular.module('appceptionApp')
           filesArray[i]["type"] = 'blob';
           filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
         }
-        // filesArray.shift()
-        console.log(filesArray)
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
@@ -369,7 +260,6 @@ angular.module('appceptionApp')
             console.log('user: ', user)
             github.createCommit(user.github.login, $scope.repoName, message, filesArray)
               .then(function(res){
-                console.log('success!', res.data);
                 $scope.committing = false;
                 $scope.success = true;
               })
@@ -398,7 +288,9 @@ angular.module('appceptionApp')
         controller: 'FilesCtrl',
         authenticate: true
       });
-  });;$(document).ready(function() {
+  });
+
+;$(document).ready(function() {
 	console.log('javascript has loaded!')
 });'use strict';
 
@@ -581,6 +473,43 @@ angular.module('appceptionApp')
       }
     };
 
+    // Insert file templates from  a given repo
+    // into the user's browsers local database.
+    var insertTemplateFilesIntoLocalDB = function(repo, items) {
+              console.log(items)
+
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
+
+      // create root folder for the project
+      filer.mkdir( '/' + repo , function(err){
+        if(err) throw err;
+      });
+      
+      // iterate through the items from the repo.
+      for(var i =0; i < items.length; i++){
+        var item = items[i];
+        console.log(item)
+
+
+        var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
+
+        // if item has no content, create a directory
+        if(! item.hasOwnProperty('content')) {
+          filer.mkdir( filePath , function(err){
+            if(err) throw err;
+          });
+        // if item has content, create a file
+        }  else {
+          filer.writeFile(filePath , item.content, function(error) {
+            if(error) throw error;
+          })
+        }
+      }
+    };
+
     // Export files and directories from the user's browsers local database.
     // exportLocalDB() returns a flat array containing information about 
     // all the files and folders.
@@ -706,7 +635,8 @@ angular.module('appceptionApp')
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
-      emptyLocalDB: emptyLocalDB
+      emptyLocalDB: emptyLocalDB,
+      insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 
   });
@@ -877,7 +807,7 @@ describe('Controller: AllProjectsCtrl', function () {
 ;'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth) {
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB) {
 
   	$scope.repoName = '';
     $scope.creating = false;
@@ -890,7 +820,13 @@ angular.module('appceptionApp')
         	console.log('user logged in')
           var user = Auth.getCurrentUser()
           github.createRepo(user.github.login, repoName).then(function(res) {
-            console.log('success')
+            console.log('success', res.data);
+
+            // empties the user's browser's local database
+            indexedDB.emptyLocalDB();
+            // inserts file templates in browser's local database
+            indexedDB.insertTemplateFilesIntoLocalDB(repoName, res.data);
+
             $state.go('files', {repoName: repoName})
           })
         }else {

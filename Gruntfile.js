@@ -1,16 +1,3 @@
-/**********************************
-***        GRUNT   TASKS        ***
-* You can issue the following tasks:
-*
-* grunt  ===================>  DEFAULT TASK.
-*   cleans old files, concats, minifies css, uglifies js,
-
-
-
-* starts server,
-* opens browser
-**********************************/
-
 module.exports = function (grunt) {
   var localConfig;
 
@@ -52,10 +39,10 @@ module.exports = function (grunt) {
   // require('express')(express);
   require('time-grunt')(grunt); // Time how long tasks take (for optimizing)
 
+
   ////////////////////////////////////////////////////
   // Main configuration tasks
   ////////////////////////////////////////////////////
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -135,7 +122,7 @@ module.exports = function (grunt) {
           src: 'client/app/min/*.*'
         }
       }//,
-      // serverFiles: 'server/tempfiles'
+      // serverFiles: 'server/tempfiles' // at the moment a bunch of zips are here... Cleaning this would remove old user zips, which I think we want to do...
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
@@ -154,47 +141,9 @@ module.exports = function (grunt) {
       } // end compile
     }, // end stylus
 
-    // injector: {
-    //   options: {
-    //   },
-    //   // Inject component styl into app.styl
-    //   stylus: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/app/', '');
-    //         filePath = filePath.replace('/client/components/', '');
-    //         return '@import \'' + filePath + '\';';
-    //       },
-    //       starttag: '// injector',
-    //       endtag: '// endinjector'
-    //     },
-    //     files: {
-    //       'client/app/app.styl': [
-    //         'client/{app,components}/**/*.styl',
-    //         '!client/app/app.styl'
-    //       ]
-    //     }
-    //   }, // end stylus
-
-    //   // Inject component css into index.html
-    //   css: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/', '');
-    //         filePath = filePath.replace('/.tmp/', '');
-    //         return '<link rel="stylesheet" href="' + filePath + '">';
-    //       }, // transform
-    //       starttag: '<!-- injector:css -->',
-    //       endtag: '<!-- endinjector -->'
-    //     },
-    //     files: {
-    //       'client/index.html': [
-    //         'client/{app,components}/**/*.css'
-    //       ]
-    //     }
-    //   } // end css
-    // }, // end injector
-
+    /**********************************
+     * Stylus injector tasks go here...
+    **********************************/
 
     // Automatically inject Bower components into the app
     wiredep: {
@@ -310,10 +259,10 @@ module.exports = function (grunt) {
         cwd: './nimble',
         command: 'npm install --recursive && grunt build'
       },
-      extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
-        cwd: './nimble/src/extensibility/node',
-        command: 'npm install --recursive'
-      },
+      // extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
+      //   cwd: './nimble/src/extensibility/node',
+      //   command: 'npm install --recursive'
+      // },
       mustache: {  // package
         cwd: './nimble/src/thirdparty/mustache',
         command: 'npm install --recursive'
@@ -453,11 +402,61 @@ module.exports = function (grunt) {
         'open',
         'watch'
     ])}
-
-  });
+  }); // end registerTask(serve)
 
   grunt.registerTask('default', [
     'build',
     'serve'
   ]);
 }; // end Gruntfile
+
+
+
+
+
+/**************************************
+ * The OLD CODE GRAVEYARD!!!
+ * Keep this in case we want to resurrect it after testing...
+ *************************************/
+
+    // injector: {
+    //   options: {
+    //   },
+    //   // Inject component styl into app.styl
+    //   stylus: {
+    //     options: {
+    //       transform: function(filePath) {
+    //         filePath = filePath.replace('/client/app/', '');
+    //         filePath = filePath.replace('/client/components/', '');
+    //         return '@import \'' + filePath + '\';';
+    //       },
+    //       starttag: '// injector',
+    //       endtag: '// endinjector'
+    //     },
+    //     files: {
+    //       'client/app/app.styl': [
+    //         'client/{app,components}/**/*.styl',
+    //         '!client/app/app.styl'
+    //       ]
+    //     }
+    //   }, // end stylus
+
+    //   // Inject component css into index.html
+    //   css: {
+    //     options: {
+    //       transform: function(filePath) {
+    //         filePath = filePath.replace('/client/', '');
+    //         filePath = filePath.replace('/.tmp/', '');
+    //         return '<link rel="stylesheet" href="' + filePath + '">';
+    //       }, // transform
+    //       starttag: '<!-- injector:css -->',
+    //       endtag: '<!-- endinjector -->'
+    //     },
+    //     files: {
+    //       'client/index.html': [
+    //         'client/{app,components}/**/*.css'
+    //       ]
+    //     }
+    //   } // end css
+    // }, // end injector
+
