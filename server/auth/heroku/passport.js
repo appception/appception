@@ -18,6 +18,8 @@ exports.setup = function (User, config) {
         return done(err);
       }
       if (!user) {
+        console.log('token !user', token)
+        exports.herokuToken = token;
         user = new User({
           name: profile.displayName,
           username: profile.username,
@@ -39,7 +41,7 @@ exports.setup = function (User, config) {
   ));
 };
 
-// exports.herokuToken = token;
+exports.herokuToken = '';
 
 
 // curl -X POST https://id.heroku.com/oauth/token \

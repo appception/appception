@@ -11,19 +11,27 @@ angular.module('appceptionApp')
       });
     };
 
-    var createApp = function(){
+    var createApp = function(githubLogin, githubRepo){
       console.log('inside service createApp');
       return $http({
         method: 'POST',
-        url: '/api/heroku/createApp'
+        url: '/api/heroku/createApp',
+        params: {
+          githubLogin: githubLogin,
+          githubRepo: githubRepo
+        }
       });
     };
 
-    var updateApp = function(){
+    var updateApp = function(githubLogin, githubRepo){
       console.log('inside service updateApp');
       return $http({
         method: 'POST',
-        url: '/api/heroku/updateApp'
+        url: '/api/heroku/updateApp',
+        params: {
+          githubLogin: githubLogin,
+          githubRepo: githubRepo
+        }
       });
     };
 
@@ -34,3 +42,5 @@ angular.module('appceptionApp')
     };
 
   });
+
+

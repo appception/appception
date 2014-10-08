@@ -10,40 +10,31 @@ angular.module('appceptionApp')
       $window.location.href = '/auth/' + provider;
     };
 
+    var user = Auth.getCurrentUser();
+    var repo = 'heroku';
+
     $scope.listApps = function(){
-      console.log('list app cont')
+      console.log('list app cont');
 
       heroku.listApps().then(function(files){
-        console.log('files', files)
+        console.log('files', files);
       });
-
-    }
-
+    };
 
     $scope.createApp = function(){
-      console.log('create app cont')
+      console.log('create app cont');
 
-      heroku.createApp().then(function(files){
-        console.log('files', files)
+      heroku.createApp(user.github.login, repo).then(function(files){
+        console.log('files', files);
       });
-
-    }
+    };
 
     $scope.updateApp = function(){
-      console.log('update app cont')
+      console.log('update app cont');
 
-      heroku.updateApp().then(function(files){
-        console.log('files', files)
+      heroku.updateApp(user.github.login, repo).then(function(files){
+        console.log('files', files);
       });
-
-    }
-
-    // console.log($cookieStore.get('deploy_token'))
-
-
+    };
 
   });
-
-  /*
-14e74e0a-af1c-4ba5-baa8-a485453dd7dc
-  */
