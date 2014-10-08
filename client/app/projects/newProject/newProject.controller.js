@@ -19,7 +19,7 @@ angular.module('appceptionApp')
             // empties the user's browser's local database
             indexedDB.emptyLocalDB();
             // inserts file templates in browser's local database
-            indexedDB.insertTemplateFilesIntoLocalDB(repoName, res.data);
+            indexedDB.insertRepoIntoLocalDB(repoName, res.data);
 
             $state.go('files', {repoName: repoName})
           })

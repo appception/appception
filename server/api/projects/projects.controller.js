@@ -196,77 +196,73 @@ exports.newRepo = function (req, response) {
     auto_init: true
   }, function (err, res) {
     if (err) {
-      console.log('projects.controller.js: create repo error', err, res)
+      console.log('projects.controller.js: create repo error', err)
     } else {
       console.log('projects.controller.js: create repo success')
-      console.log('res: ', res)
 
-      // Once new repo has been created, read the directory that contains the template files.
-
-      // return response.json(results)
-
-      var allFiles =  createRepoRecurse('', '', generator)
-      // FOR TESTING
-      // var allFiles = []
-      console.log('allFilesjealfnkgborepfksdmfx', allFiles);
+      // Generate an array of all the file names for the generator, including the directories they are within
+      var allFiles =  recursivelyGetFileNames('', '', generator)
       var results = [];
 
       forEachAsync(allFiles, function (next, fileTitle, index, array) {
         console.log('fileTitle', fileTitle)
         var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + '/' + fileTitle);
-        // Get file contents
-        // FOR TESTING
-        // var fileOrDirPath = fs.readdirSync(path.normalize(config.serverRoot + 'api/projects/filetemplates/beginner/index.html'))
 
-        // var response = fs.readFileSync(fileOrDirPath {
-        //   encoding: 'base64'
-        // })
+        // Check to see if path is a file
+        if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+          // If path is a file, get the contents of the file
+          var stream = fs.createReadStream(fileOrDirPath, {
+            encoding: 'base64'
+          })
 
-        // !!!!ASYNC VERSION!!!!
-        var stream = fs.createReadStream(fileOrDirPath, {
-          encoding: 'base64'
-        })
+          var response = '';
+          stream.on('data', function (chunk) {
+            response = response + chunk
+          })
 
-        var response = '';
-        stream.on('data', function (chunk) {
-          response = response + chunk
-        })
+          stream.on('end', function () {
+              github.authenticate({
+                type: "oauth",
+                token: token.token
+              });
+            // Using github module, create a file on github based on data read from file
+            setTimeout(function(){
+              github.repos.createFile({
+                user: githubLogin,
+                repo: repoName,
+                path: fileTitle,
+                message: 'Initial Commit for ' + fileTitle,
+                content: response,
+                committer: {
+                  "name": "appception",
+                  "email": "appception@gmail.com"
+                }
+              }, function (err, res) {
+                if (err) {
+                  console.log('projects.controller.js: create file error', err, res)
+                } else {
+                  console.log('projects.controller.js: create file success')
 
-        stream.on('end', function () {
-            github.authenticate({
-              type: "oauth",
-              token: token.token
-            });
-          // Using github module, create a file on github based on data read from file
-          setTimeout(function(){
-            github.repos.createFile({
-              user: githubLogin,
-              repo: repoName,
-              path: fileTitle,
-              message: 'Initial Commit for ' + fileTitle,
-              content: response,
-              committer: {
-                "name": "appception",
-                "email": "appception@gmail.com"
-              }
-            }, function (err, res) {
-              if (err) {
-                console.log('projects.controller.js: create file error', err, res)
-              } else {
-                console.log('projects.controller.js: create file success')
+                  var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-                // var decodeResponse = new Buffer(response, 'base64').toString('ascii');
-
-                // results.push({path: fileOrDirTitle, content: decodeResponse })
-                next()
-              }
-            })
-          }, 400)
-        })
+                  results.push([{path: repoName + '/' + fileTitle, content: decodeResponse }])
+                  next()
+                }
+              })
+            }, 600)
+          })
+        } else {
+          // If path is a directory, add the folder name to the results array
+          results.push([{path: repoName + '/' + fileTitle,}])
+          next();
+        }
       }).then(function(){
+        // Create a deploy branch for github pages
+        createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
         console.log('all done!')
-      })
-    }
+        return response.json(results)
+      }); // end forEachAsync
+    }; // end else
 
   }); // end github.repos.create()
 } // end newRepo()
@@ -371,32 +367,39 @@ exports.createBranch = function(req, res) {
   return res.json(createBranchHelper(githubLogin, repoName, baseBranchName, newBranchName))
 }
 
-var createRepoRecurse = function(rootDir, fileOrDirTitle, generator){
-  //TODO: figure out how to get recursion to fully work
+var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
   var allFiles = [];
-  console.log('========================================fileOrDirTitle', rootDir, fileOrDirTitle)
-  var innerRecurse = function(rootDir, fileOrDirTitle, generator) {
-    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + '/' + fileOrDirTitle);
 
+  var innerRecurse = function(rootDir, fileOrDirTitle) {
+    var fileOrDirPath = path.normalize(config.serverRoot + 'api/projects/filetemplates/' + generator + rootDir + '/' + fileOrDirTitle);
+    // Check if path leads to a file
     if(!fs.lstatSync(fileOrDirPath).isDirectory()){
       console.log('file: ', fileOrDirTitle)
+      // Clean the directory name if necessary
       if(rootDir.charAt(0) === '/'){
         rootDir = rootDir.substr(1)
       }
+      // If file is not yet in the allFiles array, push it in
       if(allFiles.indexOf(rootDir + fileOrDirTitle) === -1) {
         allFiles.push(rootDir + fileOrDirTitle)
       }
     } else {
+      // If path leads to a directory, read the directory
       var files = fs.readdirSync(fileOrDirPath)
       rootDir = path.normalize(rootDir + fileOrDirTitle + '/');
-
+      // Push the cleaned directory name to the allFiles array
+      if(rootDir.charAt(0) === '/'){
+        var cleanRootDir = rootDir.substr(1)
+        allFiles.push(cleanRootDir)
+      }
+      // Look at each file in the directory and perform the entire function again on each
       files.forEach(function (nextFileOrDirTitle, index, array) {
         console.log('rootDir', rootDir)
-        return innerRecurse(rootDir, nextFileOrDirTitle, generator)
+        return innerRecurse(rootDir, nextFileOrDirTitle)
       })
     }
   }
-  innerRecurse(rootDir, fileOrDirTitle, generator)
+  innerRecurse(rootDir, fileOrDirTitle)
   return allFiles
 }
 

@@ -8,18 +8,18 @@ angular.module('appceptionApp')
     // Insert files and directories for a given repo
     // into the user's browsers local database.
     var insertRepoIntoLocalDB = function(repo, items) {
-
+      console.log('insertRepoIntoLocalDB', items)
       var filer = new Filer.FileSystem({
         name: 'files',
         provider: new Filer.FileSystem.providers.Fallback(databaseName)
       });
-      
+
       // iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
 
-        var filePath = '/'+repo + '/' + item[0].path.replace(/^.*?\//, '');
-
+        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?\//, '');
+        console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
           filer.mkdir( filePath , function(err){
@@ -48,7 +48,7 @@ angular.module('appceptionApp')
       filer.mkdir( '/' + repo , function(err){
         if(err) throw err;
       });
-      
+
       // iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
@@ -72,7 +72,7 @@ angular.module('appceptionApp')
     };
 
     // Export files and directories from the user's browsers local database.
-    // exportLocalDB() returns a flat array containing information about 
+    // exportLocalDB() returns a flat array containing information about
     // all the files and folders.
     var exportLocalDB = function(){
 
@@ -88,7 +88,7 @@ angular.module('appceptionApp')
       // turn shell.ls callback into a promise
       var defer = $q.defer();
 
-      // shell.ls returns a  nested list of all files and directories 
+      // shell.ls returns a  nested list of all files and directories
       //in user's browsers local DB
       shell.ls('/', {recursive: true}, function(err, entries){
         // console.log('entries', entries[0])
@@ -97,7 +97,7 @@ angular.module('appceptionApp')
         var counter = 0;
 
         // traverse the nested directory structure to produce a flat array
-        // of files and folders. 
+        // of files and folders.
         var traverseDirectory = function(item, fullpath){
 
           // loop through every item in a directory
@@ -105,8 +105,8 @@ angular.module('appceptionApp')
             var entry = item.contents[i];
             var itemPath = fullpath + '/' + entry.path;
 
-            // if item is a file, read the file,  
-            // and add  file path and content 
+            // if item is a file, read the file,
+            // and add  file path and content
             if(entry.type === 'FILE'){
 
               (function(i) {
@@ -115,13 +115,13 @@ angular.module('appceptionApp')
                 filer.readFile(itemPath, function(err, data){
                   if (err) {
                     return promises[i].reject(err);
-                  } 
+                  }
                   // console.log('file2:', itemPath, data);
                   promises[i].resolve({path: itemPath, content: data.toString()});
-                }) 
+                })
               })(counter++)
 
-            // if item is directory, add directory path, and 
+            // if item is directory, add directory path, and
             //  recursively traverse the directory
             } else if (entry.type === 'DIRECTORY') {
              // console.log('directory:', itemPath);
@@ -145,13 +145,13 @@ angular.module('appceptionApp')
 
         // since there are two nested level of promises,
         // push every  promise in 2nd level of promise (promises[])
-        // into the promise of the 1st level (REALpromises[]) 
+        // into the promise of the 1st level (REALpromises[])
         var REALpromises = [];
         angular.forEach(promises, function(promise) {
           REALpromises.push(promise.promise);
         })
         defer.resolve($q.all(REALpromises));
-    
+
       });
 
       return defer.promise;
