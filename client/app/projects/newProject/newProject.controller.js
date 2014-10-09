@@ -8,6 +8,8 @@ angular.module('appceptionApp')
 
     $scope.generator = 'beginner';
 
+    $scope.deploymentProvider='';
+
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };

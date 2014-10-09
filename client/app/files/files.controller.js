@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window, $location, $cookieStore, heroku) {
+  .controller('FilesCtrl', function ($scope, $stateParams, github, Auth, indexedDB, $window, $location, $cookieStore, heroku) {
 
-    $scope.repoName = $stateParams.repoName;
+    // $scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;
     $scope.checkBranches = false;
     $scope.success = false;
@@ -12,8 +12,17 @@ angular.module('appceptionApp')
     $scope.nimbleLoader = true;
     $scope.requiresHeroku = false;
     var repoName = $stateParams.repoName;
+    $scope.deployBranch;
+    // $scope.deployBranch;
     var deployBranch = '';
     var username = '';
+
+    indexedDB.getCurrentRepo()
+      .then(function(repo){ 
+        $scope.repoName  = repo; 
+      });
+
+    // console.log(rp).then
 
     Auth.isLoggedInAsync(function(boolean) {
       if(boolean === true){
@@ -59,6 +68,13 @@ angular.module('appceptionApp')
     };
 
 
+    $scope.showHerokuLink = function() {
+
+      $scope.requiresHeroku = true;
+    };
+
+
+
 
     // Show "Live Preview"
     // when "Live Preview" is clicked, get progress bar of when files are being process
@@ -69,21 +85,34 @@ angular.module('appceptionApp')
 
     // when doen processing, show "Live Preview"
 
-    $scope.deploy = function(){
-      //  if project does not have a deploy branch, add a deploy branch
-      if(!$scope.isDeployed) {
-        github.createBranch($scope.username, $scope.repoName, 'master', deployBranch)
-          .then(function(res) {
-            console.log('addDeployBranch success!', res)
-            $scope.isDeployed = true;
+    // if project does not have a deploy branch, add a deploy branch
+    $scope.pickDeploy = function(){
+      console.log('deployBranch', $scope.deployBranch);
+      deployBranch = $scope.deployBranch;
+      $scope.isDeployed = true;
 
-            // if project is deployed on heroku, create a new heroku app
-            if(deployBranch ==='heroku') {
-              console.log('create heroku app')
-              heroku.createApp(username, repoName);
-            }
-          });
+      // if repo is deployed on heroku and user isn't logged in at heroku,
+      // show them login window.
+      if(deployBranch==='heroku' && !$cookieStore.get('deployToken') ){
+        $window.location.href = '/auth/heroku';
       }
+
+      // // create deploy branch on github
+      // github.createBranch($scope.username, $scope.repoName, 'master', deployBranch)
+      //   .then(function(res) {
+      //     console.log('addDeployBranch success!', res);
+  
+      //     // // if project is deployed on heroku, create a new heroku app
+      //     // if(deployBranch ==='heroku') {
+      //     //   console.log('create heroku app', username, repoName)
+      //     //   // heroku.createApp(username, repoName);
+      //     // }
+      //   });
+
+    }
+
+
+    $scope.deploy = function(){
 
       // commit the files to the deploy branch
       var message = 'test deployment ' + new Date();
@@ -145,6 +174,9 @@ angular.module('appceptionApp')
               .then(function(res){
                 $scope.committing = false;
                 $scope.success = true;
+                console.log('fff', res)
+
+                console.log(callback)
 
                 if(callback){
                   console.log('callback build app')
