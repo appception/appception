@@ -309,7 +309,53 @@ module.exports = function (grunt) {
       //   cwd: './nimble/src/thirdparty/path-utils',
       //   command: 'npm install --recursive'
       // },
-    } // end exec
+    }, // end exec
+
+
+    /************************************************
+     *     Testing:
+     * Mocha (Server):
+     *   Runs MOCHA tests at /server/api/ ** / *.spec.js
+     *   You can add as many tests as you want, in any folder.
+     *   Folders should each have at least 1 coverage test.
+     *
+     * Karma (Client):
+     *   Runs KARMA tests and launches PhantomJS web browser.
+     *   Add files / patterns to lad in browser by modifying
+     *     karma.conf.js : config.set({
+     *     files: [ ADD FILES HERE ]})
+     *
+     * Protractor (E2E):
+     *   Runs PROTRACTOR tests with Jasmine framework in Chrome browser.
+     *   Protractor config file at: protractor.conf.js
+     *   Tests are in: /e2e/ ** / *.spec.js
+     ***********************************************/
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        singleRun: true
+      }
+    },
+
+    mochaTest: {
+      options: {
+        reporter: 'spec'
+      },
+      src: ['server/api/**/*.spec.js']
+    },
+
+    protractor: {
+      options: {
+        configFile: 'protractor.conf.js'
+      },
+      chrome: {
+        options: {
+          args: {
+            browser: 'chrome'
+          }
+        }
+      }
+    },
 
     /**********************************************
      *     END init config
@@ -346,28 +392,54 @@ module.exports = function (grunt) {
   });
 
 /***********************************
- * There are 3 tasks below:
- *   test - for testing the current task we're working on
+ * There are 4 tasks below:
+ *   test - for testing 'server', 'client', or 'e2e'
  *   clean - to clean temp files
  *   build - for all build tasks that CURRENTLY WORK
- *   serve - for the server.
- *
- * As tests pass, they should be added to 'build' or 'server'.
- * the default 'grunt' task will build, then serve.
+ *   serve - for the server, either 'local' or 'production'.
  **********************************/
 
-  grunt.registerTask('test', [
-    'exec',
-    'exec:changeDir'
-    // 'injector',
-    // 'wiredep',
-    // 'useminPrepare',
-    // 'autoprefixer',
-    // 'ngtemplates',
-    // 'ngAnnotate',
-    // 'cdnify',
-    // 'usemin'
-  ]);
+  grunt.registerTask('test', function(target) {
+    if (target === 'server') {
+      return grunt.task.run([
+        'env:all',
+        'env:test',
+        'mochaTest'
+      ]);
+    } // end 'server'
+
+    else if (target === 'client') {
+      return grunt.task.run([
+        'clean:server',
+        'env:all',
+        'injector:stylus',
+        'concurrent:test',
+        'injector',
+        'autoprefixer',
+        'karma'
+      ]);
+    } // end 'client'
+
+    else if (target === 'e2e') {
+      return grunt.task.run([
+        'clean:server',
+        'env:all',
+        'env:test',
+        'injector:stylus',
+        'concurrent:test',
+        'injector',
+        'wiredep',
+        'autoprefixer',
+        'express:dev',
+        'protractor'
+      ]);
+    } // end 'e2e'
+
+    else grunt.task.run([
+      'test:server',
+      'test:client'
+    ]);
+  }); // end 'grunt test'
 
 
   // grunt.registerTask('clean', [
