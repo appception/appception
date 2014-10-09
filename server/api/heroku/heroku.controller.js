@@ -21,7 +21,7 @@ exports.create = function(req, res) {
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
   var appName = githubLogin + '-' + githubRepo;
-  var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/master.tar.gz"},
+  var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"},
                     "app": {"name": appName } };
   var callback = function(){
     return console.log('new app created'); // making this a return so the server can capture it and we can test it.
@@ -38,7 +38,7 @@ exports.update = function(req, res) {
   var githubLogin = req.query.githubLogin;
   var githubRepo = req.query.githubRepo;
   var appName = githubLogin + '-' + githubRepo;
-  var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/master.tar.gz"}};
+  var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"}};
   var callback = function(){
     return console.log(' app updated'); // making this a return so the server can capture it and we can test it.
   };

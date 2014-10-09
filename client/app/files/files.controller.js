@@ -76,20 +76,27 @@ angular.module('appceptionApp')
           .then(function(res) {
             console.log('addDeployBranch success!', res)
             $scope.isDeployed = true;
+
             // if project is deployed on heroku, create a new heroku app
             if(deployBranch ==='heroku') {
+              console.log('create heroku app')
               heroku.createApp(username, repoName);
             }
           });
       }
 
       // commit the files to the deploy branch
+      var message = 'test deployment ' + new Date();
+      console.log('message', message, deployBranch)
+      commit(message, [deployBranch], function(){
+        // if app is deployed on Heroku, build app
+        if(deployBranch ==='heroku') {
+          console.log('build heroku app')
+          heroku.updateApp(username, repoName);
+        }
 
+      });
 
-      // if app is deployed on Heroku, build app
-      if(deployBranch ==='heroku') {
-        heroku.updateApp(username, repoName);
-      }
 
     };
 
@@ -106,8 +113,14 @@ angular.module('appceptionApp')
         })
     }; // end addBranch()
 
+
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
+      commit(message, ['master', deployBranch]);
+    }
+
+
+    var commit = function(message, branches, callback){
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
 
@@ -128,10 +141,16 @@ angular.module('appceptionApp')
           if(boolean === true){
             var user = Auth.getCurrentUser()
             console.log('user: ', user)
-            github.createCommit(user.github.login, $scope.repoName, message, filesArray)
+            github.createCommit(user.github.login, $scope.repoName, branches, message, filesArray)
               .then(function(res){
                 $scope.committing = false;
                 $scope.success = true;
+
+                if(callback){
+                  console.log('callback build app')
+                  callback();
+                }
+
               })
           }else {
             console.log('Sorry, an error has occurred while committing');
@@ -141,6 +160,8 @@ angular.module('appceptionApp')
         });
       })
     }
+
+
 
     $scope.dismissNotification = function() {
       $scope.success = false;

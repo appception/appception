@@ -237,6 +237,7 @@ exports.commit = function (req, response) {
   var githubLogin = req.body.githubLogin;
   var repoName = req.body.repoName;
   var message = req.body.message;
+  var branches = req.body.branches;
   var filesArray = req.body.filesArray;
   //console.log('filesArray before',filesArray)
   // for(var i = 0; i < filesArray.length; i++) {
@@ -244,9 +245,9 @@ exports.commit = function (req, response) {
   // }
   //console.log('filesArray after',filesArray)
 
-  createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
-  createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
-
+  for(var i = 0; i < branches.length; i++){
+    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message)
+  }
   return response.json('success!')
 }
 
