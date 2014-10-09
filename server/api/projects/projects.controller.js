@@ -11,8 +11,6 @@ var request = require('request');
 var Projects = require('./projects.model');
 var token = require('../../auth/github/passport');
 var forEachAsync = require('forEachAsync').forEachAsync;
-var doesThisUserHaveUserPage = require('./projects.controller').doesUserHaveUserPage;
-var createNewRepo = require('./projects.controller').newRepo;
 
 var GitHubApi = require("github");
 
@@ -311,12 +309,11 @@ exports.getBranches = function(req, response) {
     if(err) {
       console.log('get branches error:', err)
     } else {
-      console.log('get branches success:')
+      // console.log('get branches success:')
       return response.json(res)
-
     }
-  })
-}
+  }); // end github.repos.getBranches
+}; // end exports.getBranches
 
 
 exports.createBranch = function(req, res) {
