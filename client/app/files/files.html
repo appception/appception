@@ -1,45 +1,35 @@
-<div class="main">
-  <div ng-include="'components/navbar/navbar.html'"></div>
+<div ng-include="'components/navbar/navbar.html'"></div>
 
-  <div class="group hero">
-    <div class="background">
-      <div class="container">
-        <div class="row text-center">
-          <h1>A Web App to Make Web Apps</h1>
-          <p class="large">Appception has made it easier than ever to start programming. Sign in with Github to see for yourself!</p>
-          <button class="btn btn-outline btn-lg" ng-click="loginOauth('github')">
-            <i class="fa fa-github"></i>
-            <span>Login with Github</span>
-          </button>
+<div class="page-wrapper files">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="header clear-after">
+          <div ng-show="checkBranches" class="pull-left">
+            <a ng-show="isDeployed" ng-href="http://{{username}}.github.io/{{repoName}}" target="_blank" >View your most recent commit at {{username}}.github.io/{{repoName}}</a>
+            <a ng-hide="isDeployed" ng-click="addDeployBranch()" target="_blank" >Deploy this Project</a>
+          </div>
+          <div class="pull-right">
+              <span ng-show="committing" class="margin-two--right pull-left success">Committing...</span>
+              <a ng-click="dismissNotification()" class="margin-two--right pull-left success" ng-show="success">
+                <i class="fa fa-times-circle"></i>
+                <span>Commit created!</span>
+              </a>
+              <a ng-click="dismissNotification()" class="margin-two--right pull-left error" ng-show="error">
+                <i class="fa fa-times-circle"></i>
+                <span>Commit failed, please try again</span>
+              </a>
+            <a href="" ng-click="addBranch()" class="btn btn-default btn-blue">Create Branch</a>
+            <a href="" ng-click="createCommit()" class="btn btn-default btn-blue">Commit Changes</a>
+          </div>
+        </div>
+        <div>
+          <iframe class="bracketsiframe" allowtransparency="true" src="/nimble"></iframe>
+          <p class="small gray text-center padding-one--ends">Powered by <a href="http://brackets.io">brackets</a>/<a href="https://github.com/mozilla/nimble">Nimble</a></p>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="group support">
-    <div class="layer layer--base">
-      <div class="container">
-        <div class="text-center clear-after">
-          <div class="third float-left">
-            <i class="fa fa-keyboard-o"></i>
-            <h2>Start coding in a flash</h2>
-            <p>New to programming? No problem, we have a bunch of file templates from which you can easily create a new project. Then use our code editor to start coding!</p>
-          </div>
-          <div class="third float-left">
-            <i class="fa fa-github"></i>
-            <h2>Get familiar with Git</h2>
-            <p>Intimidated by the command line? Appception allows you to commit, branch, and create new repos on Github, all by using a lovely interface.</p>
-          </div>
-          <div class="third float-left">
-            <i class="fa fa-desktop"></i>
-            <h2>Show your project off</h2>
-            <p>Appception repos are given a unique URL courtesy of Github Pages, so you can send a link around to friends. Show everyone what a great developer you've become!</p>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-  <div ng-include="'components/footer/footer.html'"></div>
 </div>
 
+<div ng-include="'components/footer/footer.html'"></div>
