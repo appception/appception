@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window) {
+  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window, $location, $cookieStore) {
 
     $scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;
@@ -10,6 +10,7 @@ angular.module('appceptionApp')
     $scope.failure = false;
     $scope.committing = false;
     $scope.nimbleLoader = true;
+    $scope.requiresHeroku = false;
     var repoName = $stateParams.repoName;
 
     Auth.isLoggedInAsync(function(boolean) {
@@ -26,12 +27,17 @@ angular.module('appceptionApp')
               if (res.data[i]["name"] === 'gh-pages'){
                 $scope.isDeployed = true;
                 $scope.deployedUrl = 'http://' + username + '.github.io/' + repoName;
-                $scope.deployedText =  username + '.github.io/' + repoName;
+                $scope.deployedHost = 'Github pages';
 
               } else if (res.data[i]["name"] === 'heroku') {
                 $scope.isDeployed = true;
                 $scope.deployedUrl = 'http://' + username + '-' + repoName + '.herokuapp.com';
-                $scope.deployedText  = username + '-' + repoName + '.herokuapp.com';
+                $scope.deployedHost = 'Heroku';
+                // check if user has logged in with Heroku
+                if(!$cookieStore.get('deployToken')) {
+                  $scope.requiresHeroku = true;
+                }
+
               }
             }
             $scope.checkBranches = true;
@@ -41,6 +47,12 @@ angular.module('appceptionApp')
       }
     });
 
+    // login in with Heroku
+    $scope.loginOauth = function(provider) {
+      $window.location.href = '/auth/' + provider;
+      $scope.requiresHeroku = false;
+    };
+
     $scope.addDeployBranch = function() {
       // Create a gh-pages branch
       github.createBranch($scope.username, $scope.repoName, 'master', 'gh-pages')
@@ -49,6 +61,17 @@ angular.module('appceptionApp')
           $scope.isDeployed = true;
         })
     }; // end addDeployBranch()
+
+
+    // Show "Live Preview"
+    // when "Live Preview" is clicked, get progress bar of when files are being process
+      // if project doesn't have deploy branch, add deploy branch
+      // if project is heroku, and cookie isn't set, make them login
+      // commit changes to deploy branch
+      // if heroku, buildApp()
+
+    // when doen processing, show "Live Preview"
+
 
 
     $scope.addBranch = function() {

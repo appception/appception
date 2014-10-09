@@ -1,12 +1,17 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB) {
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB, $window, $location) {
 
     $scope.repoName = '';
     $scope.creating = false;
 
     $scope.generator = 'beginner';
+
+    $scope.loginOauth = function(provider) {
+      $window.location.href = '/auth/' + provider;
+    };
+
 
     $scope.createRepo = function(repoName, generator, deployment) {
       console.log('generator', generator)
