@@ -7,7 +7,7 @@
         <div class="header clear-after">
           <div ng-show="checkBranches" class="pull-left">
 
-            <a ng-hide="requiresHeroku" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
+            <a ng-click="deploy()" ng-hide="requiresHeroku" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
             <a ng-click="loginOauth('heroku')" ng-show="requiresHeroku" href="">Login with Heroku for Live Preview</a>
   
 

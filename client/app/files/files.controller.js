@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window, $location, $cookieStore) {
+  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window, $location, $cookieStore, heroku) {
 
     $scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;
@@ -12,32 +12,37 @@ angular.module('appceptionApp')
     $scope.nimbleLoader = true;
     $scope.requiresHeroku = false;
     var repoName = $stateParams.repoName;
+    var deployBranch = '';
+    var username = '';
 
     Auth.isLoggedInAsync(function(boolean) {
       if(boolean === true){
-        var user = Auth.getCurrentUser()
+        var user = Auth.getCurrentUser();
         $scope.username = user.github.login;
-        var username = user.github.login;
+        username = user.github.login;
 
 
         // Get all the branches to look and see if they have a gh-pages/heroku branch for deployment
         github.getBranches($scope.username, $scope.repoName)
           .then(function(res){
             for(var i = 0; i < res.data.length; i++) {
-              if (res.data[i]["name"] === 'gh-pages'){
+              if (res.data[i]['name'] === 'gh-pages'){
+                deployBranch = 'gh-pages';
+                $scope.deployedHost = 'Github pages';
                 $scope.isDeployed = true;
                 $scope.deployedUrl = 'http://' + username + '.github.io/' + repoName;
-                $scope.deployedHost = 'Github pages';
 
-              } else if (res.data[i]["name"] === 'heroku') {
+              } else if (res.data[i]['name'] === 'heroku') {
+                deployBranch = 'heroku';
+                $scope.deployedHost = 'Heroku';
                 $scope.isDeployed = true;
                 $scope.deployedUrl = 'http://' + username + '-' + repoName + '.herokuapp.com';
-                $scope.deployedHost = 'Heroku';
-                // check if user has logged in with Heroku
+
+                // if project is deployed on Heroku, and user is not logged in with Heroku, 
+                // show log in with Heroku link
                 if(!$cookieStore.get('deployToken')) {
                   $scope.requiresHeroku = true;
                 }
-
               }
             }
             $scope.checkBranches = true;
@@ -53,24 +58,40 @@ angular.module('appceptionApp')
       $scope.requiresHeroku = false;
     };
 
-    $scope.addDeployBranch = function() {
-      // Create a gh-pages branch
-      github.createBranch($scope.username, $scope.repoName, 'master', 'gh-pages')
-        .then(function(res) {
-          console.log('addDeployBranch success!', res)
-          $scope.isDeployed = true;
-        })
-    }; // end addDeployBranch()
 
 
     // Show "Live Preview"
     // when "Live Preview" is clicked, get progress bar of when files are being process
-      // if project doesn't have deploy branch, add deploy branch
-      // if project is heroku, and cookie isn't set, make them login
+      // if project doesn't have deploy branch, add deploy branch = done
+      // if project is heroku, and cookie isn't set, make them login = done
       // commit changes to deploy branch
-      // if heroku, buildApp()
+      // if heroku, buildApp() = done
 
     // when doen processing, show "Live Preview"
+
+    $scope.deploy = function(){
+      //  if project does not have a deploy branch, add a deploy branch
+      if(!$scope.isDeployed) {
+        github.createBranch($scope.username, $scope.repoName, 'master', deployBranch)
+          .then(function(res) {
+            console.log('addDeployBranch success!', res)
+            $scope.isDeployed = true;
+            // if project is deployed on heroku, create a new heroku app
+            if(deployBranch ==='heroku') {
+              heroku.createApp(username, repoName);
+            }
+          });
+      }
+
+      // commit the files to the deploy branch
+
+
+      // if app is deployed on Heroku, build app
+      if(deployBranch ==='heroku') {
+        heroku.updateApp(username, repoName);
+      }
+
+    };
 
 
 
