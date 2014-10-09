@@ -23,7 +23,9 @@ exports.create = function(req, res) {
   var appName = githubLogin + '-' + githubRepo;
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/master.tar.gz"},
                     "app": {"name": appName } };
-  var callback = function(){console.log('new app created')}
+  var callback = function(){
+    return console.log('new app created'); // making this a return so the server can capture it and we can test it.
+  }
 
   heroku.appSetups().create(attributes, callback);
 };
@@ -37,7 +39,9 @@ exports.update = function(req, res) {
   var githubRepo = req.query.githubRepo;
   var appName = githubLogin + '-' + githubRepo;
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/master.tar.gz"}};
-  var callback = function(){console.log(' app updated')};
+  var callback = function(){
+    return console.log(' app updated'); // making this a return so the server can capture it and we can test it.
+  };
 
   heroku.apps(appName).builds().create(attributes, callback);
 };
