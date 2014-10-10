@@ -4,7 +4,7 @@ angular.module('appceptionApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('files', {
-        url: '/files/{repoName}',
+        url: '/files',
         templateUrl: 'app/files/files.html',
         controller: 'FilesCtrl',
         authenticate: true

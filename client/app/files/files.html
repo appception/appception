@@ -22,7 +22,7 @@
               {{deployBranch}}
             </form>
 
-            <a ng-click="deploy()" ng-hide="requiresHeroku" target="_blank" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
+            <a ng-click="deploy()" ng-show="isDeployed" target="_blank" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
   
 
           <!--             
@@ -45,8 +45,8 @@
           </div>
         </div>
         <div>
-<!--           <iframe class="bracketsiframe" allowtransparency="true" src="/nimble"></iframe>
- -->
+          <iframe class="bracketsiframe" allowtransparency="true" src="/nimble"></iframe>
+
           <p class="small gray text-center padding-one--ends">Powered by <a href="http://brackets.io">brackets</a>/<a href="https://github.com/mozilla/nimble">Nimble</a></p>
         </div>
       </div>
