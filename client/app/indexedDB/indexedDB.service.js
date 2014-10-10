@@ -19,7 +19,7 @@ angular.module('appceptionApp')
         var item = items[i];
         console.log('repo', repo)
 
-        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?\//, '');
+        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?[\/\\]/, '');
         console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
