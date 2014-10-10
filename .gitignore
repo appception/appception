@@ -5,7 +5,7 @@ public
 .sass-cache
 .idea
 client/bower_components
-server/tempfiles
+server/tempfiles/*
 bower_components
 server/config/local.env.js
 client/app/min/app*
