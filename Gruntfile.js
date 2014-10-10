@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   var localConfig;
 
   try {
@@ -8,8 +8,7 @@ module.exports = function (grunt) {
   } // end try/catch
 
   // add localConfig vars to process.env:
-  // var pEnv = process.env;
-  for (var key in localConfig) { // SUPER HACKY FIX!!!!!!!!!!!!!!!
+  for (var key in localConfig) { // TODO: refactor this into ENV or projects.controller.js
     process.env[key] = localConfig[key];
   }
 
@@ -24,25 +23,22 @@ module.exports = function (grunt) {
     buildcontrol: 'grunt-build-control'
   });
 
-  //? Optional??? grunt.loadNpmTasks('grunt-express-server'); // this was originally in require(jit-...)
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  // grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-exec'); // for executing command lines ==> https://github.com/jharding/grunt-exec
 
-  // require('express')(express);
   require('time-grunt')(grunt); // Time how long tasks take (for optimizing)
 
 
-  ////////////////////////////////////////////////////
-  // Main configuration tasks
-  ////////////////////////////////////////////////////
+  /*******************************
+   *   Main configuration tasks  *
+   ******************************/
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -107,14 +103,7 @@ module.exports = function (grunt) {
 
     /***********************************
      ***   Main task configs here:   ***
-     * clean
-     * stylus
-     * wiredep (bower)
-     * concat
-     * minify css
-     * uglify js
-     * start server
-     * load browser
+     * clean, stylus, wiredep (bower), concat, minify css, uglify js, start server, load browser
      **********************************/
     clean: {
       default: { // name that appears on this task. You can add more argument names at this heirarchy
@@ -122,7 +111,7 @@ module.exports = function (grunt) {
           src: 'client/app/min/*.*'
         }
       },
-      serverFiles: 'server/tempfiles/*.*' // at the moment a bunch of zips are here... Cleaning this would remove old user zips, which I think we want to do...
+      serverFiles: 'server/tempfiles/*.*' // Cleaning this removes old user zips
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
@@ -141,12 +130,7 @@ module.exports = function (grunt) {
       } // end compile
     }, // end stylus
 
-    /**********************************
-     * Stylus injector tasks go here...
-    **********************************/
-
-    // Automatically inject Bower components into the app
-    wiredep: {
+    wiredep: { // Automatically inject Bower components into the app
       target: {
         src: 'client/index.html',
         ignorePath: 'client/',
@@ -160,7 +144,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          'client/app/app.build.css' : 'client/app/app.css'
+          'client/app/app.build.css': 'client/app/app.css'
         }
       }
     },
@@ -181,9 +165,9 @@ module.exports = function (grunt) {
       },
       css: {
         files: [{
-          src: ['client/app/app.build.css', '!client/**/*.min.css'],
-          dest: 'client/app/min/app.min.css'
-        }] // end files[]
+            src: ['client/app/app.build.css', '!client/**/*.min.css'],
+            dest: 'client/app/min/app.min.css'
+          }] // end files[]
       }
     }, // end cssmin
 
@@ -193,11 +177,12 @@ module.exports = function (grunt) {
       },
       js: {
         files: [{
-          src: ['client/app/min/app.cat.js',
-          '!client/**/*.min.js',
-          '!client/bower_components'],
-          dest: 'client/app/min/app.min.js'
-        }] // end files[]
+            src: ['client/app/min/app.cat.js',
+              '!client/**/*.min.js',
+              '!client/bower_components'
+            ],
+            dest: 'client/app/min/app.min.js'
+          }] // end files[]
       }
     }, // end uglify
 
@@ -233,22 +218,6 @@ module.exports = function (grunt) {
       }, // end express
     }, // end watch
 
-
-    /************************************************
-     *              exec:
-     * command (alias: cmd): The shell command to be executed. Must be a string or a function that returns a string.
-     * stdout: If true, stdout will be printed. Defaults to true.
-     * stderr: If true, stderr will be printed. Defaults to true.
-     * cwd: Current working directory of the shell command. Defaults to the directory containing your Gruntfile.
-     * exitCode (alias: exitCodes): The expected exit code(s), task will fail if the actual exit code doesn't match.
-     *   Defaults to 0. Can be an array for multiple allowed exit codes.
-     * callback: The callback function passed child_process.exec. Defaults to a noop.
-     * If the configuration is instead a simple string, it will be interpreted as a full command itself:
-     *
-     *   exec: {
-     *     echo_something: 'echo "This is something"'
-     *   }
-     ***********************************************/
     exec: { // executes on the command line
       startExec: {
         cmd: 'echo " = = = = Installing NPM and Bower components = = = ="'
@@ -256,195 +225,118 @@ module.exports = function (grunt) {
       appception: {
         command: 'bower install --recursive' // install bower but NOT npm, or we'll be in a loop!!!
       },
-      nimble: {  // package
+      nimble: { // package
         cwd: './nimble',
         command: 'npm install --recursive && grunt build',
         exitCode: [0, 1, 2, 3, 4, 5, 6, 7, 8] // adding to compensate for deploy errors. As of 10-8-14 this is not necessary, but a precaution.
       },
-      // extensibility: {  // Including - I think Nimble pulls in brackets dependencies from here...
-      //   cwd: './nimble/src/extensibility/node',
-      //   command: 'npm install --recursive'
-      // },
-      mustache: {  // package
+      mustache: { // package
         cwd: './nimble/src/thirdparty/mustache',
         command: 'npm install --recursive'
       },
-      acorn: {  // package
+      acorn: { // package
         cwd: './nimble/src/extensions/default/JavaScriptCodeHints/thirdparty/acorn',
         command: 'npm install --recursive'
       },
-      tern: {  // package
+      tern: { // package
         cwd: './nimble/src/extensions/default/JavaScriptCodeHints/thirdparty/tern',
         command: 'npm install --recursive'
       },
-      makedriveSyncIcon: {  // package  &&  bower
+      makedriveSyncIcon: { // package  &&  bower
         cwd: './nimble/src/extensions/default/makedrive-sync-icon',
         command: 'npm install --recursive --force'
       },
-      codemirror: {  // package  &&  bower
+      codemirror: { // package  &&  bower
         cwd: './nimble/src/thirdparty/CodeMirror2',
         command: 'npm install --recursive && bower install --recursive'
       },
-      makedrive: {  // package  &&  bower
+      makedrive: { // package  &&  bower
         cwd: './nimble/src/thirdparty/makedrive',
         command: 'npm install --recursive && bower install --recursive'
       },
-      requirejs: {  // package
+      requirejs: { // package
         cwd: './nimble/src/thirdparty/requirejs',
         command: 'npm install --recursive'
       },
-      text: {  // NO INSTALL package. Keeping for reference to "main" in package.json (which may be meaningless)
-        cwd: './nimble/src/thirdparty/text',
-        command: 'npm install --recursive'
-      }
-      // JSLint: {  // NOTHING
-      //   cwd: './nimble/src/extensions/default/JSLint/thirdparty/jslint',
-      //   command: 'npm install --recursive'
-      // },
-      // i18n: {  // NOTHING
-      //   cwd: './nimble/src/thirdparty/i18n',
-      //   command: 'npm install --recursive'
-      // },
-      // pathUtils: {  // NOTHING
-      //   cwd: './nimble/src/thirdparty/path-utils',
-      //   command: 'npm install --recursive'
-      // },
     }, // end exec
 
 
     /************************************************
-     *     Testing:
+     *           Testing:           *
+     ************************************************
      * Mocha (Server):
      *   Runs MOCHA tests at /server/api/ ** / *.spec.js
      *   You can add as many tests as you want, in any folder.
      *   Folders should each have at least 1 coverage test.
      *
-     * Karma (Client):
+     * TODO: Karma (Client):
      *   Runs KARMA tests and launches PhantomJS web browser.
      *   Add files / patterns to lad in browser by modifying
-     *     karma.conf.js : config.set({
-     *     files: [ ADD FILES HERE ]})
+     *   karma.conf.js : config.set({
+     *   files: [ ADD FILES HERE ]})
      *
-     * Protractor (E2E):
+     * TODO: Protractor (E2E):
      *   Runs PROTRACTOR tests with Jasmine framework in Chrome browser.
      *   Protractor config file at: protractor.conf.js
      *   Tests are in: /e2e/ ** / *.spec.js
      ***********************************************/
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
 
     mochaTest: {
       options: {
         reporter: 'spec'
       },
       src: ['server/api/**/*.spec.js']
-    },
+    } // end mochaTest
 
+    /*
+    karma: {
+      unit: {
+      configFile: 'karma.conf.js',
+      singleRun: true
+      }
+    }, // end karma
+    */
+
+    /*
     protractor: {
       options: {
-        configFile: 'protractor.conf.js'
+      configFile: 'protractor.conf.js'
       },
       chrome: {
-        options: {
-          args: {
-            browser: 'chrome'
-          }
+      options: {
+        args: {
+        browser: 'chrome'
         }
       }
-    },
+      }
+    }, // end protractor
+    */
 
-    /**********************************************
-     *     END init config
-     *********************************************/
   }); // end initConfig()
 
 
   /**********************************************
-   *     Grunt tasks
+   *         Grunt tasks         *
+   ***********************************************
+   * There are 4 MAIN tasks below:
+   *   build - for all build tasks
+   *   deploy - for Azure deployment
+   *   serve - for the server, either 'local' or 'production'.
+   *   test - for testing 'server', 'client', or 'e2e'
    *********************************************/
-
-  // CHOICE SYNTAX:
-  //
-  //   if (target === 'debug') {
-  //     return grunt.task.run([
-  //       'clean:server'
-  //     ]);
-  //   }
-
-  // Used for delaying livereload until after server has restarted
-  grunt.registerTask('wait', function() {
+  grunt.registerTask('wait', function() { // delay livereload until after server restarts
     grunt.log.ok('Waiting for server reload...');
-
     var done = this.async();
-
     setTimeout(function() {
       grunt.log.writeln('Done waiting!');
       done();
     }, 1500);
   });
 
+
   grunt.registerTask('express-keepalive', 'Keep grunt running', function() {
     this.async();
   });
-
-/***********************************
- * There are 4 tasks below:
- *   test - for testing 'server', 'client', or 'e2e'
- *   clean - to clean temp files
- *   build - for all build tasks that CURRENTLY WORK
- *   serve - for the server, either 'local' or 'production'.
- **********************************/
-
-  grunt.registerTask('test', function(target) {
-    if (target === 'server') {
-      return grunt.task.run([
-        'env:all',
-        'env:test',
-        'mochaTest'
-      ]);
-    } // end 'server'
-
-    else if (target === 'client') {
-      return grunt.task.run([
-        'clean:server',
-        'env:all',
-        'injector:stylus',
-        'concurrent:test',
-        'injector',
-        'autoprefixer',
-        'karma'
-      ]);
-    } // end 'client'
-
-    else if (target === 'e2e') {
-      return grunt.task.run([
-        'clean:server',
-        'env:all',
-        'env:test',
-        'injector:stylus',
-        'concurrent:test',
-        'injector',
-        'wiredep',
-        'autoprefixer',
-        'express:dev',
-        'protractor'
-      ]);
-    } // end 'e2e'
-
-    else grunt.task.run([
-      'test:server',
-      'test:client'
-    ]);
-  }); // end 'grunt test'
-
-
-  // grunt.registerTask('clean', [
-  //   'clean'
-  // ]);
 
 
   grunt.registerTask('build', [
@@ -456,81 +348,63 @@ module.exports = function (grunt) {
     'uglify'
   ]);
 
+
   grunt.registerTask('deploy', [
     'build',
     'exec'
   ]);
 
-  grunt.registerTask('serve',function(target) {
+
+  grunt.registerTask('serve', function(target) {
     if (target === 'production') {
       return grunt.task.run([
-      'express:dev',
-      'wait',
-      'open'
-    ])}
-
-    else if (target === 'local') {
+        'express:dev',
+        'wait',
+        'open'
+      ])
+    } else if (target === 'local') {
       return grunt.task.run([
         'express:dev',
         'wait',
         'open',
         'watch'
-    ])}
-  }); // end registerTask(serve)
+      ])
+    }
+  }); // end 'grunt serve'
+
+
+  grunt.registerTask('test', function(target) {
+    if (target === 'server') {
+      return grunt.task.run([
+        'env:all',
+        'env:test',
+        'mochaTest'
+      ]);
+    } // end 'server'
+    else if (target === 'client') {
+      return grunt.task.run([
+        'env:all',
+        'karma'
+      ]);
+    } // end 'client'
+    else if (target === 'e2e') {
+      return grunt.task.run([
+        'env:all',
+        'env:test',
+        'express:dev',
+        'protractor'
+      ]);
+    } // end 'e2e'
+    else grunt.task.run([
+      'build',
+      'test:server',
+      'test:client'
+    ]);
+  }); // end 'grunt test'
+
 
   grunt.registerTask('default', [
     'build',
     'serve'
   ]);
 }; // end Gruntfile
-
-
-
-
-
-/**************************************
- * The OLD CODE GRAVEYARD!!!
- * Keep this in case we want to resurrect it after testing...
- *************************************/
-
-    // injector: {
-    //   options: {
-    //   },
-    //   // Inject component styl into app.styl
-    //   stylus: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/app/', '');
-    //         filePath = filePath.replace('/client/components/', '');
-    //         return '@import \'' + filePath + '\';';
-    //       },
-    //       starttag: '// injector',
-    //       endtag: '// endinjector'
-    //     },
-    //     files: {
-    //       'client/app/app.styl': [
-    //         'client/{app,components}/**/*.styl',
-    //         '!client/app/app.styl'
-    //       ]
-    //     }
-    //   }, // end stylus
-
-    //   // Inject component css into index.html
-    //   css: {
-    //     options: {
-    //       transform: function(filePath) {
-    //         filePath = filePath.replace('/client/', '');
-    //         filePath = filePath.replace('/.tmp/', '');
-    //         return '<link rel="stylesheet" href="' + filePath + '">';
-    //       }, // transform
-    //       starttag: '<!-- injector:css -->',
-    //       endtag: '<!-- endinjector -->'
-    //     },
-    //     files: {
-    //       'client/index.html': [
-    //         'client/{app,components}/**/*.css'
-    //       ]
-    //     }
-    //   } // end css
-    // }, // end injector
-

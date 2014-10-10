@@ -5,7 +5,6 @@ var zlib = require('zlib');
 var fs = require('fs');
 var path = require('path')
 var config = require('../../config/environment');
-// var fstream = require('fstream');
 var unzip = require('unzip');
 var request = require('request');
 var Projects = require('./projects.model');
@@ -16,7 +15,8 @@ var GitHubApi = require("github");
 
 var github = new GitHubApi({
   version: "3.0.0",
-  debug: true
+  // debug: true
+  debug: false
 });
 
 // get
@@ -82,12 +82,12 @@ exports.index = function(req, response) {
 exports.files = function (req, res) {
   var branchToGet = req.query.githubBranch || 'master';
   var githubLogin = req.query.githubLogin;
-  var githubRepo = req.query.githubRepo;
+  var repoName = req.query.repoName;
 
   // Get the url for the requested repo zip archive
   github.repos.getArchiveLink({
     user: githubLogin,
-    repo: githubRepo,
+    repo: repoName,
     archive_format: 'zipball'
     // archive_format: 'tarball'
   }, function (err, data) {
@@ -99,8 +99,8 @@ exports.files = function (req, res) {
     var file = data.meta.location;
     file = file.replace(/:ref/g, branchToGet) // files to load based on selected branch
 
-    // var filePath = './server/tempfiles/' + githubRepo + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
-    var filePath = path.normalize(config.serverRoot + 'tempfiles/' + githubRepo + '.zip');
+    // var filePath = './server/tempfiles/' + repoName + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
+    var filePath = path.normalize(config.serverRoot + 'tempfiles/' + repoName + '.zip');
 
     // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
     request.get({
@@ -135,7 +135,7 @@ exports.files = function (req, res) {
           })
           // when we are done unzipping, return the results
           .on('close', function () {
-            return res.send(results)
+            return res.send(results);
           })
       });
     });
@@ -208,7 +208,7 @@ exports.newRepo = function (req, response) {
 
                   var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-                  results.push([{path: repoName + '/' + fileTitle, content: decodeResponse }])
+                  results.push([{path: path.normalize(repoName + '/' + fileTitle), content: decodeResponse }])
                   next()
                 }
               })
@@ -236,11 +236,8 @@ exports.commit = function (req, response) {
   var repoName = req.body.repoName;
   var message = req.body.message;
   var filesArray = req.body.filesArray;
-  //console.log('filesArray before',filesArray)
-  // for(var i = 0; i < filesArray.length; i++) {
-  //   filesArray[i] = JSON.parse(filesArray[i])
-  // }
-  //console.log('filesArray after',filesArray)
+
+  console.log(req.body);
 
   createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
   createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
@@ -467,7 +464,8 @@ var createCommitHelper = function(githubLogin, repoName, branchName, filesArray,
                       console.log('create reference error', err)
                     } else {
                       console.log('create reference success')
-                      return;
+                      return res;
+
                     }
                   })
                 }

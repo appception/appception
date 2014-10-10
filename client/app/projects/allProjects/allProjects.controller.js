@@ -41,14 +41,10 @@ angular.module('appceptionApp')
 
           github.getBranches(user.github.login, project.name).then(function(res) {
             project.branches = res.data; // array of objects with {commit: {sha: "shaCode", url: "commitURL"}, name: "bug/packageJSON"}
-
-
-
           }); // end github.getBranches().then()
         } // end if
       }) // end Auth.isLoggedInAsync
     }; // end getBranchesForRepo
-
 
     // Makes a call to Github API to get the files for a particular repo.
     // Filer inserts the files into the client's browser local database.
