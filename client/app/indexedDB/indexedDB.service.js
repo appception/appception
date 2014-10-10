@@ -216,7 +216,8 @@ angular.module('appceptionApp')
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
-      emptyLocalDB: emptyLocalDB
+      emptyLocalDB: emptyLocalDB,
+      getCurrentRepo: getCurrentRepo,
       // insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 
