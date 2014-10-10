@@ -10,7 +10,8 @@ angular.module('appceptionApp')
       $window.location.href = '/auth/' + provider;
     };
 
-    var user = Auth.getCurrentUser();
+    // var user = Auth.getCurrentUser();
+    var username = 'wykhuh'
     var repo = 'heroku';
 
     $scope.listApps = function(){
@@ -32,7 +33,7 @@ angular.module('appceptionApp')
     $scope.updateApp = function(){
       console.log('update app cont');
 
-      heroku.updateApp(user.github.login, repo).then(function(files){
+      heroku.updateApp(username, repo).then(function(files){
         console.log('files', files);
       });
     };

@@ -75,12 +75,13 @@ function setTokenCookie(req, res) {
 // set token cookie for third party services that deploy the user's project
 function setDeployTokenCookie(req, res) {
   console.log('inside set deploy token cookie')
-  console.log('setDeployTokenCookie', req.user.heroku.herokuToken)
   if (!req.user) return res.json(404, { message: 'Something went wrong, please try again.'});
-  var token = req.user.heroku.herokuToken;
-  res.cookie('deploy_token',token);
-  res.redirect('/heroku');
-
+  // var token = req.user.heroku.herokuToken;
+  // res.cookie('deploy_token',token);
+  var token = signToken(req.user._id, req.user.role);
+  console.log('deply token', token)
+  res.cookie('deployToken', JSON.stringify(token));
+  res.redirect('/files')
 }
 
 exports.isAuthenticated = isAuthenticated;

@@ -148,6 +148,7 @@ exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var generator = req.query.generator
+  var deployment = req.query.deployment;
 
   github.authenticate({
     type: "oauth",
@@ -221,8 +222,8 @@ exports.newRepo = function (req, response) {
           next();
         }
       }).then(function(){
-        // Create a deploy branch for github pages
-        createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+        // Create a deploy branch for github pages/deployment
+        createBranchHelper(githubLogin, repoName, 'master', deployment)
         console.log('all done!')
         return response.json(results)
       }); // end forEachAsync
@@ -236,6 +237,7 @@ exports.commit = function (req, response) {
   var githubLogin = req.body.githubLogin;
   var repoName = req.body.repoName;
   var message = req.body.message;
+  var branches = req.body.branches;
   var filesArray = req.body.filesArray;
   //console.log('filesArray before',filesArray)
   // for(var i = 0; i < filesArray.length; i++) {
@@ -243,9 +245,9 @@ exports.commit = function (req, response) {
   // }
   //console.log('filesArray after',filesArray)
 
-  createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
-  createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
-
+  for(var i = 0; i < branches.length; i++){
+    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message)
+  }
   return response.json('success!')
 }
 
