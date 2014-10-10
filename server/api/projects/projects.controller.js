@@ -171,6 +171,7 @@ exports.newRepo = function (req, response) {
         console.log('fileTitle', fileTitle)
         var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + generator + '/' + fileTitle);
 
+
         // Check to see if path is a file
         if(!fs.lstatSync(fileOrDirPath).isDirectory()){
           // If path is a file, get the contents of the file
@@ -208,7 +209,7 @@ exports.newRepo = function (req, response) {
 
                   var decodeResponse = new Buffer(response, 'base64').toString('ascii');
 
-                  results.push([{path: repoName + '/' + fileTitle, content: decodeResponse }])
+                  results.push([{path: path.normalize(repoName + '/' + fileTitle), content: decodeResponse }])
                   next()
                 }
               })
