@@ -11,26 +11,26 @@ angular.module('appceptionApp')
       });
     };
 
-    var createApp = function(githubLogin, githubRepo){
+    var createApp = function(githubLogin, repoName){
       console.log('inside service createApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/createApp',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo
+          repoName: repoName
         }
       });
     };
 
-    var updateApp = function(githubLogin, githubRepo){
+    var updateApp = function(githubLogin, repoName){
       console.log('inside service updateApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/updateApp',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo
+          repoName: repoName
         }
       });
     };

@@ -6,6 +6,8 @@ var Heroku = require('heroku-client');
 
 // Get list of all heroku apps
 exports.index = function(req, res) {
+  console.log('list all app api', herokuToken.herokuToken );
+
   var heroku = new Heroku({ token: herokuToken.herokuToken  });
 
   heroku.apps().list(function (err, apps) {
@@ -19,7 +21,7 @@ exports.create = function(req, res) {
 
   var heroku = new Heroku({ token: herokuToken.herokuToken  });
   var githubLogin = req.query.githubLogin;
-  var githubRepo = req.query.githubRepo;
+  var githubRepo = req.query.repoName;
   var appName = githubLogin + '-' + githubRepo;
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"},
                     "app": {"name": appName } };
@@ -36,7 +38,7 @@ exports.update = function(req, res) {
 
   var heroku = new Heroku({ token: herokuToken.herokuToken  });
   var githubLogin = req.query.githubLogin;
-  var githubRepo = req.query.githubRepo;
+  var githubRepo = req.query.repoName;
   var appName = githubLogin + '-' + githubRepo;
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"}};
   var callback = function(){

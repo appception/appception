@@ -6,8 +6,8 @@
       <div class="col-lg-12">
         <div class="header clear-after">
           <div ng-submit="checkBranches" class="pull-left">
+            {{repoName}}
               <form  ng-hide='isDeployed'>
-              <!-- <form ng-hide='isDeployed' ng-click="pickDeploy(deployBranch)" > -->
               <label> 
                 <input type='radio' ng-model="deployBranch" value="gh-pages"> Github pages (suitable  for apps with only client-side code)
               </label><br>
@@ -15,12 +15,10 @@
                 <input ng-click='showHerokuLink()' type='radio' ng-model="deployBranch" value="heroku"> Heruko  (suitable for apps  with client-side and server-side code)
               </label>
 
-                <br><a ng-click="loginOauth('heroku')" ng-show="requiresHeroku" href="">Login with Heroku for Live Preview</a></br>
-
               <button ng-click="pickDeploy()"  class="btn btn-default btn-sm btn-blue" type="submit" ng-hide="creating">Pick Deployment</button>
-
-              {{deployBranch}}
             </form>
+           
+           <br><a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a></br>
 
             <a ng-click="deploy()" ng-show="isDeployed" target="_blank" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
   

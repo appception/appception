@@ -81,7 +81,7 @@ function setDeployTokenCookie(req, res) {
   var token = signToken(req.user._id, req.user.role);
   console.log('deply token', token)
   res.cookie('deployToken', JSON.stringify(token));
-  res.redirect('/files/')
+  res.redirect('/files')
 }
 
 exports.isAuthenticated = isAuthenticated;
