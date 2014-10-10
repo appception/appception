@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB,, $window, $location, repoTemplates) {
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB, $window, $location, repoTemplates) {
     $scope.repoName = '';
     $scope.creating = false;
 

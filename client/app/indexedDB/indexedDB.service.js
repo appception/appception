@@ -18,8 +18,8 @@ angular.module('appceptionApp')
       for(var i =0; i < items.length; i++){
         var item = items[i];
         console.log('repo', repo)
-
-        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?[\/\\]/, '');
+        var filePath = item[0].path.replace(/\\/g, '/')
+        filePath = '/'+ repo + '/' + filePath.replace(/^.*?[\/\\]/, '');
         console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
@@ -187,7 +187,7 @@ angular.module('appceptionApp')
       })
     }
 
-    // get the name of the project currently in IndexedDb 
+    // get the name of the project currently in IndexedDb
     var getCurrentRepo = function(){
       var currentRepo;
 
