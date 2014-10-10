@@ -343,14 +343,16 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
         allFiles.push(rootDir + fileOrDirTitle)
       }
     } else {
-      // If path leads to a directory, read the directory
-      var files = fs.readdirSync(fileOrDirPath)
       rootDir = path.normalize(rootDir + fileOrDirTitle + '/');
       // Push the cleaned directory name to the allFiles array
       if(rootDir.charAt(0) === '/'){
         var cleanRootDir = rootDir.substr(1)
         allFiles.push(cleanRootDir)
+      } else {
+        allFiles.push(rootDir)
       }
+      // If path leads to a directory, read the directory
+      var files = fs.readdirSync(fileOrDirPath)
       // Look at each file in the directory and perform the entire function again on each
       files.forEach(function (nextFileOrDirTitle, index, array) {
         console.log('rootDir', rootDir)
