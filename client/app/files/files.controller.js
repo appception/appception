@@ -167,11 +167,13 @@ angular.module('appceptionApp')
       // commit the files to the deploy branch
       var message = 'test deployment ' + new Date();
       console.log('message', message, deployBranch)
+
       commit(message, [deployBranch], function(){
         // if app is deployed on Heroku, build app
+
         if(deployBranch ==='heroku') {
-          console.log('build heroku app')
-          heroku.updateApp(username, repoName);
+          console.log('update heroku app')
+          heroku.updateApp($scope.username, $scope.repoName);
         }
 
       });
@@ -200,9 +202,10 @@ angular.module('appceptionApp')
 
 
     var commit = function(message, branches, callback){
+      console.log('start commit')
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
-
+        console.log('export local db')
         filesArray.shift()
         for(var i = filesArray.length-1; i >= 0; i--) {
           if(!filesArray[i]["content"]){
@@ -222,9 +225,9 @@ angular.module('appceptionApp')
             console.log('user: ', user)
             github.createCommit(user.github.login, $scope.repoName, branches, message, filesArray)
               .then(function(res){
+                console.log('commit done')
                 $scope.committing = false;
                 $scope.success = true;
-                console.log('fff', res)
 
                 console.log(callback)
 
