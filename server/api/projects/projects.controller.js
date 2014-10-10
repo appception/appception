@@ -148,6 +148,7 @@ exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
   var generator = req.query.generator
+  var deployment = req.query.deployment;
 
   github.authenticate({
     type: "oauth",
@@ -170,6 +171,7 @@ exports.newRepo = function (req, response) {
       forEachAsync(allFiles, function (next, fileTitle, index, array) {
         console.log('fileTitle', fileTitle)
         var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + generator + '/' + fileTitle);
+
 
         // Check to see if path is a file
         if(!fs.lstatSync(fileOrDirPath).isDirectory()){
@@ -216,12 +218,12 @@ exports.newRepo = function (req, response) {
           })
         } else {
           // If path is a directory, add the folder name to the results array
-          results.push([{path: repoName + '/' + fileTitle,}])
+          results.push([{path: path.normalize(repoName + '/' + fileTitle)}])
           next();
         }
       }).then(function(){
-        // Create a deploy branch for github pages
-        createBranchHelper(githubLogin, repoName, 'master', 'gh-pages')
+        // Create a deploy branch for github pages/deployment
+        createBranchHelper(githubLogin, repoName, 'master', deployment)
         console.log('all done!')
         return response.json(results)
       }); // end forEachAsync
@@ -235,13 +237,14 @@ exports.commit = function (req, response) {
   var githubLogin = req.body.githubLogin;
   var repoName = req.body.repoName;
   var message = req.body.message;
+  var branches = req.body.branches;
   var filesArray = req.body.filesArray;
 
   console.log(req.body);
 
-  createCommitHelper(githubLogin, repoName, 'heads/master', filesArray, message)
-  createCommitHelper(githubLogin, repoName, 'heads/gh-pages', filesArray, message)
-
+  for(var i = 0; i < branches.length; i++){
+    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message)
+  }
   return response.json('success!')
 }
 
@@ -339,14 +342,16 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
         allFiles.push(rootDir + fileOrDirTitle)
       }
     } else {
-      // If path leads to a directory, read the directory
-      var files = fs.readdirSync(fileOrDirPath)
       rootDir = path.normalize(rootDir + fileOrDirTitle + '/');
       // Push the cleaned directory name to the allFiles array
       if(rootDir.charAt(0) === '/'){
         var cleanRootDir = rootDir.substr(1)
         allFiles.push(cleanRootDir)
+      } else {
+        allFiles.push(rootDir)
       }
+      // If path leads to a directory, read the directory
+      var files = fs.readdirSync(fileOrDirPath)
       // Look at each file in the directory and perform the entire function again on each
       files.forEach(function (nextFileOrDirTitle, index, array) {
         console.log('rootDir', rootDir)
@@ -356,6 +361,42 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
   }
   innerRecurse(rootDir, fileOrDirTitle)
   return allFiles
+}
+
+exports.getTemplates = function(req, res) {
+  var fileTemplatesRoot = path.normalize(config.serverRoot + 'filetemplates/');
+
+  var filesObject = {};
+
+  var innerRecurse = function(currentObj, rootDir, dirTitle) {
+    var dirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir);
+    if(dirTitle) {
+      currentObj[dirTitle] = {};
+      currentObj = currentObj[dirTitle];
+    }
+    // Read the directory
+    var files = fs.readdirSync(dirPath)
+
+    // Look at each file in the directory
+    files.forEach(function (fileOrDirTitle) {
+      var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir + '/' + fileOrDirTitle);
+      // Check if path leads to a file
+      if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+        currentObj[fileOrDirTitle] = 'file';
+        return;
+      } else {
+        currentObj[fileOrDirTitle] = {};
+        return innerRecurse(currentObj, path.normalize(rootDir + '/' + fileOrDirTitle), fileOrDirTitle)
+      }
+    })
+  }
+  fs.readdir(fileTemplatesRoot, function(err, files) {
+    files.forEach(function(generator) {
+      filesObject[generator] = {}
+      return innerRecurse(filesObject[generator], generator)
+    })
+    return res.json(filesObject)
+  })
 }
 
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {

@@ -17,8 +17,9 @@ angular.module('appceptionApp')
       // iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
+        console.log('repo', repo)
 
-        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?\//, '');
+        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?[\/\\]/, '');
         console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
@@ -34,42 +35,42 @@ angular.module('appceptionApp')
       }
     };
 
-    // Insert file templates from  a given repo
-    // into the user's browsers local database.
-    var insertTemplateFilesIntoLocalDB = function(repo, items) {
-              console.log(items)
+    // // Insert file templates from  a given repo
+    // // into the user's browsers local database.
+    // var insertTemplateFilesIntoLocalDB = function(repo, items) {
+    //           console.log(items)
 
-      var filer = new Filer.FileSystem({
-        name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback(databaseName)
-      });
+    //   var filer = new Filer.FileSystem({
+    //     name: 'files',
+    //     provider: new Filer.FileSystem.providers.Fallback(databaseName)
+    //   });
 
-      // create root folder for the project
-      filer.mkdir( '/' + repo , function(err){
-        if(err) throw err;
-      });
+    //   // create root folder for the project
+    //   filer.mkdir( '/' + repo , function(err){
+    //     if(err) throw err;
+    //   });
 
-      // iterate through the items from the repo.
-      for(var i =0; i < items.length; i++){
-        var item = items[i];
-        console.log(item)
+    //   // iterate through the items from the repo.
+    //   for(var i =0; i < items.length; i++){
+    //     var item = items[i];
+    //     console.log(item)
 
 
-        var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
+    //     var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
 
-        // if item has no content, create a directory
-        if(! item.hasOwnProperty('content')) {
-          filer.mkdir( filePath , function(err){
-            if(err) throw err;
-          });
-        // if item has content, create a file
-        }  else {
-          filer.writeFile(filePath , item.content, function(error) {
-            if(error) throw error;
-          })
-        }
-      }
-    };
+    //     // if item has no content, create a directory
+    //     if(! item.hasOwnProperty('content')) {
+    //       filer.mkdir( filePath , function(err){
+    //         if(err) throw err;
+    //       });
+    //     // if item has content, create a file
+    //     }  else {
+    //       filer.writeFile(filePath , item.content, function(error) {
+    //         if(error) throw error;
+    //       })
+    //     }
+    //   }
+    // };
 
     // Export files and directories from the user's browsers local database.
     // exportLocalDB() returns a flat array containing information about
@@ -184,20 +185,39 @@ angular.module('appceptionApp')
         })
 
       })
+    }
 
+    // get the name of the project currently in IndexedDb 
+    var getCurrentRepo = function(){
+      var currentRepo;
 
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
 
-      // shell.rm('/test3', {recursive : true }, function(err){
-      //   if (err) throw err;
-      //   console.log('indexedDB is cleared.')
-      // });
+      var shell = filer.Shell();
+
+      // turn shell.ls callback into a promise
+      var defer = $q.defer();
+
+      // return the name of the repo directory as a promise
+      shell.ls('/', {recursive: false}, function(err, entries){
+        angular.forEach(entries, function(entry){
+          if(entry.type === 'DIRECTORY'){
+            defer.resolve( entry.path);
+          }
+        })
+      })
+
+      return defer.promise;
     }
 
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
-      emptyLocalDB: emptyLocalDB,
-      insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
+      emptyLocalDB: emptyLocalDB
+      // insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 
   });
