@@ -7,6 +7,7 @@ public
 client/bower_components
 bower_components
 server/config/local.env.js
+server/tempfiles/*.*
 client/app/min/app*
 client/app/app.build.css
 ~$*

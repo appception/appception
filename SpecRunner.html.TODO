@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Mocha Spec Runner</title>
+
+    <!-- library files -->
+    <!-- <script src="node_modules/grunt-mocha-test/node_modules/grunt-blanket/node_modules/blanket/test/vendor/jquery.js"></script> -->
+    <script src="node_modules/grunt-mocha-test/node_modules/grunt-blanket/node_modules/blanket/test/jquery-usage/js/ext/jquery.js"></script>
+    <script src="node_modules/grunt-mocha-test/node_modules/grunt-blanket/node_modules/blanket/test/jquery-usage/js/ext/backbone.js"></script>
+    <script src="node_modules/grunt-mocha-test/node_modules/grunt-blanket/node_modules/blanket/test/jquery-usage/js/ext/underscore.js"></script>
+
+    <!-- testing frameworks -->
+    <link rel="stylesheet" href="node_modules/grunt-mocha-test/node_modules/mocha/mocha.css">
+    <script src="node_modules/grunt-mocha-test/node_modules/mocha/mocha.js"></script>
+    <script src="node_modules/grunt-mocha-test/node_modules/chai/chai.js"></script>
+    <script src="node_modules/grunt-mocha-test/node_modules/grunt-blanket/node_modules/blanket/test/jquery-usage/js/ext/sinon-1.3.1.js"></script>
+    <script>
+      mocha.setup('bdd');
+      window.expect = chai.expect;
+      $(function() {
+        window.mochaPhantomJS ? mochaPhantomJS.run() : mocha.run();
+      });
+    </script>
+
+    <!-- source files -->
+    <script src="server/app.js"></script>
+
+    <!-- tests -->
+    <script src="server/api/heroku/heroku.spec.js"></script>
+    <script src="server/api/projects/projects.spec.js"></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+  </body>
+</html>

@@ -14,22 +14,22 @@ angular.module('appceptionApp')
     };
 
     //Get list and content of repo files for the logged in user.
-    var getRepoFiles = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFiles = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
         url: '/api/projects/files',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo,
+          repoName: repoName,
           githubBranch: githubBranch
         }
       });
     };
 
-    var getRepoFilesClient = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFilesClient = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
-        url: 'https://github.org/' + githubLogin + '/' + githubRepo + '/zipball/' + githubBranch,
+        url: 'https://github.org/' + githubLogin + '/' + repoName + '/zipball/' + githubBranch,
       });
     };
 

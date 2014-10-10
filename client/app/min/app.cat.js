@@ -466,22 +466,22 @@ angular.module('appceptionApp')
     };
 
     //Get list and content of repo files for the logged in user.
-    var getRepoFiles = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFiles = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
         url: '/api/projects/files',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo,
+          repoName: repoName,
           githubBranch: githubBranch
         }
       });
     };
 
-    var getRepoFilesClient = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFilesClient = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
-        url: 'https://github.org/' + githubLogin + '/' + githubRepo + '/zipball/' + githubBranch,
+        url: 'https://github.org/' + githubLogin + '/' + repoName + '/zipball/' + githubBranch,
       });
     };
 
@@ -1081,14 +1081,10 @@ angular.module('appceptionApp')
 
           github.getBranches(user.github.login, project.name).then(function(res) {
             project.branches = res.data; // array of objects with {commit: {sha: "shaCode", url: "commitURL"}, name: "bug/packageJSON"}
-
-
-
           }); // end github.getBranches().then()
         } // end if
       }) // end Auth.isLoggedInAsync
     }; // end getBranchesForRepo
-
 
     // Makes a call to Github API to get the files for a particular repo.
     // Filer inserts the files into the client's browser local database.
