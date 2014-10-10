@@ -12,6 +12,10 @@
         <a class="success btn btn-default btn-lg" ng-show="creating">Creating...</a>
       </div>
     </div>
+
+    <a ng-click="getTemplates()">Get Templates</a>
+    {{templates}}
+    <repotemplate repotemplate='templates'></repotemplate>
     <h2>1. Github Repo Name</h2>
     <input id="repo_name" placeholder="my-new-repo" type="text" ng-model="repoName">
 
