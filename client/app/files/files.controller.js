@@ -13,6 +13,7 @@ angular.module('appceptionApp')
     $scope.isDeployedOnHeroku = false;
     $scope.showHerokuLogin = !!$cookieStore.get('deployToken') && $scope.isDeployed ;
     $scope.deployBranch;
+    $scope.repoName  = '';
 
 
     // getCurrentRepo() reads the files in IndexedDb and returns name of the current repo
@@ -20,7 +21,7 @@ angular.module('appceptionApp')
       .then(function(repo){
         $scope.repoName  = repo;
         findDeployProvider();
-        console.log('repo', $scope.repoName);
+        console.log('getCurrentRepo', $scope.repoName);
       });
 
     var findDeployProvider = function() {

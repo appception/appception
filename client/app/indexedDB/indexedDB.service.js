@@ -131,9 +131,6 @@ angular.module('appceptionApp')
               counter++;
               traverseDirectory(entry, itemPath );
             }
-
-            // console.log(promises)
-
           })
         }
 
@@ -163,28 +160,41 @@ angular.module('appceptionApp')
     // in the local database at a time
     var emptyLocalDB = function() {
 
+      var promises = [];
       var filer = new Filer.FileSystem({
         name: 'files',
         provider: new Filer.FileSystem.providers.Fallback(databaseName)
       });
       var shell = filer.Shell();
 
-      // gets  every directory file at the root
+      // turn filer.readdir callback into a promise
+      var defer = $q.defer();
+
+      // return  every  file at the root
       filer.readdir('/', function(err, files){
         if (err) throw err;
-        console.log(files)
 
         // delete each root file and directory
         angular.forEach(files, function(file, i){
-          console.log(file)
+          promises[i]  = $q.defer();
+          promises[i].resolve(file);
 
           shell.rm(file, {recursive : true }, function(err){
             if (err) throw err;
-            console.log(file, ' from indexedDB is cleared.')
-          })
-        })
+            console.log(file, ' from indexedDB is cleared.');
+          });
 
+        });
+
+        // console.log('promises', promises);
+
+        var REALpromises = [];
+        angular.forEach(promises, function(promise) {
+          REALpromises.push(promise.promise);
+        });
+        defer.resolve($q.all(REALpromises));
       })
+      return defer.promise;
     }
 
     // get the name of the project currently in IndexedDb 
