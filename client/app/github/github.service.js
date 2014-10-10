@@ -14,26 +14,26 @@ angular.module('appceptionApp')
     };
 
     //Get list and content of repo files for the logged in user.
-    var getRepoFiles = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFiles = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
         url: '/api/projects/files',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo,
+          repoName: repoName,
           githubBranch: githubBranch
         }
       });
     };
 
-    var getRepoFilesClient = function(githubLogin, githubRepo, githubBranch) {
+    var getRepoFilesClient = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
-        url: 'https://github.org/' + githubLogin + '/' + githubRepo + '/zipball/' + githubBranch,
+        url: 'https://github.org/' + githubLogin + '/' + repoName + '/zipball/' + githubBranch,
       });
     };
 
-    var createRepo = function(githubLogin, repoName, generator) {
+    var createRepo = function(githubLogin, repoName, generator, deployment) {
       console.log('inside service createRepo');
       return $http({
         method: 'GET',
@@ -41,12 +41,13 @@ angular.module('appceptionApp')
         params: {
           githubLogin: githubLogin,
           repoName: repoName,
-          generator: generator
+          generator: generator,
+          deployment: deployment
         }
       })
     };
 
-    var createCommit = function(githubLogin, repoName, message, filesArray) {
+    var createCommit = function(githubLogin, repoName, branches, message, filesArray) {
       console.log('inside createCommit')
       return $http({
         method: 'POST',
@@ -55,7 +56,8 @@ angular.module('appceptionApp')
           githubLogin: githubLogin,
           repoName: repoName,
           message: message,
-          filesArray: JSON.stringify(filesArray)
+          filesArray: JSON.stringify(filesArray),
+          branches: branches
         }
       })
     }

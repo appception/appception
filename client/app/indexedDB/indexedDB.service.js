@@ -19,7 +19,7 @@ angular.module('appceptionApp')
         var item = items[i];
         console.log('repo', repo)
 
-        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?\//, '');
+        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?[\/\\]/, '');
         console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
@@ -185,19 +185,39 @@ angular.module('appceptionApp')
         })
 
       })
+    }
 
+    // get the name of the project currently in IndexedDb 
+    var getCurrentRepo = function(){
+      var currentRepo;
 
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
 
-      // shell.rm('/test3', {recursive : true }, function(err){
-      //   if (err) throw err;
-      //   console.log('indexedDB is cleared.')
-      // });
+      var shell = filer.Shell();
+
+      // turn shell.ls callback into a promise
+      var defer = $q.defer();
+
+      // return the name of the repo directory as a promise
+      shell.ls('/', {recursive: false}, function(err, entries){
+        angular.forEach(entries, function(entry){
+          if(entry.type === 'DIRECTORY'){
+            defer.resolve( entry.path);
+          }
+        })
+      })
+
+      return defer.promise;
     }
 
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
       emptyLocalDB: emptyLocalDB,
+      getCurrentRepo: getCurrentRepo,
       // insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 

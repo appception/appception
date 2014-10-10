@@ -1,21 +1,29 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB, repoTemplates) {
-
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB,, $window, $location, repoTemplates) {
     $scope.repoName = '';
     $scope.creating = false;
 
     $scope.generator = 'beginner';
     $scope.templates = '';
 
-    $scope.createRepo = function(repoName, generator) {
+    $scope.deploymentProvider='';
+
+    $scope.loginOauth = function(provider) {
+      $window.location.href = '/auth/' + provider;
+    };
+
+
+    $scope.createRepo = function(repoName, generator, deployment) {
       console.log('generator', generator)
+      console.log('deployment', deployment)
+
       $scope.creating = true;
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser()
-          github.createRepo(user.github.login, repoName, generator).then(function(res) {
+          github.createRepo(user.github.login, repoName, generator, deployment).then(function(res) {
 
             // empties the user's browser's local database
             indexedDB.emptyLocalDB();

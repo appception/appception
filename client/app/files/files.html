@@ -5,9 +5,28 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="header clear-after">
-          <div ng-show="checkBranches" class="pull-left">
-            <a ng-show="isDeployed" ng-href="http://{{username}}.github.io/{{repoName}}" target="_blank" >View your most recent commit at {{username}}.github.io/{{repoName}}</a>
-            <a ng-hide="isDeployed" ng-click="addDeployBranch()" target="_blank" >Deploy this Project</a>
+          <div ng-submit="checkBranches" class="pull-left">
+            {{repoName}}
+              <form  ng-hide='isDeployed'>
+              <label> 
+                <input type='radio' ng-model="deployBranch" value="gh-pages"> Github pages (suitable  for apps with only client-side code)
+              </label><br>
+              <label>
+                <input ng-click='showHerokuLink()' type='radio' ng-model="deployBranch" value="heroku"> Heruko  (suitable for apps  with client-side and server-side code)
+              </label>
+
+              <button ng-click="pickDeploy()"  class="btn btn-default btn-sm btn-blue" type="submit" ng-hide="creating">Pick Deployment</button>
+            </form>
+           
+           <br><a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a></br>
+
+            <a ng-click="deploy()" ng-show="isDeployed" target="_blank" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a> 
+  
+
+          <!--             
+          <a ng-show="isDeployed" ng-href="{{deployedUrl}}" target="_blank" >View your most recent commit at {{deployedText}}</a>
+            <a ng-hide="isDeployed" ng-click="addDeployBranch()" target="_blank" >Deploy this Project</a> 
+          -->
           </div>
           <div class="pull-right">
               <span ng-show="committing" class="margin-two--right pull-left success">Committing...</span>
@@ -25,6 +44,7 @@
         </div>
         <div>
           <iframe class="bracketsiframe" allowtransparency="true" src="/nimble"></iframe>
+
           <p class="small gray text-center padding-one--ends">Powered by <a href="http://brackets.io">brackets</a>/<a href="https://github.com/mozilla/nimble">Nimble</a></p>
         </div>
       </div>
