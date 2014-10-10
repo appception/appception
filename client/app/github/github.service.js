@@ -115,6 +115,14 @@ angular.module('appceptionApp')
           newBranchName: newBranchName
         }
       })
+    };
+
+    // TEMPORARY - MOVE THIS TO A BETTER SPOT PLZ KELLY
+    var getTemplates = function() {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/templates'
+      })
     }
 
     return {
@@ -123,6 +131,7 @@ angular.module('appceptionApp')
       createRepo: createRepo,
       createCommit: createCommit,
       createBranch: createBranch,
-      getBranches: getBranches
+      getBranches: getBranches,
+      getTemplates: getTemplates
     };
   });

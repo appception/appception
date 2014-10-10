@@ -361,6 +361,66 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
   return allFiles
 }
 
+exports.getTemplates = function() {
+  var fileTemplatesRoot = path.normalize(config.serverRoot + 'filetemplates/');
+
+  var filesObject = {};
+
+  var innerRecurse = function(currentObj, rootDir, dirTitle) {
+    var dirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir);
+    currentObj[dirTitle] = {};
+    currentObj = currentObj[dirTitle];
+    // Read the directory
+    console.log('rootDir', rootDir)
+    console.log('dirTitle', dirTitle)
+    console.log('dirPath', dirPath)
+    var files = fs.readdirSync(dirPath)
+    // Look at each file in the directory
+    files.forEach(function (fileOrDirTitle) {
+      var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir + '/' + fileOrDirTitle);
+      console.log('fileOrDirPath', fileOrDirPath)
+      // Check if path leads to a file
+      if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+        console.log('file: ', fileOrDirTitle)
+        currentObj[fileOrDirTitle] = 'file';
+        console.log('currentObj', currentObj)
+        console.log('filesObject', filesObject)
+        return;
+      } else {
+        // console.log('rewrite rootDir', rootDir)
+        currentObj[fileOrDirTitle] = {};
+        console.log('currentObj', currentObj)
+        console.log('filesObject', filesObject)
+        return innerRecurse(currentObj, path.normalize(rootDir + '/' + fileOrDirTitle), fileOrDirTitle)
+      }
+    })
+  }
+  console.log(filesObject)
+  fs.readdir(fileTemplatesRoot, function(err, files) {
+    files.forEach(function(generator) {
+      return innerRecurse(filesObject, generator, '')
+    })
+    return filesObject
+  })
+}
+
+// {
+//   'beginner-test': {
+//     'anotherfolder' : {
+//       'index.html' : 'file'
+//     },
+//     'subfolder' : {
+//       'sub-subfolder' : {
+//         'index.js' : 'file'
+//       },
+//       'main.css' : 'file'
+//     },
+//     'index.html' : 'file',
+//     'index.js' : 'file',
+//     'main.css' : 'file'
+//   }
+// }
+
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
     user: username,
