@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB) {
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB, repoTemplates) {
 
     $scope.repoName = '';
     $scope.creating = false;
 
     $scope.generator = 'beginner';
+    $scope.templates = '';
 
     $scope.createRepo = function(repoName, generator) {
       console.log('generator', generator)
@@ -27,5 +28,12 @@ angular.module('appceptionApp')
           $scope.files = 'Sorry, there has been an error while creating your repo.';
         }
       })
+    };
+
+    $scope.getTemplates = function() {
+      repoTemplates.getTemplates()
+      .then(function(res) {
+        $scope.templates = res.data
+      });
     }
   });

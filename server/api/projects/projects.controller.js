@@ -340,7 +340,7 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
       }
       // If file is not yet in the allFiles array, push it in
       if(allFiles.indexOf(rootDir + fileOrDirTitle) === -1) {
-        allFiles.push(rootDir + fileOrDirTitle)
+        allFiles.push(rootDir + fileOrDirTitle);
       }
     } else {
       rootDir = path.normalize(rootDir + fileOrDirTitle + '/');

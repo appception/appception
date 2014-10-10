@@ -1,16 +1,8 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('MainCtrl', function ($scope, $location, $window, Auth, github) {
+  .controller('MainCtrl', function ($scope, $location, $window) {
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
-
-    $scope.getTemplates = function() {
-    	github.getTemplates()
-    	.then(function(res) {
-    		console.log(res)
-    	});
-    }
-
   });
