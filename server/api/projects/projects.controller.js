@@ -217,7 +217,7 @@ exports.newRepo = function (req, response) {
           })
         } else {
           // If path is a directory, add the folder name to the results array
-          results.push([{path: repoName + '/' + fileTitle,}])
+          results.push([{path: path.normalize(repoName + '/' + fileTitle)}])
           next();
         }
       }).then(function(){
