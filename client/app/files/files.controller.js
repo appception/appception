@@ -202,10 +202,10 @@ angular.module('appceptionApp')
 
 
     var commit = function(message, branches, callback){
-      console.log('start commit')
+      console.log('start commit');
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
-        console.log('export local db')
+        console.log('export local db');
         filesArray.shift()
         for(var i = filesArray.length-1; i >= 0; i--) {
           if(!filesArray[i]["content"]){
@@ -221,18 +221,14 @@ angular.module('appceptionApp')
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
-            var user = Auth.getCurrentUser()
-            console.log('user: ', user)
+            var user = Auth.getCurrentUser();
             github.createCommit(user.github.login, $scope.repoName, branches, message, filesArray)
               .then(function(res){
                 console.log('commit done')
                 $scope.committing = false;
                 $scope.success = true;
 
-                console.log(callback)
-
                 if(callback){
-                  console.log('callback build app')
                   callback();
                 }
 

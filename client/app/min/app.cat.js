@@ -185,44 +185,186 @@ angular.module('appceptionApp', [
   });;'use strict';
 
 angular.module('appceptionApp')
-  .controller('FilesCtrl', function ($scope, $stateParams, $timeout, github, Auth, $state,$q, indexedDB, $window) {
+  .controller('FilesCtrl', function ($scope, $stateParams, github, Auth, indexedDB, $window, $location, $cookieStore, heroku) {
+    // $scope.repoName='';
 
-    $scope.repoName = $stateParams.repoName;
+    // $scope.repoName = $stateParams.repoName;
     $scope.isDeployed = false;
     $scope.checkBranches = false;
     $scope.success = false;
     $scope.failure = false;
     $scope.committing = false;
     $scope.nimbleLoader = true;
+    $scope.requiresHeroku = false;
+    // $scope.isDeployedOnGithub = false;
+    $scope.isDeployedOnHeroku = false;
+    $scope.showHerokuLogin = !!$cookieStore.get('deployToken') && $scope.isDeployed ;
 
-    Auth.isLoggedInAsync(function(boolean) {
-      if(boolean === true){
-        var user = Auth.getCurrentUser()
-        $scope.username = user.github.login
+    console.log('acaa', !!$cookieStore.get('deployToken'))
+    console.log('acaa', $scope.showHerokuLogin)
 
-        // Get all the branches to look and see if they have a gh-pages branch for deployment
-        github.getBranches($scope.username, $scope.repoName)
-          .then(function(res){
-            for(var i = 0; i < res.data.length; i++) {
-              if (res.data[i]["name"] === 'gh-pages'){
-                $scope.isDeployed = true;
+    // $scope.repoName='';
+
+    // var repoName = $stateParams.repoName;
+    $scope.deployBranch;
+    // $scope.deployBranch;
+    var deployBranch = '';
+    var username = '';
+    var repoName;
+
+    // getCurrentRepo() reads the files in IndexedDb and returns name of the current repo
+    indexedDB.getCurrentRepo()
+      .then(function(repo){
+        $scope.repoName  = repo;
+        findDeployProvider();
+        console.log('repo', $scope.repoName)
+      });
+
+    var findDeployProvider = function() {
+      Auth.isLoggedInAsync(function(boolean) {
+        if(boolean === true){
+          var user = Auth.getCurrentUser();
+          $scope.username = user.github.login;
+          username = user.github.login;
+          console.log('username', username)
+
+          // Get all the branches for the current repo and checks
+          // to see if they have a gh-pages or heroku branch for deployment
+          github.getBranches($scope.username, $scope.repoName)
+            .then(function(res){
+              // create a a link for the deployment branches 
+              for(var i = 0; i < res.data.length; i++) {
+                  $scope.requiresHeroku = true;
+
+                // if project is has  Heroku branch, 
+                if(res.data[i]['name'] === 'heroku'){
+                  $scope.isDeployed = true;
+
+
+                  // if user is  logged in, show preview with Heroku
+                  if( !!$cookieStore.get('deployToken') ) {
+                    formDeployLink(res.data[i]['name']);
+                  // if user is not logged in, show login with Heroku
+                  } else {
+                    $scope.showHerokuLogin = true;
+                  }
+
+                }
+
+                // if project is has git-hub branch, show preview with Github
+                if(res.data[i]['name'] === 'gh-pages' ) {
+                  $scope.isDeployed = true;
+                  formDeployLink(res.data[i]['name']);
+                }
+
               }
-            }
-            $scope.checkBranches = true;
-          });
-      } else {
-        console.log('Sorry, an error has occurred while loading the user');
-      }
-    });
+              $scope.checkBranches = true;
+            });
+        } else {
+          console.log('Sorry, an error has occurred while loading the user');
+        }
+      });
 
-    $scope.addDeployBranch = function() {
-      // Create a gh-pages branch
-      github.createBranch($scope.username, $scope.repoName, 'master', 'gh-pages')
+    };
+
+    var formDeployLink = function(branch){
+      if ( branch === 'gh-pages'){
+        console.log('gh link')
+        deployBranch = 'gh-pages';
+        $scope.deployedHost = 'Github pages';
+        $scope.deployedUrl = 'http://' + username + '.github.io/' + $scope.repoName;
+
+      } else if (branch === 'heroku') {
+        console.log('heroku link')
+        deployBranch = 'heroku';
+        $scope.deployedHost = 'Heroku';
+        $scope.deployedUrl = 'http://' + username + '-' + $scope.repoName + '.herokuapp.com';
+      }
+    }
+
+
+    // // login in with Heroku
+    // $scope.loginOauth = function(provider) {
+    //   $window.location.href = '/auth/' + provider;
+    //   $scope.requiresHeroku = false;
+    // };
+
+    $scope.showHerokuLink = function() {
+      $scope.requiresHeroku = true;
+    };
+
+    $scope.loginOauth = function() {
+        $window.location.href = '/auth/heroku';
+    };
+
+    // if project does not have a deploy branch, add a deploy branch
+    $scope.pickDeploy = function(){
+      console.log('deployBranch', $scope.deployBranch);
+      deployBranch = $scope.deployBranch;
+      $scope.isDeployed = true;
+
+      if(deployBranch) {
+        formDeployLink(deployBranch);
+      }
+
+      // if repo is deployed on heroku and user isn't logged in at heroku,
+      // show them login window.
+      if(deployBranch==='heroku' && !$cookieStore.get('deployToken') ){
+        $window.location.href = '/auth/heroku';
+      }
+
+      // create deploy branch on github
+      github.createBranch($scope.username, $scope.repoName, 'master', deployBranch)
         .then(function(res) {
-          console.log('addDeployBranch success!', res)
-          $scope.isDeployed = true;
+          console.log('addDeployBranch success!', res);
+        });
+
+    }
+
+    // create new heroku app for the current app if
+    // 1) user is logged in with heroku
+    // 2) if app doesn't  already exist
+    if( $cookieStore.get('deployToken') ) {
+    console.log('inside')
+      // get a list of heroku apps for logged in user
+      heroku.listApps().then(function(apps){
+        var appExists = false;
+        // check if the current repo already has a heroko app
+        angular.forEach(apps.data, function(app){
+          console.log(app.name)
+          if(app.name === $scope.username + '-' + $scope.repoName) {
+            appExists = true;
+          }
         })
-    }; // end addDeployBranch()
+
+        // if current app isn't already a heroku app, create a heroku app
+        if(!appExists) {
+          console.log('aa', $scope.username, $scope.repoName)
+           heroku.createApp($scope.username, $scope.repoName);
+        }
+      });
+    }
+
+
+    $scope.deploy = function(){
+
+      // commit the files to the deploy branch
+      var message = 'test deployment ' + new Date();
+      console.log('message', message, deployBranch)
+
+      commit(message, [deployBranch], function(){
+        // if app is deployed on Heroku, build app
+
+        if(deployBranch ==='heroku') {
+          console.log('update heroku app')
+          heroku.updateApp($scope.username, $scope.repoName);
+        }
+
+      });
+
+
+    };
+
 
 
     $scope.addBranch = function() {
@@ -236,11 +378,18 @@ angular.module('appceptionApp')
         })
     }; // end addBranch()
 
+
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:')
+      commit(message, ['master', deployBranch]);
+    }
+
+
+    var commit = function(message, branches, callback){
+      console.log('start commit')
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
-
+        console.log('export local db')
         filesArray.shift()
         for(var i = filesArray.length-1; i >= 0; i--) {
           if(!filesArray[i]["content"]){
@@ -258,10 +407,19 @@ angular.module('appceptionApp')
           if(boolean === true){
             var user = Auth.getCurrentUser()
             console.log('user: ', user)
-            github.createCommit(user.github.login, $scope.repoName, message, filesArray)
+            github.createCommit(user.github.login, $scope.repoName, branches, message, filesArray)
               .then(function(res){
+                console.log('commit done')
                 $scope.committing = false;
                 $scope.success = true;
+
+                console.log(callback)
+
+                if(callback){
+                  console.log('callback build app')
+                  callback();
+                }
+
               })
           }else {
             console.log('Sorry, an error has occurred while committing');
@@ -271,6 +429,8 @@ angular.module('appceptionApp')
         });
       })
     }
+
+
 
     $scope.dismissNotification = function() {
       $scope.success = false;
@@ -283,7 +443,7 @@ angular.module('appceptionApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('files', {
-        url: '/files/{repoName}',
+        url: '/files',
         templateUrl: 'app/files/files.html',
         controller: 'FilesCtrl',
         authenticate: true
@@ -325,7 +485,7 @@ angular.module('appceptionApp')
       });
     };
 
-    var createRepo = function(githubLogin, repoName, generator) {
+    var createRepo = function(githubLogin, repoName, generator, deployment) {
       console.log('inside service createRepo');
       return $http({
         method: 'GET',
@@ -333,12 +493,13 @@ angular.module('appceptionApp')
         params: {
           githubLogin: githubLogin,
           repoName: repoName,
-          generator: generator
+          generator: generator,
+          deployment: deployment
         }
       })
     };
 
-    var createCommit = function(githubLogin, repoName, message, filesArray) {
+    var createCommit = function(githubLogin, repoName, branches, message, filesArray) {
       console.log('inside createCommit')
       return $http({
         method: 'POST',
@@ -347,7 +508,8 @@ angular.module('appceptionApp')
           githubLogin: githubLogin,
           repoName: repoName,
           message: message,
-          filesArray: JSON.stringify(filesArray)
+          filesArray: JSON.stringify(filesArray),
+          branches: branches
         }
       })
     }
@@ -407,6 +569,14 @@ angular.module('appceptionApp')
           newBranchName: newBranchName
         }
       })
+    };
+
+    // TEMPORARY - MOVE THIS TO A BETTER SPOT PLZ KELLY
+    var getTemplates = function() {
+      return $http({
+        method: 'GET',
+        url: '/api/projects/templates'
+      })
     }
 
     return {
@@ -415,7 +585,8 @@ angular.module('appceptionApp')
       createRepo: createRepo,
       createCommit: createCommit,
       createBranch: createBranch,
-      getBranches: getBranches
+      getBranches: getBranches,
+      getTemplates: getTemplates
     };
   });
 ;'use strict';
@@ -448,7 +619,8 @@ angular.module('appceptionApp')
       $window.location.href = '/auth/' + provider;
     };
 
-    var user = Auth.getCurrentUser();
+    // var user = Auth.getCurrentUser();
+    var username = 'wykhuh'
     var repo = 'heroku';
 
     $scope.listApps = function(){
@@ -470,7 +642,7 @@ angular.module('appceptionApp')
     $scope.updateApp = function(){
       console.log('update app cont');
 
-      heroku.updateApp(user.github.login, repo).then(function(files){
+      heroku.updateApp(username, repo).then(function(files){
         console.log('files', files);
       });
     };
@@ -520,26 +692,26 @@ angular.module('appceptionApp')
       });
     };
 
-    var createApp = function(githubLogin, githubRepo){
+    var createApp = function(githubLogin, repoName){
       console.log('inside service createApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/createApp',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo
+          repoName: repoName
         }
       });
     };
 
-    var updateApp = function(githubLogin, githubRepo){
+    var updateApp = function(githubLogin, repoName){
       console.log('inside service updateApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/updateApp',
         params: {
           githubLogin: githubLogin,
-          githubRepo: githubRepo
+          repoName: repoName
         }
       });
     };
@@ -590,8 +762,9 @@ angular.module('appceptionApp')
       // iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
+        console.log('repo', repo)
 
-        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?\//, '');
+        var filePath = '/'+ repo + '/' + item[0].path.replace(/^.*?[\/\\]/, '');
         console.log('filePath', filePath)
         // if item has no content, create a directory
         if(! item[0].hasOwnProperty('content')) {
@@ -607,42 +780,42 @@ angular.module('appceptionApp')
       }
     };
 
-    // Insert file templates from  a given repo
-    // into the user's browsers local database.
-    var insertTemplateFilesIntoLocalDB = function(repo, items) {
-              console.log(items)
+    // // Insert file templates from  a given repo
+    // // into the user's browsers local database.
+    // var insertTemplateFilesIntoLocalDB = function(repo, items) {
+    //           console.log(items)
 
-      var filer = new Filer.FileSystem({
-        name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback(databaseName)
-      });
+    //   var filer = new Filer.FileSystem({
+    //     name: 'files',
+    //     provider: new Filer.FileSystem.providers.Fallback(databaseName)
+    //   });
 
-      // create root folder for the project
-      filer.mkdir( '/' + repo , function(err){
-        if(err) throw err;
-      });
+    //   // create root folder for the project
+    //   filer.mkdir( '/' + repo , function(err){
+    //     if(err) throw err;
+    //   });
 
-      // iterate through the items from the repo.
-      for(var i =0; i < items.length; i++){
-        var item = items[i];
-        console.log(item)
+    //   // iterate through the items from the repo.
+    //   for(var i =0; i < items.length; i++){
+    //     var item = items[i];
+    //     console.log(item)
 
 
-        var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
+    //     var filePath = '/'+repo + '/' + item.path.replace(/^.*?\//, '');
 
-        // if item has no content, create a directory
-        if(! item.hasOwnProperty('content')) {
-          filer.mkdir( filePath , function(err){
-            if(err) throw err;
-          });
-        // if item has content, create a file
-        }  else {
-          filer.writeFile(filePath , item.content, function(error) {
-            if(error) throw error;
-          })
-        }
-      }
-    };
+    //     // if item has no content, create a directory
+    //     if(! item.hasOwnProperty('content')) {
+    //       filer.mkdir( filePath , function(err){
+    //         if(err) throw err;
+    //       });
+    //     // if item has content, create a file
+    //     }  else {
+    //       filer.writeFile(filePath , item.content, function(error) {
+    //         if(error) throw error;
+    //       })
+    //     }
+    //   }
+    // };
 
     // Export files and directories from the user's browsers local database.
     // exportLocalDB() returns a flat array containing information about
@@ -757,20 +930,39 @@ angular.module('appceptionApp')
         })
 
       })
+    }
 
+    // get the name of the project currently in IndexedDb 
+    var getCurrentRepo = function(){
+      var currentRepo;
 
+      var filer = new Filer.FileSystem({
+        name: 'files',
+        provider: new Filer.FileSystem.providers.Fallback(databaseName)
+      });
 
-      // shell.rm('/test3', {recursive : true }, function(err){
-      //   if (err) throw err;
-      //   console.log('indexedDB is cleared.')
-      // });
+      var shell = filer.Shell();
+
+      // turn shell.ls callback into a promise
+      var defer = $q.defer();
+
+      // return the name of the repo directory as a promise
+      shell.ls('/', {recursive: false}, function(err, entries){
+        angular.forEach(entries, function(entry){
+          if(entry.type === 'DIRECTORY'){
+            defer.resolve( entry.path);
+          }
+        })
+      })
+
+      return defer.promise;
     }
 
     return {
       exportLocalDB: exportLocalDB,
       insertRepoIntoLocalDB: insertRepoIntoLocalDB,
-      emptyLocalDB: emptyLocalDB,
-      insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
+      emptyLocalDB: emptyLocalDB
+      // insertTemplateFilesIntoLocalDB: insertTemplateFilesIntoLocalDB
     }
 
   });
@@ -795,10 +987,17 @@ describe('Service: indexedDB', function () {
 ;'use strict';
 
 angular.module('appceptionApp')
-  .controller('MainCtrl', function ($scope, $location, $window, Auth) {
+  .controller('MainCtrl', function ($scope, $location, $window, Auth, github) {
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
+
+    $scope.getTemplates = function() {
+    	github.getTemplates()
+    	.then(function(res) {
+    		console.log(res)
+    	});
+    }
 
   });
 ;// 'use strict';
@@ -930,8 +1129,8 @@ angular.module('appceptionApp')
       .state('projects', {
         url: '/projects',
         templateUrl: 'app/projects/allProjects/allProjects.html',
-        controller: 'AllProjectsCtrl'
-        // authenticate: true
+        controller: 'AllProjectsCtrl',
+        authenticate: true
       });
   });;'use strict';
 
@@ -964,20 +1163,29 @@ describe('Controller: AllProjectsCtrl', function () {
 ;'use strict';
 
 angular.module('appceptionApp')
-  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB) {
+  .controller('NewProjectCtrl', function ($scope, $state, github, Auth, indexedDB, $window, $location) {
 
     $scope.repoName = '';
     $scope.creating = false;
 
     $scope.generator = 'beginner';
 
-    $scope.createRepo = function(repoName, generator) {
+    $scope.deploymentProvider='';
+
+    $scope.loginOauth = function(provider) {
+      $window.location.href = '/auth/' + provider;
+    };
+
+
+    $scope.createRepo = function(repoName, generator, deployment) {
       console.log('generator', generator)
+      console.log('deployment', deployment)
+
       $scope.creating = true;
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser()
-          github.createRepo(user.github.login, repoName, generator).then(function(res) {
+          github.createRepo(user.github.login, repoName, generator, deployment).then(function(res) {
 
             // empties the user's browser's local database
             indexedDB.emptyLocalDB();
