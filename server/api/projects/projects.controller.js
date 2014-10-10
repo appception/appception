@@ -361,6 +361,42 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
   return allFiles
 }
 
+exports.getTemplates = function(req, res) {
+  var fileTemplatesRoot = path.normalize(config.serverRoot + 'filetemplates/');
+
+  var filesObject = {};
+
+  var innerRecurse = function(currentObj, rootDir, dirTitle) {
+    var dirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir);
+    if(dirTitle) {
+      currentObj[dirTitle] = {};
+      currentObj = currentObj[dirTitle];
+    }
+    // Read the directory
+    var files = fs.readdirSync(dirPath)
+
+    // Look at each file in the directory
+    files.forEach(function (fileOrDirTitle) {
+      var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir + '/' + fileOrDirTitle);
+      // Check if path leads to a file
+      if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+        currentObj[fileOrDirTitle] = 'file';
+        return;
+      } else {
+        currentObj[fileOrDirTitle] = {};
+        return innerRecurse(currentObj, path.normalize(rootDir + '/' + fileOrDirTitle), fileOrDirTitle)
+      }
+    })
+  }
+  fs.readdir(fileTemplatesRoot, function(err, files) {
+    files.forEach(function(generator) {
+      filesObject[generator] = {}
+      return innerRecurse(filesObject[generator], generator)
+    })
+    return res.json(filesObject)
+  })
+}
+
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
     user: username,
