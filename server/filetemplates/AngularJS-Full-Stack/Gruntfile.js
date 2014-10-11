@@ -343,7 +343,7 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             'bower_components/**/*',
-            'assets/images/{,*/}*.{webp}',
+            'assets/images/**/*',
             'assets/fonts/**/*',
             'index.html'
           ]
@@ -407,7 +407,7 @@ module.exports = function (grunt) {
         }
       },
       dist: [
-        'imagemin',
+        // 'imagemin',
         'svgmin'
       ]
     },
