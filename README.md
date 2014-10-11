@@ -48,7 +48,7 @@ bower install
 
 
 ### Roadmap
-View the project roadmap [on waffle.io](https://waffle.io/appception/appception)
+View the project roadmap [on waffle.io](https://waffle.io/appception/appception).
 
 
 ## Team
