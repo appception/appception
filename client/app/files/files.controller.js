@@ -15,6 +15,7 @@ angular.module('appceptionApp')
     $scope.deployBranch;
     $scope.repoName  = '';
     $scope.timeLoaded = '';
+    $scope.currentRepoInformation = github.currentRepoInformation
 
 
     // getCurrentRepo() reads the files in IndexedDb and returns name of the current repo

@@ -18,7 +18,7 @@ angular.module('appceptionApp')
           $scope.selectedbranch = 'master'; // for the default master branch selection
 
           $scope.projects.forEach(function(element, index, arrayBeingTraversed) {
-            $scope.getBranchesForRepo(arrayBeingTraversed[index]);
+            $scope.getBranchesForRepo(element);
           }); // end $scope.projects.forEach()
 
           $scope.loading = false;
@@ -49,7 +49,10 @@ angular.module('appceptionApp')
     // Makes a call to Github API to get the files for a particular repo.
     // Filer inserts the files into the client's browser local database.
     $scope.getRepoFiles = function(repo, selectedbranch) {
-
+      github.currentRepoInformation = {
+        repoName: repo,
+        branch: selectedbranch
+      }
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser();
@@ -63,7 +66,7 @@ angular.module('appceptionApp')
           .then(function(res) {
 
             console.log('downloading zip file');
-            // insert the files into the user's browser local database 
+            // insert the files into the user's browser local database
             indexedDB.insertRepoIntoLocalDB(repo, res.data);
 
             $state.go('files', {repoName: repo})
