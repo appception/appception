@@ -15,7 +15,13 @@ Starting a new application, juggling web, terminal, and text interfaces, is conf
 
 
 ## Usage
-If you want to use Appception, we recommend you check out the [Appception website](https://appception.azurewebsites.net)
+If you want to use Appception, we recommend you check out the [Appception website](https://appception.azurewebsites.net). You'll need a GitHub account to log in.
+
+Once you log in, you'll see a list of your current GitHub projects. You can __select a project/branch__ or __create a new project__ using one of our generators.
+
+Either way, you're going to end up the file editor! From there just make changes, save, and __commit__. Easy!
+
+Oh! Did we mention that your project will be __automatically deployed__ on [GitHub](https://www.github.com/) or [Heroku](https://www.heroku.com/)?!
 
 
 ## Requirements
