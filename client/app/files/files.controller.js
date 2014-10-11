@@ -16,86 +16,20 @@ angular.module('appceptionApp')
     $scope.repoName  = '';
     $scope.timeLoaded = '';
     $scope.currentRepoInformation = github.currentRepoInformation
-
+    $scope.username ='';
 
     // getCurrentRepo() reads the files in IndexedDb and returns name of the current repo
     indexedDB.getCurrentRepo()
       .then(function(repo){
-        $scope.repoName  = repo;
-        findDeployProvider();
-        console.log('getCurrentRepo', $scope.repoName);
-        // get time page has loaded to compare for commit times, using a set timeout to give a little extra padding
-        setTimeout(function(){
-          $scope.timeLoaded = new Date().getTime()
-        }, 500)
+        Auth.isLoggedInAsync(function(boolean) {
+          if(boolean === true){
+            var user = Auth.getCurrentUser();
+            $scope.username = user.github.login;
+            $scope.repoName  = repo;
+            fetchDeploymentBranch();
+          }
+        })
       });
-
-    var findDeployProvider = function() {
-      Auth.isLoggedInAsync(function(boolean) {
-        if(boolean === true){
-          var user = Auth.getCurrentUser();
-          $scope.username = user.github.login;
-
-          // Get all the branches for the current repo and checks
-          // to see if they have a gh-pages or heroku branch for deployment
-          github.getBranches($scope.username, $scope.repoName)
-            .then(function(res){
-              // create a a link for the deployment branches
-              for(var i = 0; i < res.data.length; i++) {
-                  $scope.requiresHeroku = true;
-
-                // if project is has  Heroku branch,
-                if(res.data[i]['name'] === 'heroku'){
-                  $scope.isDeployed = true;
-
-
-                  // if user is  logged in, show preview with Heroku
-                  if( !!$cookieStore.get('deployToken') ) {
-                    formDeployLink(res.data[i]['name']);
-                  // if user is not logged in, show login with Heroku
-                  } else {
-                    $scope.showHerokuLogin = true;
-                  }
-
-                }
-
-                // if project is has git-hub branch, show preview with Github
-                if(res.data[i]['name'] === 'gh-pages' ) {
-                  $scope.isDeployed = true;
-                  formDeployLink(res.data[i]['name']);
-                }
-
-              }
-              $scope.checkBranches = true;
-            });
-        } else {
-          console.log('Sorry, an error has occurred while loading the user');
-        }
-      });
-
-    };
-
-    var formDeployLink = function(branch){
-      if ( branch === 'gh-pages'){
-        console.log('gh link')
-        $scope.deployBranch = 'gh-pages';
-        $scope.deployedHost = 'Github pages';
-        $scope.deployedUrl = 'http://' + $scope.username + '.github.io/' + $scope.repoName;
-
-      } else if (branch === 'heroku') {
-        console.log('heroku link')
-        $scope.deployBranch = 'heroku';
-        $scope.deployedHost = 'Heroku';
-        $scope.deployedUrl = 'http://' + $scope.username + '-' + $scope.repoName + '.herokuapp.com';
-      }
-    }
-
-
-    // // login in with Heroku
-    // $scope.loginOauth = function(provider) {
-    //   $window.location.href = '/auth/' + provider;
-    //   $scope.requiresHeroku = false;
-    // };
 
     $scope.showHerokuLink = function() {
       $scope.requiresHeroku = true;
@@ -130,46 +64,16 @@ angular.module('appceptionApp')
 
     }
 
-    // create new heroku app for the current app if
-    // 1) user is logged in with heroku
-    // 2) if app doesn't  already exist
-    if( $cookieStore.get('deployToken') ) {
-      console.log('inside')
-      // get a list of heroku apps for logged in user
-      heroku.listApps().then(function(apps){
-        var appExists = false;
-        // check if the current repo already has a heroko app
-        angular.forEach(apps.data, function(app){
-          if(app.name === $scope.username + '-' + $scope.repoName) {
-            appExists = true;
-          }
-        })
-
-        // if current app isn't already a heroku app, create a heroku app
-        if(!appExists) {
-           heroku.createApp($scope.username, $scope.repoName);
-        }
-      });
-    }
 
 
     $scope.deploy = function(){
 
       // commit the files to the deploy branch
       var message = 'test deployment ' + new Date();
-      console.log('message', message, $scope.deployBranch)
+      console.log('deploy commit:', message, $scope.deployBranch)
 
-      commit(message, [$scope.deployBranch], function(){
-
-        // if app is deployed on Heroku, build app
-        if($scope.deployBranch ==='heroku') {
-          console.log('update heroku app')
-          heroku.updateApp($scope.username, $scope.repoName);
-        }
-
-      });
+      commit(message, [$scope.deployBranch]);
     };
-
 
 
     $scope.addBranch = function() {
@@ -185,13 +89,14 @@ angular.module('appceptionApp')
 
 
     $scope.createCommit = function(message) {
-      var message = prompt('Enter a commit message:')
+      var message = prompt('Enter a commit message:');
+      console.log('branch', $scope.deployBranch)
       commit(message, ['master', $scope.deployBranch]);
     };
 
 
-    var commit = function(message, branches, callback){
-      console.log('start commit');
+    var commit = function(message, branches){
+      console.log('start commit:', message, '- ', branches);
       var toCommit = [];
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
@@ -223,8 +128,10 @@ angular.module('appceptionApp')
                 $scope.committing = false;
                 $scope.success = true;
 
-                if(callback){
-                  callback();
+                // if app is deployed on Heroku, build app
+                if($scope.deployBranch ==='heroku' && !!$cookieStore.get('deployToken')) {
+                  console.log('update heroku app')
+                  heroku.updateApp($scope.username, $scope.repoName);
                 }
 
               })
@@ -238,9 +145,75 @@ angular.module('appceptionApp')
     };
 
 
-
     $scope.dismissNotification = function() {
       $scope.success = false;
       $scope.failure = false;
     };
+
+
+    var formDeployLink = function(branch){
+      if ( branch === 'gh-pages'){
+        console.log('gh link')
+        $scope.deployBranch = 'gh-pages';
+        $scope.deployedHost = 'Github pages';
+        $scope.deployedUrl = 'http://' + $scope.username + '.github.io/' + $scope.repoName;
+
+      } else if (branch === 'heroku') {
+        console.log('heroku link')
+        $scope.deployBranch = 'heroku';
+        $scope.deployedHost = 'Heroku';
+        $scope.deployedUrl = 'http://' + $scope.username + '-' + $scope.repoName + '.herokuapp.com';
+      }
+    };
+
+    var fetchDeploymentBranch = function() {
+      // Auth.isLoggedInAsync(function(boolean) {
+      //   if(boolean === true){
+      //     var user = Auth.getCurrentUser();
+      //     $scope.username = user.github.login;
+
+
+     // Get all the branches for the current repo and checks
+          // to see if they have a gh-pages or heroku branch for deployment
+          github.getBranches($scope.username, $scope.repoName)
+            .then(function(res){
+              console.log('inside getBranches:', $scope.username, $scope.repoName)
+              // create a a link for the deployment branches 
+              for(var i = 0; i < res.data.length; i++) {
+                $scope.requiresHeroku = true;
+
+                // if project is has  Heroku branch, 
+                if(res.data[i]['name'] === 'heroku'){
+                  $scope.isDeployed = true;
+
+                  // if user is  logged in, show preview with Heroku
+                  if( !!$cookieStore.get('deployToken') ) {
+                    formDeployLink(res.data[i]['name']);
+                    heroku.createHerokuApp($scope.username, $scope.repoName);
+
+                  // if user is not logged in, show login with Heroku
+                  } else {
+                    $scope.showHerokuLogin = true;
+                  }
+                }
+
+                // if project is has git-hub branch, show preview with Github
+                if(res.data[i]['name'] === 'gh-pages' ) {
+                  $scope.isDeployed = true;
+                  formDeployLink(res.data[i]['name']);
+                }
+
+              }
+              $scope.checkBranches = true;
+            });
+      //   } else {
+      //     console.log('Sorry, an error has occurred while loading the user');
+      //   }
+      // });
+
+    };
+
+
+
+
   });
