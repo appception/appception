@@ -119,6 +119,11 @@ angular.module('appceptionApp')
       })
     };
 
+    var currentRepoInformation = {
+      repoName: '',
+      branch: ''
+    }
+
     // TEMPORARY - MOVE THIS TO A BETTER SPOT PLZ KELLY
     var getTemplates = function() {
       return $http({
@@ -134,6 +139,7 @@ angular.module('appceptionApp')
       createCommit: createCommit,
       createBranch: createBranch,
       getBranches: getBranches,
-      getTemplates: getTemplates
+      getTemplates: getTemplates,
+      currentRepoInformation: currentRepoInformation
     };
   });
