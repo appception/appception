@@ -6,7 +6,9 @@ angular.module('appceptionApp')
     $scope.creating = false;
 
     $scope.generator = 'beginner';
-    $scope.templates = '';
+    $scope.allTemplates;
+    $scope.renderedTemplate;
+    $scope.templateNames = [];
 
     $scope.deploymentProvider='';
 
@@ -44,10 +46,22 @@ angular.module('appceptionApp')
       })
     };
 
-    $scope.getTemplates = function() {
-      repoTemplates.getTemplates()
-      .then(function(res) {
-        $scope.templates = res.data
-      });
+    $scope.renderTemplate = function(repo) {
+      $scope.allTemplates.forEach(function(value) {
+        if(repo === value.name) {
+          console.log(value)
+          $scope.renderedTemplate = [value]
+        }
+      })
     }
+
+    repoTemplates.getTemplates()
+      .then(function(res) {
+        console.log(res.data)
+        $scope.allTemplates = res.data;
+        $scope.allTemplates.forEach(function(value) {
+          $scope.templateNames.push(value.name)
+        })
+        $scope.renderTemplate('beginner')
+      });
   });
