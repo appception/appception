@@ -1,7 +1,9 @@
 # Appception
 [Appception](https://appception.azurewebsites.net) is a web app generator. It allows you to forget about complicated setup and start coding your web app now.
 
-Starting a new application, juggling web, terminal, and text interfaces, is confusing and tedious and frustrating. Appception replaces that experience with a turnkey solution that creates a working, deployed app from nothing fast. Really fast.
+Starting a new application, juggling web, terminal, and text interfaces, is confusing and tedious and frustrating. Appception replaces that experience with a turnkey solution that creates a working, deployed app from nothing fast.
+
+Really fast.
 
 
 ## Table of Contents
