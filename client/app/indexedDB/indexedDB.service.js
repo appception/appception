@@ -105,7 +105,7 @@ angular.module('appceptionApp')
           angular.forEach(item.contents, function(entry, i){
             var entry = item.contents[i];
             var itemPath = fullpath + '/' + entry.path;
-
+            console.log(entry)
             // if item is a file, read the file,
             // and add  file path and content
             if(entry.type === 'FILE'){
@@ -118,7 +118,7 @@ angular.module('appceptionApp')
                     return promises[i].reject(err);
                   }
                   // console.log('file2:', itemPath, data);
-                  promises[i].resolve({path: itemPath, content: data.toString()});
+                  promises[i].resolve({path: itemPath, content: data.toString(), modified: entry.modified});
                 })
               })(counter++)
 

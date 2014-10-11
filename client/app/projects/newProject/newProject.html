@@ -33,18 +33,9 @@
         <label ng-repeat="name in templateNames">
           <input type='radio' ng-model="$parent.generator" ng-change="renderTemplate(generator)" ng-value="name" /> {{name}}
         </label>
-        <!-- <label >
-          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="beginner-test"> Beginner Test
-        </label>
-        <label>
-          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="google-web-starter-kit"> Google Web Starter Kit
-        </label>
-        <label>
-          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="foundation"> Foundation
-        </label> -->
       </div>
       <div>
-        <repotemplate class="file-structure" repotemplate='renderedTemplate'></repotemplate>
+        <repotemplate class="half file-structure" repotemplate='renderedTemplate'></repotemplate>
         <!-- <div ng-include="'app/projects/newProject/fileStructureTemplates/foundation.html'"></div> -->
       </div>
     </div>

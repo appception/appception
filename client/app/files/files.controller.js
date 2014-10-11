@@ -14,6 +14,7 @@ angular.module('appceptionApp')
     $scope.showHerokuLogin = !!$cookieStore.get('deployToken') && $scope.isDeployed ;
     $scope.deployBranch;
     $scope.repoName  = '';
+    $scope.timeLoaded = '';
 
 
     // getCurrentRepo() reads the files in IndexedDb and returns name of the current repo
@@ -22,6 +23,10 @@ angular.module('appceptionApp')
         $scope.repoName  = repo;
         findDeployProvider();
         console.log('getCurrentRepo', $scope.repoName);
+        // get time page has loaded to compare for commit times, using a set timeout to give a little extra padding
+        setTimeout(function(){
+          $scope.timeLoaded = new Date().getTime()
+        }, 500)
       });
 
     var findDeployProvider = function() {
@@ -34,11 +39,11 @@ angular.module('appceptionApp')
           // to see if they have a gh-pages or heroku branch for deployment
           github.getBranches($scope.username, $scope.repoName)
             .then(function(res){
-              // create a a link for the deployment branches 
+              // create a a link for the deployment branches
               for(var i = 0; i < res.data.length; i++) {
                   $scope.requiresHeroku = true;
 
-                // if project is has  Heroku branch, 
+                // if project is has  Heroku branch,
                 if(res.data[i]['name'] === 'heroku'){
                   $scope.isDeployed = true;
 
@@ -186,26 +191,32 @@ angular.module('appceptionApp')
 
     var commit = function(message, branches, callback){
       console.log('start commit');
+      var toCommit = [];
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
-        console.log('export local db');
         filesArray.shift()
-        for(var i = filesArray.length-1; i >= 0; i--) {
-          if(!filesArray[i]["content"]){
-            filesArray.splice(i, 1);
+        filesArray.forEach(function(value) {
+          if (value.modified > $scope.timeLoaded){
+            toCommit.push(value)
+          }
+        })
+        console.log(toCommit)
+        for(var i = toCommit.length-1; i >= 0; i--) {
+          if(!toCommit[i]["content"]){
+            toCommit.splice(i, 1);
           }
         }
 
-        for(var i = 0; i < filesArray.length; i++) {
-          filesArray[i]["mode"] = '100644';
-          filesArray[i]["type"] = 'blob';
-          filesArray[i]["path"] = filesArray[i]["path"].replace('/' + $scope.repoName + '/', '')
+        for(var i = 0; i < toCommit.length; i++) {
+          toCommit[i]["mode"] = '100644';
+          toCommit[i]["type"] = 'blob';
+          toCommit[i]["path"] = toCommit[i]["path"].replace('/' + $scope.repoName + '/', '')
         }
 
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
             var user = Auth.getCurrentUser();
-            github.createCommit(user.github.login, $scope.repoName, branches, message, filesArray)
+            github.createCommit(user.github.login, $scope.repoName, branches, message, toCommit)
               .then(function(res){
                 console.log('commit done')
                 $scope.committing = false;
