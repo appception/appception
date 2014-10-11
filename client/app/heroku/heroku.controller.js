@@ -25,7 +25,7 @@ angular.module('appceptionApp')
     $scope.createApp = function(){
       console.log('create app cont');
 
-      heroku.createApp(user.github.login, repo).then(function(files){
+      heroku.createApp(username, 'testher').then(function(files){
         console.log('files', files);
       });
     };
