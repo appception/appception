@@ -13,9 +13,6 @@
       </div>
     </div>
 
-    <a ng-click="getTemplates()">Get Templates</a>
-    {{templates}}
-    <repotemplate repotemplate='templates'></repotemplate>
     <h2>1. Github Repo Name</h2>
     <input id="repo_name" placeholder="my-new-repo" type="text" ng-model="repoName">
 
@@ -27,28 +24,28 @@
           <input type='radio' ng-model="deployment" value="heroku"> Heruko  (suitable for apps with client-side and server-side code)
         </label>
 
-
-
     <div class="clear-after">
       <div class="float-left">
         <h2>3. Generator </h2>
-        <label>
-          <input type='radio' ng-model="generator" value="beginner"> Beginner
+        <!-- <ul>
+          <li ng-repeat="name in templateNames">{{name}}</li>
+        </ul> -->
+        <label ng-repeat="name in templateNames">
+          <input type='radio' ng-model="$parent.generator" ng-change="renderTemplate(generator)" ng-value="name" /> {{name}}
+        </label>
+        <!-- <label >
+          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="beginner-test"> Beginner Test
         </label>
         <label>
-          <input type='radio' ng-model="generator" value="beginner-test"> Beginner Test
+          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="google-web-starter-kit"> Google Web Starter Kit
         </label>
         <label>
-          <input type='radio' ng-model="generator" value="google-web-starter-kit"> Google Web Starter Kit
-        </label>
-        <label>
-          <input type='radio' ng-model="generator" value="foundation"> Foundation
-        </label>
-        <p>{{generator}}</p>
+          <input type='radio' ng-model="generator" ng-change="renderTemplate(generator)" value="foundation"> Foundation
+        </label> -->
       </div>
       <div>
-
-        <div ng-include="'app/projects/newProject/fileStructureTemplates/foundation.html'"></div>
+        <repotemplate class="file-structure" repotemplate='renderedTemplate'></repotemplate>
+        <!-- <div ng-include="'app/projects/newProject/fileStructureTemplates/foundation.html'"></div> -->
       </div>
     </div>
   </form>
