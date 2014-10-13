@@ -334,7 +334,7 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
     if(!fs.lstatSync(fileOrDirPath).isDirectory()){
       console.log('file: ', fileOrDirTitle)
       // Clean the directory name if necessary
-      if(rootDir.charAt(0) === '/'){
+      if(rootDir.charAt(0) === '/' || rootDir.charAt(0) === '\\'){
         rootDir = rootDir.substr(1)
       }
       // If file is not yet in the allFiles array, push it in
@@ -344,7 +344,7 @@ var recursivelyGetFileNames = function(rootDir, fileOrDirTitle, generator){
     } else {
       rootDir = path.normalize(rootDir + fileOrDirTitle + '/');
       // Push the cleaned directory name to the allFiles array
-      if(rootDir.charAt(0) === '/'){
+      if(rootDir.charAt(0) === '/' || rootDir.charAt(0) === '\\'){
         var cleanRootDir = rootDir.substr(1)
         allFiles.push(cleanRootDir)
       } else {
