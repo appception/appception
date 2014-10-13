@@ -51,7 +51,8 @@ angular.module('appceptionApp')
         // if current app isn't already a heroku app, create a heroku app
         if(!appExists) {
           console.log('create new app:', username, repoName);
-          createApp(username, repoName);
+          // returns a promise when app is created
+          return createApp(username, repoName);
         }
       });
     };

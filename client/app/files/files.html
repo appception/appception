@@ -5,6 +5,7 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="header clear-after">
+          <p>Repo: {{repoName}} > Branch: {{currentRepoInformation.branch}}</p>
           <div ng-submit="checkBranches" class="pull-left">
               <form  ng-hide='isDeployed'>
               <label>
@@ -14,17 +15,12 @@
                 <input ng-click='showHerokuLink()' type='radio' ng-model="deployBranch" value="heroku"> Heruko  (suitable for apps  with client-side and server-side code)
               </label>
 
-              <button ng-click="pickDeploy()"  class="btn btn-default btn-sm btn-blue" type="submit" ng-hide="creating">Pick Deployment</button>
+              <button ng-click="addDeployBranch()"  class="btn btn-default btn-sm btn-blue" type="submit" ng-hide="creating">Pick Deployment</button>
             </form>
-            <a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a></br>
+            <a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a>
 
-            <a ng-click="deploy()" ng-show="isDeployed" target="_blank" href="{{deployedUrl}}">Live Preview {{deployedHost}}</a>
+            <a ng-click="deploy()" ng-show="showLivePreview" target="_blank" class="btn btn-default btn-blue" href="{{deployedUrl}}">Live Preview</a>
 
-
-          <!--
-          <a ng-show="isDeployed" ng-href="{{deployedUrl}}" target="_blank" >View your most recent commit at {{deployedText}}</a>
-            <a ng-hide="isDeployed" ng-click="addDeployBranch()" target="_blank" >Deploy this Project</a>
-          -->
           </div>
           <div class="pull-right">
               <span ng-show="committing" class="margin-two--right pull-left success">Committing...</span>
