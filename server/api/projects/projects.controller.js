@@ -373,29 +373,30 @@ exports.getTemplates = function(req, res) {
     currentObj['children'] = currentObj['children'] || [];
     var dirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir);
     // Read the directory
-    // var files = fs.readdirSync(dirPath)
+    var files = fs.readdirSync(dirPath)
 
     // Look at each file in the directory
-    // files.forEach(function (fileOrDirTitle) {
-      // var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir + '/' + fileOrDirTitle);
+    files.forEach(function (fileOrDirTitle) {
+      var fileOrDirPath = path.normalize(config.serverRoot + 'filetemplates/' + rootDir + '/' + fileOrDirTitle);
       // Check if path leads to a file
-      // if(!fs.lstatSync(fileOrDirPath).isDirectory()){
-      //   currentObj['children'].push({name: fileOrDirTitle});
-      //   return;
-      // } else {
-      //   var innerFileObject = {name: fileOrDirTitle}
-      //   currentObj['children'].push(innerFileObject);
-      //   return innerRecurse(innerFileObject, path.normalize(rootDir + '/' + fileOrDirTitle), fileOrDirTitle)
-      // }
-    // })
+      if(!fs.lstatSync(fileOrDirPath).isDirectory()){
+        currentObj['children'].push({name: fileOrDirTitle});
+        return;
+      } else {
+        var innerFileObject = {name: fileOrDirTitle}
+        currentObj['children'].push(innerFileObject);
+        return innerRecurse(innerFileObject, path.normalize(rootDir + '/' + fileOrDirTitle), fileOrDirTitle)
+      }
+    })
   }
   fs.readdir(fileTemplatesRoot, function(err, files) {
     files.forEach(function(generator) {
-      if(generator !== '.DS_Store') {
+      if(generator !== '.DS_Store'){
         var folderObj = {name: generator};
         filesObject.push(folderObj)
         return innerRecurse(folderObj, generator)
-      };
+      }
+
     })
     return res.json(filesObject)
   })
@@ -419,6 +420,7 @@ exports.getTemplates = function(req, res) {
 //     ]
 //   }
 // ]
+
 
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
