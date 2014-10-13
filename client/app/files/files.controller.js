@@ -26,6 +26,8 @@ angular.module('appceptionApp')
             var user = Auth.getCurrentUser();
             $scope.username = user.github.login;
             $scope.repoName  = repo;
+
+            $scope.timeLoaded = new Date().getTime();
             fetchDeploymentBranch();
           }
         })
@@ -169,10 +171,10 @@ angular.module('appceptionApp')
       github.getBranches($scope.username, $scope.repoName)
         .then(function(res){
           console.log('inside getBranches:', $scope.username, $scope.repoName)
-          // create a a link for the deployment branches 
+          // create a a link for the deployment branches
           for(var i = 0; i < res.data.length; i++) {
 
-            // if project is has  Heroku branch, 
+            // if project is has  Heroku branch,
             if(res.data[i]['name'] === 'heroku'){
               $scope.isDeployed = true;
               // $scope.showLivePreview = true;
@@ -207,7 +209,7 @@ angular.module('appceptionApp')
           }
           $scope.checkBranches = true;
         });
-  
+
 
     };
 
