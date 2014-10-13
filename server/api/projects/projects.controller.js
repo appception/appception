@@ -16,7 +16,7 @@ var GitHubApi = require("github");
 var github = new GitHubApi({
   version: "3.0.0",
   // debug: true
-  debug: false
+  debug: true
 });
 
 // get
@@ -454,7 +454,7 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
 
 var createCommitHelper = function(githubLogin, repoName, branchName, filesArray, message) {
   // Get reference to head of branch
-  // NOTE: if we want to commit to a different branch we can change that in ref
+  console.log('filesArray', filesArray)
   github.gitdata.getReference({
     user: githubLogin,
     repo: repoName,
