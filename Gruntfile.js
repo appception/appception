@@ -111,7 +111,7 @@ module.exports = function(grunt) {
           src: 'client/app/min/*.*'
         }
       },
-      serverFiles: 'server/tempfiles/*.*' // Cleaning this removes old user zips
+      serverFiles: 'server/tempfiles/*.zip' // Cleaning this removes old user zips
     }, // end clean
 
     stylus: { // Compiles Stylus to CSS
