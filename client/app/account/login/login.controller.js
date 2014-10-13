@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $window) {
+  .controller('LoginCtrl', function ($scope, Auth, $location, $window, $cookieStore) {
     $scope.user = {};
     $scope.errors = {};
 
     $scope.login = function(form) {
+      $cookieStore.remove('deployToken');
+      
       $scope.submitted = true;
 
       if(form.$valid) {
