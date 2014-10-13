@@ -89,7 +89,7 @@ angular.module('appceptionApp')
       $scope.committing = true;
       indexedDB.exportLocalDB().then(function(filesArray) {
         console.log('files',filesArray)
-        filesArray.shift()
+        // filesArray.shift()
         filesArray.forEach(function(value) {
           if (value.modified > $scope.timeLoaded){
             toCommit.push(value)
