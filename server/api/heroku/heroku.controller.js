@@ -27,10 +27,11 @@ exports.create = function(req, res) {
                     "app": {"name": appName } };
 
   var callback = function(){
+    res.send('new app created')
     return console.log('new app created'); // making this a return so the server can capture it and we can test it.
   }
 
-  console.log('create new attributes', attributes);
+  // console.log('create new attributes', attributes);
 
   heroku.appSetups().create(attributes, callback);
 };
@@ -49,7 +50,8 @@ exports.update = function(req, res) {
 
 
   var callback = function(){
-    return console.log(' app updated'); // making this a return so the server can capture it and we can test it.
+    res.send('app updated');
+    return console.log('app updated'); // making this a return so the server can capture it and we can test it.
   };
    console.log('update app attributes', attributes);
 

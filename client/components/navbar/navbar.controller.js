@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('NavbarCtrl', function ($scope, $location, $window, Auth) {
+  .controller('NavbarCtrl', function ($scope, $location, $window, Auth, $cookieStore) {
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
@@ -35,6 +35,7 @@ angular.module('appceptionApp')
     };
 
     $scope.loginOauth = function(provider) {
+      $cookieStore.remove('deployToken');
       $window.location.href = '/auth/' + provider;
     };
 

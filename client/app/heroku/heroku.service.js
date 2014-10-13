@@ -38,7 +38,7 @@ angular.module('appceptionApp')
     // create new heroku app if user logged in and app doesn't exist
     var createHerokuApp = function(username, repoName){
       // get a list of heroku apps for logged in user
-      listApps().then(function(apps){
+      return listApps().then(function(apps){
         console.log('list of apps', apps);
         var appExists = false;
         // check if the current repo already has a heroko app
@@ -51,7 +51,10 @@ angular.module('appceptionApp')
         // if current app isn't already a heroku app, create a heroku app
         if(!appExists) {
           console.log('create new app:', username, repoName);
-          createApp(username, repoName);
+          // returns a promise when app is created
+           var res= createApp(username, repoName);
+           return res;
+
         }
       });
     };

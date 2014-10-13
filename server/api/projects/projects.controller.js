@@ -240,11 +240,11 @@ exports.commit = function (req, response) {
   var branches = req.body.branches;
   var filesArray = req.body.filesArray;
 
-  console.log(req.body);
-
   for(var i = 0; i < branches.length; i++){
-    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message)
+    var a = createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message);
+    console.log('aaa',a)
   }
+  console.log('commit 1')
   return response.json('success!')
 }
 
@@ -391,9 +391,12 @@ exports.getTemplates = function(req, res) {
   }
   fs.readdir(fileTemplatesRoot, function(err, files) {
     files.forEach(function(generator) {
-      var folderObj = {name: generator};
-      filesObject.push(folderObj)
-      return innerRecurse(folderObj, generator)
+      if(generator !== '.DS_Store'){
+        var folderObj = {name: generator};
+        filesObject.push(folderObj)
+        return innerRecurse(folderObj, generator)
+      }
+
     })
     return res.json(filesObject)
   })
@@ -417,6 +420,7 @@ exports.getTemplates = function(req, res) {
 //     ]
 //   }
 // ]
+
 
 var createBranchHelper = function(username, repoName, baseBranchName, newBranchName) {
   github.gitdata.getReference({
