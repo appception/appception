@@ -16,28 +16,28 @@ angular.module('appceptionApp')
        * @param  {Function} callback - optional
        * @return {Promise}
        */
-      login: function(user, callback) {
-        var cb = callback || angular.noop;
-        var deferred = $q.defer();
+      // login: function(user, callback) {
+      //   var cb = callback || angular.noop;
+      //   var deferred = $q.defer();
 
-        $http.post('/auth/local', {
-          email: user.email,
-          password: user.password
-        }).
-        success(function(data) {
-          $cookieStore.put('token', data.token);
-          currentUser = User.get();
-          deferred.resolve(data);
-          return cb();
-        }).
-        error(function(err) {
-          this.logout();
-          deferred.reject(err);
-          return cb(err);
-        }.bind(this));
+      //   $http.post('/auth/local', {
+      //     email: user.email,
+      //     password: user.password
+      //   }).
+      //   success(function(data) {
+      //     $cookieStore.put('token', data.token);
+      //     currentUser = User.get();
+      //     deferred.resolve(data);
+      //     return cb();
+      //   }).
+      //   error(function(err) {
+      //     this.logout();
+      //     deferred.reject(err);
+      //     return cb(err);
+      //   }.bind(this));
 
-        return deferred.promise;
-      },
+      //   return deferred.promise;
+      // },
 
       /**
        * Delete access token and user info
@@ -46,6 +46,7 @@ angular.module('appceptionApp')
        */
       logout: function() {
         $cookieStore.remove('token');
+        $cookieStore.remove('deployToken');
         currentUser = {};
       },
 
@@ -56,20 +57,20 @@ angular.module('appceptionApp')
        * @param  {Function} callback - optional
        * @return {Promise}
        */
-      createUser: function(user, callback) {
-        var cb = callback || angular.noop;
+      // createUser: function(user, callback) {
+      //   var cb = callback || angular.noop;
 
-        return User.save(user,
-          function(data) {
-            $cookieStore.put('token', data.token);
-            currentUser = User.get();
-            return cb(user);
-          },
-          function(err) {
-            this.logout();
-            return cb(err);
-          }.bind(this)).$promise;
-      },
+      //   return User.save(user,
+      //     function(data) {
+      //       $cookieStore.put('token', data.token);
+      //       currentUser = User.get();
+      //       return cb(user);
+      //     },
+      //     function(err) {
+      //       this.logout();
+      //       return cb(err);
+      //     }.bind(this)).$promise;
+      // },
 
       /**
        * Change password
@@ -79,18 +80,18 @@ angular.module('appceptionApp')
        * @param  {Function} callback    - optional
        * @return {Promise}
        */
-      changePassword: function(oldPassword, newPassword, callback) {
-        var cb = callback || angular.noop;
+      // changePassword: function(oldPassword, newPassword, callback) {
+      //   var cb = callback || angular.noop;
 
-        return User.changePassword({ id: currentUser._id }, {
-          oldPassword: oldPassword,
-          newPassword: newPassword
-        }, function(user) {
-          return cb(user);
-        }, function(err) {
-          return cb(err);
-        }).$promise;
-      },
+      //   return User.changePassword({ id: currentUser._id }, {
+      //     oldPassword: oldPassword,
+      //     newPassword: newPassword
+      //   }, function(user) {
+      //     return cb(user);
+      //   }, function(err) {
+      //     return cb(err);
+      //   }).$promise;
+      // },
 
       /**
        * Gets all available info on authenticated user
