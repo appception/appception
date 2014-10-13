@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('appceptionApp')
-  .controller('MainCtrl', function ($scope, $location, $window, Auth, repoTemplates) {
+  .controller('MainCtrl', function ($scope, $location, $window, Auth, repoTemplates, $cookieStore) {
     $scope.loginOauth = function(provider) {
+      $cookieStore.remove('deployToken');
       $window.location.href = '/auth/' + provider;
     };
 
