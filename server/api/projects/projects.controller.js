@@ -240,11 +240,11 @@ exports.commit = function (req, response) {
   var branches = req.body.branches;
   var filesArray = req.body.filesArray;
 
-  console.log(req.body);
-
   for(var i = 0; i < branches.length; i++){
-    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message)
+    var a = createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message);
+    console.log('aaa',a)
   }
+  console.log('commit 1')
   return response.json('success!')
 }
 

@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="header clear-after">
-          <p>Repo: {{repoName}} > Branch: {{currentRepoInformation.branch}}</p>
+          <p>Repo: {{repoName}} > Branch: {{branch}}</p>
           <div ng-submit="checkBranches" class="pull-left">
               <form  ng-hide='isDeployed'>
               <label>
@@ -20,6 +20,16 @@
             <a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a>
 
             <a ng-click="deploy()" ng-show="showLivePreview" target="_blank" class="btn btn-default btn-blue" href="{{deployedUrl}}">Live Preview</a>
+
+              <a ng-click="dismissNotification()" class="margin-two--right pull-left creatingHerokuApp" ng-show="creatingHerokuApp">
+                <i class="fa fa-times-circle"></i>
+                <span>creating app </span>
+              </a>
+
+              <a ng-click="dismissNotification()" class="margin-two--right pull-left updatingHerokuApp" ng-show="updatingHerokuApp">
+                <i class="fa fa-times-circle"></i>
+                <span>updating app </span>
+              </a>
 
           </div>
           <div class="pull-right">

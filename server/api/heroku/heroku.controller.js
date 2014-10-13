@@ -31,7 +31,7 @@ exports.create = function(req, res) {
     return console.log('new app created'); // making this a return so the server can capture it and we can test it.
   }
 
-  console.log('create new attributes', attributes);
+  // console.log('create new attributes', attributes);
 
   heroku.appSetups().create(attributes, callback);
 };
