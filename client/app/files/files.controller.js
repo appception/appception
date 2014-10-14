@@ -121,24 +121,20 @@ angular.module('appceptionApp')
         Auth.isLoggedInAsync(function(boolean) {
           if(boolean === true){
             var user = Auth.getCurrentUser();
-            github.createCommit(user.github.login, $scope.repoName, branches, message, toCommit)
+            var updateHerokuApp;
+
+            if($scope.deployBranch ==='heroku' && !!$cookieStore.get('deployToken')) {
+              updateHerokuApp = true;
+            } else {
+              updateHerokuApp = false;
+            }
+
+
+            github.createCommit(user.github.login, $scope.repoName, branches, message, toCommit, updateHerokuApp)
               .then(function(res){
                 console.log('commit done', res)
                 $scope.committing = false;
                 $scope.success = true;
-
-                // if app is deployed on Heroku, build app
-                if($scope.deployBranch ==='heroku' && !!$cookieStore.get('deployToken')) {
-                  console.log('update heroku app');
-                  $scope.updatingHerokuApp = true;
-                  heroku.updateApp($scope.username, $scope.repoName)
-                    .then( function(res){
-                      console.log('done updating', res)
-                      $scope.showLivePreview = true;
-                      $scope.updatingHerokuApp = false;
-                    });
-                }
-
               })
           }else {
             console.log('Sorry, an error has occurred while committing');

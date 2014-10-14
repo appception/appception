@@ -59,6 +59,24 @@ exports.update = function(req, res) {
 };
 
 
+exports.updateServerSide = function(githubLogin, githubRepo) {
+  console.log('update app api');
+
+  var heroku = new Heroku({ token: herokuToken.herokuToken  });
+  var appName = githubLogin + '-' + githubRepo;
+  var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"},
+                    "app": {"name": appName } };
+ 
+
+
+  var callback = function(){
+    return console.log('app updated server side'); // making this a return so the server can capture it and we can test it.
+  };
+   console.log('update app attributes server side', attributes);
+
+  heroku.apps(appName).builds().create(attributes, callback);
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }
