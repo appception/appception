@@ -162,15 +162,11 @@ angular.module('appceptionApp')
     var formDeployLink = function(deployBranch){
       if ( deployBranch === 'gh-pages'){
         console.log('gh link')
-        $scope.deployBranch = 'gh-pages';
-        $scope.deployedHost = 'Github pages';
         $scope.deployedUrl = 'http://' + $scope.username + '.github.io/' + $scope.repoName;
         $scope.showLivePreview = true;
 
       } else if (deployBranch === 'heroku') {
         console.log('heroku link')
-        $scope.deployBranch = 'heroku';
-        $scope.deployedHost = 'Heroku';
         $scope.deployedUrl = 'http://' + $scope.username + '-' + $scope.repoName + '.herokuapp.com';
         $scope.showLivePreview = true;
 
@@ -191,7 +187,11 @@ angular.module('appceptionApp')
 
             // if project has  Heroku branch,
             if(res.data[i]['name'] === 'heroku'){
+              console.log('deployment heroku')
               $scope.missingDeployBranch = false;
+              $scope.deployBranch = 'heroku';
+              $scope.deployedHost = 'Heroku';
+  
 
               // if user already has 5 Heroku apps, show them a warning.
               heroku.countHerokuApps()
@@ -221,6 +221,9 @@ angular.module('appceptionApp')
 
             // if project is has github branch, show preview with Github
             } else if(res.data[i]['name'] === 'gh-pages' ) {
+              console.log('deployment github')
+              $scope.deployBranch = 'gh-pages';
+              $scope.deployedHost = 'Github pages';
               formDeployLink(res.data[i]['name']);
               $scope.showLivePreview = true;
               $scope.missingDeployBranch = false;

@@ -43,22 +43,19 @@ angular.module('appceptionApp')
 
       var deployment = generatorDeployment[generator];
 
+      // Empties the user's browser's local database
+      indexedDB.emptyLocalDB();
+
       $scope.creating = true;
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser()
           // Create a new repo in Github.
           github.createRepo(user.github.login, repoName, generator, deployment).then(function(res) {
-
-            // Empties the user's browser's local database
-            indexedDB.emptyLocalDB()
-              .then(function(){
-                // Inserts file template in browser's local database.
-                indexedDB.insertRepoIntoLocalDB(repoName, res.data);
-                // Redirect to files page
-                $state.go('files');
-              }
-            );
+            // Inserts file template in browser's local database.
+            indexedDB.insertRepoIntoLocalDB(repoName, res.data);
+            // Redirect to files page
+            $state.go('files');
           })
         }else {
           $scope.files = 'Sorry, there has been an error while creating your repo.';
