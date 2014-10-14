@@ -1,5 +1,5 @@
 'use strict';
-
+// This factory interacts with the Heroku API.
 angular.module('appceptionApp')
   .controller('HerokuCtrl', function ($scope, Auth, $window, $location, heroku, $cookieStore) {
     $scope.message = 'Hello';

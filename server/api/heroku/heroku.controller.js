@@ -4,7 +4,7 @@ var _ = require('lodash');
 var herokuToken = require('../../auth/heroku/passport');
 var Heroku = require('heroku-client');
 
-// Get list of all heroku apps
+// Get a list of all heroku apps,
 exports.index = function(req, res) {
   console.log('list all app api', herokuToken.herokuToken );
 
@@ -15,7 +15,7 @@ exports.index = function(req, res) {
   });
 };
 
-// Creates a new heroku app
+// Creates a new heroku app.
 exports.create = function(req, res) {
   console.log('create app api');
 
@@ -36,7 +36,7 @@ exports.create = function(req, res) {
   heroku.appSetups().create(attributes, callback);
 };
 
-// Updates an existing heroku app
+// Updates an existing heroku app.
 exports.update = function(req, res) {
   console.log('update app api');
 
@@ -56,7 +56,7 @@ exports.update = function(req, res) {
   heroku.apps(appName).builds().create(attributes, callback);
 };
 
-
+// Gets account info for logged in user.
 exports.account = function(req, res) {
 
   var heroku = new Heroku({ token: herokuToken.herokuToken  });

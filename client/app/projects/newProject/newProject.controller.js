@@ -12,6 +12,7 @@ angular.module('appceptionApp')
 
     $scope.deploymentProvider='';
 
+    // List of generators and their deployment branch.
     var generatorDeployment = {
       'AngularJS': 'heroku',
       'AngularJS-Full-Stack':'heroku',
@@ -30,32 +31,31 @@ angular.module('appceptionApp')
       'WebBasic': 'gh-pages' 
     };
 
+    // Login with heroku.
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
 
-
+    // Create a new repo.
     $scope.createRepo = function(repoName, generator) {
       console.log('generator', generator);
       console.log('deployment', deployment);
 
       var deployment = generatorDeployment[generator];
 
-      indexedDB.emptyLocalDB().then(function(res) {console.log('res', res)});
-
       $scope.creating = true;
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
           var user = Auth.getCurrentUser()
-          // create a new repo in Github
+          // Create a new repo in Github.
           github.createRepo(user.github.login, repoName, generator, deployment).then(function(res) {
 
-            // empties the user's browser's local database
+            // Empties the user's browser's local database
             indexedDB.emptyLocalDB()
               .then(function(){
-                // inserts file templates in browser's local database
+                // Inserts file template in browser's local database.
                 indexedDB.insertRepoIntoLocalDB(repoName, res.data);
-                // redirect to files page
+                // Redirect to files page
                 $state.go('files');
               }
             );
@@ -66,6 +66,7 @@ angular.module('appceptionApp')
       })
     };
 
+    // Render the prebuilt file templates.
     $scope.renderTemplate = function(repo) {
       $scope.allTemplates.forEach(function(value) {
         if(repo === value.name) {
@@ -75,6 +76,7 @@ angular.module('appceptionApp')
       })
     }
 
+    // When the page loads, load all the prebuilt file templates.
     repoTemplates.getTemplates()
       .then(function(res) {
         console.log(res.data)

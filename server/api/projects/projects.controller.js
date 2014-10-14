@@ -15,23 +15,21 @@ var GitHubApi = require("github");
 
 var github = new GitHubApi({
   version: "3.0.0",
-  // debug: true
   debug: true
 });
 
-// get
 github.authenticate({
   type: "oauth",
   key: process.env.GITHUB_ID,
   secret: process.env.GITHUB_SECRET
 });
 
-// Get list of projects
+// Get list of repos.
 exports.index = function(req, response) {
   var githubLogin = req.query.githubLogin;
   var userPageName = '' + githubLogin + '.github.io';
 
-  // get list of repos
+  // Get list of repos.
   github.repos.getFromUser({
     user: githubLogin,
     per_page: 100
@@ -41,7 +39,7 @@ exports.index = function(req, response) {
     } // end if (error)
     console.log("SUCCESS: projects.controller.js: get all repos")
 
-    // 'data' is all the data back from GH. Iterate and check for userPageNamme.
+    // Iterate through the data from Github and check for userPageName.
     for (var key in data) {
       if (data[key].name === userPageName) { // user has User Page
         return response.json(data);
@@ -54,8 +52,8 @@ exports.index = function(req, response) {
       token: token.token
     });
 
-    // Create the user page if it doesn't exist
-    // Creating a new repo using github node module
+    // Create the user page if it doesn't exist.
+    // Creating a new repo.
     github.repos.create({
       name: userPageName,
       auto_init: true
@@ -84,12 +82,11 @@ exports.files = function (req, res) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
 
-  // Get the url for the requested repo zip archive
+  // Get the url for the requested repo zip archive.
   github.repos.getArchiveLink({
     user: githubLogin,
     repo: repoName,
     archive_format: 'zipball'
-    // archive_format: 'tarball'
   }, function (err, data) {
     if (err) {
       console.log('projects.controller.js: get files error', err)
@@ -99,10 +96,10 @@ exports.files = function (req, res) {
     var file = data.meta.location;
     file = file.replace(/:ref/g, branchToGet) // files to load based on selected branch
 
-    // var filePath = './server/tempfiles/' + repoName + '.zip'; // OLD removed code from commit 089ec1686831b023c5609f2d00e569b80d1dadd7
+    // Create the file path for the zip file.
     var filePath = path.normalize(config.serverRoot + 'tempfiles/' + repoName + '.zip');
 
-    // Download the zip file from the given url and write it to a temporary folder in the server. Then unzip the file and save the outcome to the same temp folder.
+    // Download the zip file from the given url and write it to a temporary folder in the server.
     request.get({
       url: file,
       encoding: null
@@ -117,10 +114,10 @@ exports.files = function (req, res) {
 
         console.log("file written!");
         var r = fs.createReadStream(filePath)
-          // unzip file
+          // Unzip  the file.
           .pipe(unzip.Parse())
-          //for each item in the zipped file,
-          // create an entry object that has path and content properties
+          //For each item in the zipped file,
+          // create an entry object that has path and content properties.
           .on("entry", function (e) {
             results.push([]);
             var entry = {};
@@ -133,7 +130,7 @@ exports.files = function (req, res) {
               i++;
             })
           })
-          // when we are done unzipping, return the results
+          // When we are done unzipping, return the results.
           .on('close', function () {
             return res.send(results);
           })
@@ -143,7 +140,7 @@ exports.files = function (req, res) {
 };
 
 
-// Create a new repo
+// Create a new repo.
 exports.newRepo = function (req, response) {
   var githubLogin = req.query.githubLogin;
   var repoName = req.query.repoName;
