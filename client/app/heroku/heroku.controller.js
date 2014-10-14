@@ -22,6 +22,12 @@ angular.module('appceptionApp')
       });
     };
 
+    $scope.accountInfo = function(){
+      heroku.accountInfo().then(function(info){
+        console.log('info', info);
+      });
+    }
+
     $scope.createApp = function(){
       console.log('create app cont');
 

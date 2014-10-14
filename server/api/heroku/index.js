@@ -14,4 +14,7 @@ router.post('/createApp', controller.create);
 // update existing app
 router.post('/updateApp', controller.update);
 
+// get info about user's account
+router.get('/accountInfo', controller.account);
+
 module.exports = router;

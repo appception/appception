@@ -5,9 +5,13 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="header clear-after">
-          <p>Repo: {{repoName}} > Branch: {{branch}}</p>
+          <p>Repo: {{repoName}} > Branch: {{branch}} > Deploy: {{deployedHost}}</p>
+          <p ng-show="herokuMaxLimit"><a ng-click="dismissNotification()">
+            <i class="fa fa-times-circle"></i>
+            <span>Free Heroku accounts only allow 5 apps. You already have 5 apps.</span>
+          </a></p>
           <div ng-submit="checkBranches" class="pull-left">
-              <form  ng-hide='isDeployed'>
+              <form  ng-show='missingDeployBranch'>
               <label>
                 <input type='radio' ng-model="deployBranch" value="gh-pages"> Github pages (suitable  for apps with only client-side code)
               </label><br>
@@ -20,11 +24,6 @@
             <a ng-click="loginOauth('heroku')" ng-show="showHerokuLogin" href="">Login with Heroku for Live Preview</a>
 
             <a ng-click="deploy()" ng-show="showLivePreview" target="_blank" class="btn btn-default btn-blue" href="{{deployedUrl}}">Live Preview</a>
-
-              <a ng-click="dismissNotification()" class="margin-two--right pull-left creatingHerokuApp" ng-show="creatingHerokuApp">
-                <i class="fa fa-times-circle"></i>
-                <span>creating app </span>
-              </a>
 
               <a ng-click="dismissNotification()" class="margin-two--right pull-left updatingHerokuApp" ng-show="updatingHerokuApp">
                 <i class="fa fa-times-circle"></i>
