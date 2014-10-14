@@ -1,5 +1,5 @@
 'use strict';
-
+var heroku = require('../heroku/heroku.controller')
 var _ = require('lodash');
 var zlib = require('zlib');
 var fs = require('fs');
@@ -239,10 +239,10 @@ exports.commit = function (req, response) {
   var message = req.body.message;
   var branches = req.body.branches;
   var filesArray = req.body.filesArray;
+  var updateHerokuApp = req.body.updateHerokuApp;
 
   for(var i = 0; i < branches.length; i++){
-    var a = createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message);
-    console.log('aaa',a)
+    createCommitHelper(githubLogin, repoName, 'heads/' + branches[i], filesArray, message, updateHerokuApp);
   }
   console.log('commit 1')
   return response.json('success!')
@@ -456,7 +456,7 @@ var createBranchHelper = function(username, repoName, baseBranchName, newBranchN
   })
 }
 
-var createCommitHelper = function(githubLogin, repoName, branchName, filesArray, message) {
+var createCommitHelper = function(githubLogin, repoName, branchName, filesArray, message, updateHerokuApp) {
   // Get reference to head of branch
   console.log('filesArray', filesArray)
   github.gitdata.getReference({
@@ -528,6 +528,12 @@ var createCommitHelper = function(githubLogin, repoName, branchName, filesArray,
                       console.log('create reference error', err)
                     } else {
                       console.log('create reference success')
+
+                      if(updateHerokuApp){
+                        heroku.updateServerSide(githubLogin, repoName);
+                        // res.body.herokuFinished = true;
+                      }
+                        
                       return res;
 
                     }

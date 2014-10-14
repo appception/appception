@@ -47,7 +47,7 @@ angular.module('appceptionApp')
       })
     };
 
-    var createCommit = function(githubLogin, repoName, branches, message, filesArray) {
+    var createCommit = function(githubLogin, repoName, branches, message, filesArray, updateHerokuApp) {
       console.log('inside createCommit')
       return $http({
         method: 'POST',
@@ -57,7 +57,8 @@ angular.module('appceptionApp')
           repoName: repoName,
           message: message,
           filesArray: JSON.stringify(filesArray),
-          branches: branches
+          branches: branches,
+          updateHerokuApp: updateHerokuApp
         }
       })
     }
