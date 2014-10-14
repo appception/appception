@@ -12,14 +12,34 @@ angular.module('appceptionApp')
 
     $scope.deploymentProvider='';
 
+    var generatorDeployment = {
+      'AngularJS': 'heroku',
+      'AngularJS-Full-Stack':'heroku',
+      'Backbone': 'heroku',
+      'beginner': 'gh-pages',
+      'beginner-test': 'gh-pages',
+      'ChromeExtension': 'heroku',
+      'Ember': 'heroku',
+      'foundation': 'gh-pages',
+      'google-web-starter-kit': 'gh-pages',
+      'GulpWebapp': 'heroku',
+      'Heroku': 'heroku',
+      'Ionic': 'heroku',
+      'Mobile': 'heroku',
+      'Polymer': 'heroku',
+      'WebBasic': 'gh-pages' 
+    };
+
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
 
 
-    $scope.createRepo = function(repoName, generator, deployment) {
-      console.log('generator', generator)
-      console.log('deployment', deployment)
+    $scope.createRepo = function(repoName, generator) {
+      console.log('generator', generator);
+      console.log('deployment', deployment);
+
+      var deployment = generatorDeployment[generator];
 
       indexedDB.emptyLocalDB().then(function(res) {console.log('res', res)});
 
