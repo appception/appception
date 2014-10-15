@@ -4,7 +4,7 @@
   <div class="container clear-after">
 
 
-  <form action="" ng-submit="createRepo(repoName, generator, deployment)" class="new-repo">
+  <form action="" ng-submit="createRepo(repoName, generator)" class="new-repo">
     <div class="header clear-after">
       <h1 class="float-left">Create a New Project</h1>
       <div class="float-right">
@@ -16,17 +16,11 @@
     <h2>1. Github Repo Name</h2>
     <input id="repo_name" placeholder="my-new-repo" type="text" ng-model="repoName">
 
-    <h2>2. Deployment</h2>
-        <label>
-          <input type='radio' ng-model="deployment" value="gh-pages"> Github pages (suitable for apps with only client-side code)
-        </label>
-        <label>
-          <input type='radio' ng-model="deployment" value="heroku"> Heruko  (suitable for apps with client-side and server-side code)
-        </label>
 
     <div class="clear-after">
       <div class="float-left">
-        <h2>3. Generator </h2>
+        <h2>2. Generator </h2>
+        <p>Apps that only have client-side code are hosted on Github pages. Apps that have server-side code are hosted on Heroku.</p>
         <!-- <ul>
           <li ng-repeat="name in templateNames">{{name}}</li>
         </ul> -->

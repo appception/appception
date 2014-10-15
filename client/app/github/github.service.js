@@ -1,6 +1,8 @@
 'use strict';
 
-// This factory interacts with the Github API
+// This factory interacts with the Github API.
+// Right now, making call to server to make a call to Github.
+// TODO: To make faster, switch this to client side call to Github using CORS.
 angular.module('appceptionApp')
   .factory('github', function ($http, Auth) {
 
@@ -13,7 +15,7 @@ angular.module('appceptionApp')
       });
     };
 
-    //Get list and content of repo files for the logged in user.
+    //Get the all thee files for one one repo for the logged in user.
     var getRepoFiles = function(githubLogin, repoName, githubBranch) {
       return $http({
         method: 'GET',
@@ -26,13 +28,7 @@ angular.module('appceptionApp')
       });
     };
 
-    var getRepoFilesClient = function(githubLogin, repoName, githubBranch) {
-      return $http({
-        method: 'GET',
-        url: 'https://github.org/' + githubLogin + '/' + repoName + '/zipball/' + githubBranch,
-      });
-    };
-
+    // Create a Github repo.
     var createRepo = function(githubLogin, repoName, generator, deployment) {
       console.log('inside service createRepo');
       return $http({
@@ -47,6 +43,7 @@ angular.module('appceptionApp')
       })
     };
 
+    // Commit files to Github.
     var createCommit = function(githubLogin, repoName, branches, message, filesArray, updateHerokuApp) {
       console.log('inside createCommit')
       return $http({
@@ -63,39 +60,8 @@ angular.module('appceptionApp')
       })
     }
 
-    var insertRepoIntoLocalDB = function(repo, items){
-      var filer = new Filer.FileSystem({
-        name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback('makedrive')
-      });
 
-      // iterate through the items from the repo.
-      for(var i =0; i < items.length; i++){
-        var item = items[i];
-
-        var filePath = '/'+repo + '/' + item[0].path.replace(/^.*?\//, '');
-
-        // if item has no content, create a directory
-        if(! item[0].hasOwnProperty('content')) {
-          filer.mkdir( filePath , function(err){
-            if(err) throw err;
-          })
-        // if item has content, create a file
-        }  else {
-          filer.writeFile(filePath , item[0].content, function(error) {
-            if(error) throw error;
-          });
-        }
-      }
-    }
-
-    var exportLocalDB = function(repo) {
-      var filer = new Filer.FileSystem({
-        name: 'files',
-        provider: new Filer.FileSystem.providers.Fallback('makedrive')
-      });
-    }
-
+    // Get all the branches for a repo.
     var getBranches = function(githubLogin, repoName) {
       return $http({
         method: 'GET',
@@ -107,6 +73,7 @@ angular.module('appceptionApp')
       })
     };
 
+    // Create a new branch on Github.
     var createBranch = function(githubLogin, repoName, baseBranchName, newBranchName) {
       return $http({
         method: 'GET',
@@ -120,12 +87,13 @@ angular.module('appceptionApp')
       })
     };
 
+    // Stores info about the current repo.
     var currentRepoInformation = {
       repoName: '',
       branch: ''
     }
 
-    // TEMPORARY - MOVE THIS TO A BETTER SPOT PLZ KELLY
+    // Get the template files.
     var getTemplates = function() {
       return $http({
         method: 'GET',

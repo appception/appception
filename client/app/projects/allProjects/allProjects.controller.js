@@ -6,19 +6,21 @@ angular.module('appceptionApp')
     $scope.projects;
     $scope.loading = false;
 
-    // Check to see if currentUser exists. If it does exist, get all of its repos. If it doesn't exist, print an error on the screen
+    // Check to see if currentUser exists. If user does exist, get all of their repos.
+    // If user doesn't exist, print an error on the screen
     Auth.isLoggedInAsync(function(boolean) {
       $scope.loading = true;
       if(boolean === true){
         var user = Auth.getCurrentUser()
-        // right now, it is making call to server to make a call to Github.
-        // TODO: to make faster, switch this to client side call to Github using Coors.
+        // Get the repos for the current user.
         github.getRepos(user.github.login).then(function(res){
           $scope.projects = res.data;
-          $scope.selectedbranch = 'master'; // for the default master branch selection
+          // Sets 'master' as the default selection in the dropdown menue.
+          $scope.selectedbranch = 'master'; 
 
+          // Get the branches for each repo.
           $scope.projects.forEach(function(element, index, arrayBeingTraversed) {
-            $scope.getBranchesForRepo(element);
+            getBranchesForRepo(element);
           }); // end $scope.projects.forEach()
 
           $scope.loading = false;
@@ -29,11 +31,8 @@ angular.module('appceptionApp')
       }
     });
 
-    $scope.emptyLocalDB = function(){
-      indexedDB.emptyLocalDB();
-    }
-
-    $scope.getBranchesForRepo = function(project) { // store $scope.project.branch.name{name, sha, url}
+    // Fetches all the branches for a repo.
+    var getBranchesForRepo = function(project) { // store $scope.project.branch.name{name, sha, url}
 
       Auth.isLoggedInAsync(function(boolean) {
         if(boolean === true){
@@ -57,20 +56,20 @@ angular.module('appceptionApp')
         if(boolean === true){
           var user = Auth.getCurrentUser();
 
-          // empties the user's browser's local database so there is only
+          // Empties the user's browser's local database so there is only
           // one project in the local database at a time.
-          indexedDB.emptyLocalDB(); // NOTE from Aaron: Can we not empty the DB but have a 'top-level' project object or something?
+          indexedDB.emptyLocalDB();
 
-          // Fetches the files for a particular repo
+          // Fetches the files for a particular repo.
           github.getRepoFiles(user.github.login, repo, selectedbranch)
           .then(function(res) {
-
             console.log('downloading zip file');
-            // insert the files into the user's browser local database
+
+            // Insert the files into the user's browser local database.
             indexedDB.insertRepoIntoLocalDB(repo, res.data);
 
+            // Redirects to files page.
             $state.go('files', {repoName: repo})
-
           });
 
         }else {

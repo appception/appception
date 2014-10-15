@@ -4,7 +4,7 @@ var _ = require('lodash');
 var herokuToken = require('../../auth/heroku/passport');
 var Heroku = require('heroku-client');
 
-// Get list of all heroku apps
+// Get a list of all heroku apps,
 exports.index = function(req, res) {
   console.log('list all app api', herokuToken.herokuToken );
 
@@ -15,7 +15,7 @@ exports.index = function(req, res) {
   });
 };
 
-// Creates a new heroku app
+// Creates a new heroku app.
 exports.create = function(req, res) {
   console.log('create app api');
 
@@ -36,7 +36,7 @@ exports.create = function(req, res) {
   heroku.appSetups().create(attributes, callback);
 };
 
-// Updates an existing heroku app
+// Updates an existing heroku app.
 exports.update = function(req, res) {
   console.log('update app api');
 
@@ -47,8 +47,6 @@ exports.update = function(req, res) {
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"},
                     "app": {"name": appName } };
  
-
-
   var callback = function(){
     res.send('app updated');
     return console.log('app updated'); // making this a return so the server can capture it and we can test it.
@@ -58,7 +56,18 @@ exports.update = function(req, res) {
   heroku.apps(appName).builds().create(attributes, callback);
 };
 
+// Gets account info for logged in user.
+exports.account = function(req, res) {
 
+  var heroku = new Heroku({ token: herokuToken.herokuToken  });
+
+  heroku.account().info(function (err, info) {
+     return res.json(info)
+  });
+};
+
+// Updates an existing heroku app. 
+// This method is used by server-side controllers. 
 exports.updateServerSide = function(githubLogin, githubRepo) {
   console.log('update app api');
 
@@ -67,8 +76,6 @@ exports.updateServerSide = function(githubLogin, githubRepo) {
   var attributes = {"source_blob":{"url":"https://github.com/" + githubLogin + "/" + githubRepo + "/archive/heroku.tar.gz"},
                     "app": {"name": appName } };
  
-
-
   var callback = function(){
     return console.log('app updated server side'); // making this a return so the server can capture it and we can test it.
   };
@@ -76,6 +83,7 @@ exports.updateServerSide = function(githubLogin, githubRepo) {
 
   heroku.apps(appName).builds().create(attributes, callback);
 };
+
 
 function handleError(res, err) {
   return res.send(500, err);
