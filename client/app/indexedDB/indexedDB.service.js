@@ -8,7 +8,7 @@ angular.module('appceptionApp')
     // Insert files and directories for a given repo
     // into the browsers local database.
     var insertRepoIntoLocalDB = function(repo, items) {
-      console.log('insertRepoIntoLocalDB', items)
+      console.log('insertRepoIntoLocalDB')
       var filer = new Filer.FileSystem({
         name: 'files',
         provider: new Filer.FileSystem.providers.Fallback(databaseName)
@@ -17,13 +17,13 @@ angular.module('appceptionApp')
       // Iterate through the items from the repo.
       for(var i =0; i < items.length; i++){
         var item = items[i];
-        console.log('repo', repo);
+        //console.log('repo', repo);
 
         //Replace forward Windows forward slash with Linux back slash for 
         // all the file paths.
         var filePath = item[0].path.replace(/\\/g, '/')
         filePath = '/'+ repo + '/' + filePath.replace(/^.*?[\/\\]/, '');
-        console.log('filePath', filePath);
+        //console.log('filePath', filePath);
 
         // If item has no content, create a directory.
         if(! item[0].hasOwnProperty('content')) {
@@ -72,7 +72,7 @@ angular.module('appceptionApp')
           angular.forEach(item.contents, function(entry, i){
             var entry = item.contents[i];
             var itemPath = fullpath + '/' + entry.path;
-            console.log(entry)
+            //console.log(entry)
 
             // If item is a file, read the file, and add file path and content to promises.
             if(entry.type === 'FILE'){

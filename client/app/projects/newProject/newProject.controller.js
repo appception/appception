@@ -38,8 +38,8 @@ angular.module('appceptionApp')
 
     // Create a new repo.
     $scope.createRepo = function(repoName, generator) {
-      console.log('generator', generator);
-      console.log('deployment', deployment);
+      // console.log('generator', generator);
+      // console.log('deployment', deployment);
 
       var deployment = generatorDeployment[generator];
 
@@ -67,7 +67,7 @@ angular.module('appceptionApp')
     $scope.renderTemplate = function(repo) {
       $scope.allTemplates.forEach(function(value) {
         if(repo === value.name) {
-          console.log(value)
+          // console.log(value)
           $scope.renderedTemplate = [value]
         }
       })
@@ -76,7 +76,7 @@ angular.module('appceptionApp')
     // When the page loads, load all the prebuilt file templates.
     repoTemplates.getTemplates()
       .then(function(res) {
-        console.log(res.data)
+        // console.log(res.data)
         $scope.allTemplates = res.data;
         $scope.allTemplates.forEach(function(value) {
           $scope.templateNames.push(value.name)

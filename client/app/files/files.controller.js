@@ -41,7 +41,7 @@ angular.module('appceptionApp')
 
     // If project does not have a deploy branch, add a deploy branch.
     $scope.addDeployBranch = function(){
-      console.log('deployBranch', $scope.deployBranch);
+      //console.log('deployBranch', $scope.deployBranch);
 
       $scope.missingDeployBranch = false;
 
@@ -58,14 +58,14 @@ angular.module('appceptionApp')
       // Create deploy branch on Github
       github.createBranch($scope.username, $scope.repoName, 'master', $scope.deployBranch)
         .then(function(res) {
-          console.log('addDeployBranch success!', res);
+          console.log('addDeployBranch success!');
         });
     }
 
     // Commit the files to the deploy branch so users can preview the changes.
     $scope.deploy = function(){
       var message = 'test deployment ' + new Date();
-      console.log('deploy commit:', message, $scope.deployBranch)
+      //console.log('deploy commit:', message, $scope.deployBranch)
       commit(message, [$scope.deployBranch]);
     };
 
@@ -76,7 +76,7 @@ angular.module('appceptionApp')
 
       github.createBranch($scope.username, $scope.repoName, 'master', branchName)
         .then(function(res) {
-          console.log('addBranch', branchName, 'success!\n', res);
+          console.log('addBranch', branchName, 'success!\n');
           $scope.branch = branchName;
         })
     }; // end addBranch()
@@ -84,7 +84,7 @@ angular.module('appceptionApp')
     // Commits the files to the current branch and the deploy branch.
     $scope.createCommit = function(message) {
       var message = prompt('Enter a commit message:');
-      console.log('main branch', $scope.branch , 'deploy branch', $scope.deployBranch )
+      //console.log('main branch', $scope.branch , 'deploy branch', $scope.deployBranch )
       commit(message, [$scope.branch , $scope.deployBranch]);
     };
 
@@ -103,7 +103,7 @@ angular.module('appceptionApp')
       $scope.committing = true;
       // export the files from indexedDB
       indexedDB.exportLocalDB().then(function(filesArray) {
-        console.log('files',filesArray);
+        //console.log('files',filesArray);
 
         filesArray.forEach(function(value) {
           // console.log('time', value, $scope.timeLoaded)
@@ -144,7 +144,7 @@ angular.module('appceptionApp')
             // Commits the files to Github.
             github.createCommit(user.github.login, $scope.repoName, branches, message, toCommit, updateHerokuApp)
               .then(function(res){
-                console.log('commit done', res);
+                console.log('commit done');
                 $scope.committing = false;
                 $scope.success = true;
               });
@@ -161,12 +161,12 @@ angular.module('appceptionApp')
     // Sets the deployment information based on which branch the repo has.
     var formDeployLink = function(deployBranch){
       if ( deployBranch === 'gh-pages'){
-        console.log('gh link')
+        // console.log('gh link')
         $scope.deployedUrl = 'http://' + $scope.username + '.github.io/' + $scope.repoName;
         $scope.showLivePreview = true;
 
       } else if (deployBranch === 'heroku') {
-        console.log('heroku link')
+        // console.log('heroku link')
         $scope.deployedUrl = 'http://' + $scope.username + '-' + $scope.repoName + '.herokuapp.com';
         $scope.showLivePreview = true;
 
@@ -178,7 +178,7 @@ angular.module('appceptionApp')
     var fetchDeploymentBranch = function() {
       github.getBranches($scope.username, $scope.repoName)
         .then(function(res){
-          console.log('inside getBranches:', $scope.username, $scope.repoName);
+          // console.log('inside getBranches:', $scope.username, $scope.repoName);
 
           // create a a link for the deployment branches
           $scope.missingDeployBranch = true;
@@ -187,7 +187,7 @@ angular.module('appceptionApp')
 
             // if project has  Heroku branch,
             if(res.data[i]['name'] === 'heroku'){
-              console.log('deployment heroku')
+              // console.log('deployment heroku')
               $scope.missingDeployBranch = false;
               $scope.deployBranch = 'heroku';
               $scope.deployedHost = 'Heroku';
@@ -197,7 +197,7 @@ angular.module('appceptionApp')
               heroku.countHerokuApps()
                 .then(function(res){
                   if(res === 5){
-                    console.log('max limit')
+                    // console.log('max limit')
                     $scope.herokuMaxLimit = true;
                   }
                 });
@@ -221,7 +221,7 @@ angular.module('appceptionApp')
 
             // if project is has github branch, show preview with Github
             } else if(res.data[i]['name'] === 'gh-pages' ) {
-              console.log('deployment github')
+              // console.log('deployment github')
               $scope.deployBranch = 'gh-pages';
               $scope.deployedHost = 'Github pages';
               formDeployLink(res.data[i]['name']);
