@@ -5,7 +5,7 @@ angular.module('appceptionApp')
     
     // List the user's Heroku apps.
     var listApps = function(){
-      console.log('inside service listApps');
+      // console.log('inside service listApps');
       return $http({
         method: 'GET',
         url: '/api/heroku'
@@ -22,7 +22,7 @@ angular.module('appceptionApp')
 
     // Create Heroku app.
     var createApp = function(githubLogin, repoName){
-      console.log('inside service createApp');
+      // console.log('inside service createApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/createApp',
@@ -35,7 +35,7 @@ angular.module('appceptionApp')
 
     // Update the Heroku app.
     var updateApp = function(githubLogin, repoName){
-      console.log('inside service updateApp');
+      // console.log('inside service updateApp');
       return $http({
         method: 'POST',
         url: '/api/heroku/updateApp',
@@ -57,7 +57,7 @@ angular.module('appceptionApp')
     var createHerokuApp = function(username, repoName){
       // Get a list of Heroku apps for logged in user.
       return listApps().then(function(apps){
-        console.log('list of apps', apps);
+        // console.log('list of apps', apps);
 
         var appExists = false;
         // Check if the current repo already has a heroko app.

@@ -30,7 +30,7 @@ angular.module('appceptionApp')
 
     // Create a Github repo.
     var createRepo = function(githubLogin, repoName, generator, deployment) {
-      console.log('inside service createRepo');
+      // console.log('inside service createRepo');
       return $http({
         method: 'GET',
         url: '/api/projects/new',
@@ -45,7 +45,7 @@ angular.module('appceptionApp')
 
     // Commit files to Github.
     var createCommit = function(githubLogin, repoName, branches, message, filesArray, updateHerokuApp) {
-      console.log('inside createCommit')
+      // console.log('inside createCommit')
       return $http({
         method: 'POST',
         url: '/api/projects/commit',
